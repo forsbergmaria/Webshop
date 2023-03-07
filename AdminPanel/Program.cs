@@ -1,4 +1,4 @@
-using AdminPanel.Data;
+using DataAccess;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
