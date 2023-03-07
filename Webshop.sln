@@ -5,6 +5,7 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Webshop", "Webshop\Webshop.csproj", "{AA2BD614-7AD8-4587-9867-5CBAF1BAB53E}"
 	ProjectSection(ProjectDependencies) = postProject
+		{457C490B-9C6C-4B54-BDC6-E7BAB1992582} = {457C490B-9C6C-4B54-BDC6-E7BAB1992582}
 		{F2CABA70-5AFF-4FD5-90A0-DFD226DBB72A} = {F2CABA70-5AFF-4FD5-90A0-DFD226DBB72A}
 	EndProjectSection
 EndProject
