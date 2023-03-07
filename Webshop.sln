@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webshop", "Webshop\Webshop.csproj", "{AA2BD614-7AD8-4587-9867-5CBAF1BAB53E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Webshop", "Webshop\Webshop.csproj", "{AA2BD614-7AD8-4587-9867-5CBAF1BAB53E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminPanel", "AdminPanel\AdminPanel.csproj", "{A2362EAC-1AF8-4F81-9A04-FF0151493F63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{AA2BD614-7AD8-4587-9867-5CBAF1BAB53E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA2BD614-7AD8-4587-9867-5CBAF1BAB53E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA2BD614-7AD8-4587-9867-5CBAF1BAB53E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2362EAC-1AF8-4F81-9A04-FF0151493F63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2362EAC-1AF8-4F81-9A04-FF0151493F63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2362EAC-1AF8-4F81-9A04-FF0151493F63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2362EAC-1AF8-4F81-9A04-FF0151493F63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
