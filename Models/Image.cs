@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -7,14 +8,16 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    public class OrderContainsItem
+    public class Image
     {
-        public int OrderId { get; set; }
-        public int ItemId { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int ImageId { set; get; }
+        public int ItemId { set; get; }
+        public string Path { set; get; }
 
-        [ForeignKey(nameof(OrderId))]
-        public virtual Order Orders { get; set; }
         [ForeignKey(nameof(ItemId))]
         public virtual Item Items { get; set; }
+
     }
 }

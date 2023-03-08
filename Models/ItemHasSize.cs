@@ -12,6 +12,7 @@ namespace Models
 {
     public class ItemHasSize
     {
+        [Key]
         public int ItemId { get; set; }
         public int SizeId { get; set; }
         public int Quantity { get; set; }
