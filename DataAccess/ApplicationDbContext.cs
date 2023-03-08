@@ -16,12 +16,24 @@ namespace DataAccess
         public DbSet<OrderContainsItem> OrderContainsItem { get; set; }
         public DbSet<Size> Sizes { get; set; }
         public DbSet<Subcategory> Subcategories { get; set; }
-
         public DbSet<Image> Images { get; set; }
+        public DbSet<Admin> Admins { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Admin>().HasData(
+                new Admin
+                {
+                    FirstName = "Anton",
+                    LastName = "Kraft",
+                    Id = "jfkdgjk8jd5509",
+                    UserName = "username",
+                    PasswordHash = "sdfghjklqwertyui12345678",
+                    Email = "antonkraft25@gmail.com"
+                }
+                );
 
             modelBuilder.Entity<Category>().HasMany(c => c.Subcategories);
             modelBuilder.Entity<Category>().HasData(
