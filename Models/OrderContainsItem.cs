@@ -14,6 +14,8 @@ namespace Models
         public int OrderId { get; set; }
         public int ItemId { get; set; }
 
+        public int ItemQuantity { get; set; }
+
         [ForeignKey(nameof(OrderId))]
         public virtual Order Orders { get; set; }
         [ForeignKey(nameof(ItemId))]
