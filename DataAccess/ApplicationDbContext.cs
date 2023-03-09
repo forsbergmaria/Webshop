@@ -85,7 +85,8 @@ namespace DataAccess
                     Quantity = null,
                     Description = "En skön T-Shirt i bomullsmaterial",
                     CategoryId = 1,
-                    SubcategoryId = 1
+                    SubcategoryId = 1,
+                    IsPublished = true
                 },
             new Item
             {
@@ -98,7 +99,8 @@ namespace DataAccess
                 Quantity = null,
                 Description = "En skön T - Shirt i bomullsmaterial",
                 CategoryId = 1,
-                SubcategoryId = 1
+                SubcategoryId = 1,
+                IsPublished = true
             },
             new Item
             {
@@ -111,7 +113,8 @@ namespace DataAccess
                 Quantity = 14,
                 Description = "Maxa dina gainz med ett gott vassleproteinpulver från Tyngre!",
                 CategoryId = 2,
-                SubcategoryId = 2
+                SubcategoryId = 2,
+                IsPublished = true
             }
             );
 

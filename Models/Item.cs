@@ -23,6 +23,7 @@ namespace Models
         public string Description { get; set; }
         public int CategoryId { get; set; }
         public int? SubcategoryId { get; set; }
+        public bool IsPublished { get; set; }
         [ForeignKey(nameof(CategoryId))]
         public virtual Category Category { get; set; }
         [ForeignKey(nameof(SubcategoryId))]
