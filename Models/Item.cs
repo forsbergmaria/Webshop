@@ -22,7 +22,6 @@ namespace Models
         public int? Quantity { get; set; }
         public string Description { get; set; }
         public int CategoryId { get; set; }
-        public bool IsPublished { get; set; }
         public int? SubcategoryId { get; set; }
         public bool IsPublished { get; set; }
         [ForeignKey(nameof(CategoryId))]

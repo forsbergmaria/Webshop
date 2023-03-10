@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Models;
+using API.Models;
 
 namespace AdminPanel.Areas.Identity.Pages.Account
 {
