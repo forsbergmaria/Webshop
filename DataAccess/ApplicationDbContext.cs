@@ -22,6 +22,7 @@ namespace DataAccess
         public DbSet<Subcategory> Subcategories { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Admin> Admins { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
