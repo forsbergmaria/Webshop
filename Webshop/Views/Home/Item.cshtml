@@ -1,0 +1,9 @@
+﻿@using Models
+@model List<Item>
+
+@{
+    foreach(var item in Model)
+    {
+        <p>@item.Name</p>
+    }
+}
