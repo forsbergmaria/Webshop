@@ -83,6 +83,8 @@ namespace DataAccess
                     Name = "T-Shirt",
                     HasSize = true,
                     Color = "Svart",
+                    PriceWithoutVAT = 149.25m,
+                    VAT = 1.25m,
                     Quantity = null,
                     Description = "En skön T-Shirt i bomullsmaterial",
                     CategoryId = 1,
@@ -97,6 +99,8 @@ namespace DataAccess
                 Brand = "Bergslagen Sportcenter",
                 HasSize = true,
                 Color = "Vit",
+                PriceWithoutVAT = 149.25m,
+                VAT = 1.25m,
                 Quantity = null,
                 Description = "En skön T - Shirt i bomullsmaterial",
                 CategoryId = 1,
@@ -117,7 +121,7 @@ namespace DataAccess
                 SubcategoryId = 2,
                 IsPublished = true
             }
-            );
+            ) ;
 
             modelBuilder.Entity<Image>().HasData(
         new Image
@@ -132,6 +136,7 @@ namespace DataAccess
             new Order
             {
                 OrderId = 1,
+                OrderDate = DateTime.Parse("2023-03-08 10:00"),
                 CustomerFirstName = "Maria",
                 CustomerLastName = "Forsberg",
                 CustomerPhone = "0765696217",
@@ -142,6 +147,7 @@ namespace DataAccess
             new Order
             {
                 OrderId = 2,
+                OrderDate = DateTime.Parse("2023-03-10 13:44"),
                 CustomerFirstName = "Anton",
                 CustomerLastName = "Kraft",
                 CustomerPhone = "0767128320",
