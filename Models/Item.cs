@@ -23,7 +23,6 @@ namespace Models
         public decimal PriceWithoutVAT { get; set; }
         [Precision(18, 2)]
         public decimal VAT { get; set; }
-        public int? Quantity { get; set; }
         public string Description { get; set; }
         public int CategoryId { get; set; }
         public int? SubcategoryId { get; set; }
