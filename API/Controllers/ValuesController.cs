@@ -15,7 +15,7 @@ namespace API
         [HttpGet]
         public async Task<List<Item>> GetAllPublishedItems()
         {
-            return await _dbContext.Items.ToListAsync();
+            return await _dbContext.Items.Where(i => i.IsPublished == true).ToListAsync();
         }
     }
 }

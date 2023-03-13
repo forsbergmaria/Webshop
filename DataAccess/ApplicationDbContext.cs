@@ -16,7 +16,8 @@ namespace DataAccess
         }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Item> Items { get; set; }
-        public DbSet<ItemHasSize> ItemHasSize { get; set; }
+        public DbSet<StockTransaction> StockTransactions { get; set; }
+        public DbSet<StockTransactionSizes> StockTransactionSizes { get; set; }
         public DbSet<OrderContainsItem> OrderContainsItem { get; set; }
         public DbSet<Size> Sizes { get; set; }
         public DbSet<Subcategory> Subcategories { get; set; }
@@ -72,7 +73,6 @@ namespace DataAccess
                 );
 
             modelBuilder.Entity<Item>().HasOne(i => i.Category);
-            //modelBuilder.Entity<Item>().HasKey(fk => new { fk.ItemId });
             modelBuilder.Entity<Item>().HasMany(i => i.ProductImages);
             modelBuilder.Entity<Item>().HasData(
                 new Item
@@ -85,7 +85,6 @@ namespace DataAccess
                     Color = "Svart",
                     PriceWithoutVAT = 149.25m,
                     VAT = 1.25m,
-                    Quantity = null,
                     Description = "En skön T-Shirt i bomullsmaterial",
                     CategoryId = 1,
                     SubcategoryId = 1,
@@ -101,7 +100,6 @@ namespace DataAccess
                 Color = "Vit",
                 PriceWithoutVAT = 149.25m,
                 VAT = 1.25m,
-                Quantity = null,
                 Description = "En skön T - Shirt i bomullsmaterial",
                 CategoryId = 1,
                 SubcategoryId = 1,
@@ -115,7 +113,6 @@ namespace DataAccess
                 Name = "Vassle Kladdkaka",
                 HasSize = false,
                 Color = null,
-                Quantity = 14,
                 Description = "Maxa dina gainz med ett gott vassleproteinpulver från Tyngre!",
                 CategoryId = 2,
                 SubcategoryId = 2,
@@ -200,50 +197,80 @@ namespace DataAccess
                 }
                 );
 
-            modelBuilder.Entity<ItemHasSize>().HasOne(i => i.Items);
-            modelBuilder.Entity<ItemHasSize>().HasOne(i => i.Sizes);
-            modelBuilder.Entity<ItemHasSize>().HasKey(vf => new { vf.ItemId, vf.SizeId });
-            modelBuilder.Entity<ItemHasSize>().HasData(
-                    new ItemHasSize
+            modelBuilder.Entity<StockTransaction>().HasOne(i => i.Items);
+            modelBuilder.Entity<StockTransaction>().HasData(
+                    new StockTransaction
                     {
+                        TransactionId = 1,
+                        ItemId = 3,
+                        Quantity = 16,
+                        TransactionType = "In",
+                        TransactionDate = DateTime.Now
+                    }
+                );
+
+			modelBuilder.Entity<StockTransactionSizes>().HasOne(i => i.Items);
+            modelBuilder.Entity<StockTransactionSizes>().HasOne(i => i.Sizes);
+			modelBuilder.Entity<StockTransactionSizes>().HasKey(vf => new { vf.ItemId, vf.SizeId });
+            modelBuilder.Entity<StockTransactionSizes>().HasData(
+                    new StockTransactionSizes
+                    {
+                        TransactionId = 1,
                         ItemId = 1,
                         SizeId = 1,
-                        Quantity = 18
+                        Quantity = 18,
+                        TransactionType = "In",
+                        TransactionDate = DateTime.Parse("2023-03-11")
                     },
 
-                    new ItemHasSize
+                    new StockTransactionSizes
                     {
+                        TransactionId = 2,
                         ItemId = 1,
                         SizeId = 2,
-                        Quantity = 4
+                        Quantity = 4,
+                        TransactionType = "In",
+                        TransactionDate = DateTime.Parse("2023-03-11")
                     },
 
-                    new ItemHasSize
+                    new StockTransactionSizes
                     {
+                        TransactionId = 3,
                         ItemId = 1,
                         SizeId = 3,
-                        Quantity = 0
-                    },
-                     new ItemHasSize
+                        Quantity = 0,
+						TransactionType = "In",
+						TransactionDate = DateTime.Parse("2023-03-12")
+					},
+                     new StockTransactionSizes
                      {
+                         TransactionId = 4,
                          ItemId = 2,
                          SizeId = 1,
-                         Quantity = 13
-                     },
+                         Quantity = 13,
+						 TransactionType = "In",
+						 TransactionDate = DateTime.Parse("2023-03-11")
+					 },
 
-                    new ItemHasSize
+                    new StockTransactionSizes
                     {
+                        TransactionId = 5,
                         ItemId = 2,
                         SizeId = 2,
-                        Quantity = 0
-                    },
+                        Quantity = 0,
+						TransactionType = "In",
+						TransactionDate = DateTime.Parse("2023-03-12")
+					},
 
-                    new ItemHasSize
+                    new StockTransactionSizes
                     {
+                        TransactionId = 6,
                         ItemId = 2,
                         SizeId = 3,
-                        Quantity = 23
-                    }
+                        Quantity = 23,
+						TransactionType = "In",
+						TransactionDate = DateTime.Parse("2023-03-12")
+					}
                 );
 
 
