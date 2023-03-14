@@ -1,0 +1,38 @@
+﻿@model List<Models.Item>
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <div>
+ <div class="table-hover">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Brand</th>
+                    <th>Category</th>
+                    <th>Color</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Brand</td>
+                        <td>@item.Category</td>
+                        <td>@item.Color</td>
+                        <td>@item.Description</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+    </div>
+</body>
+</html>
