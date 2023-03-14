@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Authorization;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using DataAccess;
+using Data;
 
 namespace Webshop.Controllers
 {
     public class HomeController : Controller
-    {
+    {ItemRepository itemRepository { get { return new ItemRepository(); } }
+
         private readonly ILogger<HomeController> _logger;
         public HomeController(ILogger<HomeController> logger)
         {
@@ -29,6 +31,12 @@ namespace Webshop.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        public IActionResult Items()
+        {
+            var items = itemRepository.GetAllItems();
+            return View(items);
         }
     }
 }
