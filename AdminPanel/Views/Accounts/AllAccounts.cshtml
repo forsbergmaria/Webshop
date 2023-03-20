@@ -1,5 +1,5 @@
 ﻿@using Models
-@model List<Admin>
+@model List<AdminViewModel>
 
 <div>
     <div class="table-hover">
@@ -9,6 +9,7 @@
                     <th>Förnamn</th>
                     <th>Efternamn</th>
                     <th>E-postadress</th>
+                    <th>Administratörsroll</th>
                     <th>Hantera</th>
                 </tr>
             </thead>
@@ -20,7 +21,15 @@
                         <td>@account.FirstName</td>
                         <td>@account.LastName</td>
                         <td>@account.Email</td>
-                        <td><button class="btn btn-primary">Redigera</button><button class="btn btn-danger">Ta bort konto</button></td>
+                        <td>@account.Role</td>
+                        @if(account.Role.Equals("Huvudadministratör"))
+                        {
+                            <td><button class="btn btn-primary">Redigera</button><button class="btn btn-danger">Ta bort konto</button></td>
+                        } else
+                        {
+                            <td>Du har inte behörighet att hantera konton</td>
+                        }
+
                     </tr>
                 }
 
