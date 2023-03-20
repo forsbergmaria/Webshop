@@ -83,8 +83,5 @@ namespace Data
                 context.SaveChanges();
             }
         }
-
-        //Gets sizes of specific item
-
     }
 }
