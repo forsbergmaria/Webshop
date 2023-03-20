@@ -40,6 +40,7 @@ namespace DataAccess
                 {
                     FirstName = "Anton",
                     LastName = "Kraft",
+                    HasFullAccess = false,
                     Id = "jfkdgjk8jd5509",
                     UserName = "username",
                     PasswordHash = "sdfghjklqwertyui12345678",

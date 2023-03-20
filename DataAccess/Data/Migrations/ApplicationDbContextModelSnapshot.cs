@@ -242,7 +242,7 @@ namespace AdminPanel.Data.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
 
                     b.HasData(
                         new
@@ -276,7 +276,7 @@ namespace AdminPanel.Data.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("Images");
+                    b.ToTable("Images", (string)null);
 
                     b.HasData(
                         new
@@ -339,7 +339,7 @@ namespace AdminPanel.Data.Migrations
 
                     b.HasIndex("SubcategoryId");
 
-                    b.ToTable("Items");
+                    b.ToTable("Items", (string)null);
 
                     b.HasData(
                         new
@@ -425,7 +425,7 @@ namespace AdminPanel.Data.Migrations
 
                     b.HasKey("OrderId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
 
                     b.HasData(
                         new
@@ -467,7 +467,7 @@ namespace AdminPanel.Data.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("OrderContainsItem");
+                    b.ToTable("OrderContainsItem", (string)null);
 
                     b.HasData(
                         new
@@ -504,7 +504,7 @@ namespace AdminPanel.Data.Migrations
 
                     b.HasKey("SizeId");
 
-                    b.ToTable("Sizes");
+                    b.ToTable("Sizes", (string)null);
 
                     b.HasData(
                         new
@@ -549,7 +549,7 @@ namespace AdminPanel.Data.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("StockTransactions");
+                    b.ToTable("StockTransactions", (string)null);
 
                     b.HasData(
                         new
@@ -590,7 +590,7 @@ namespace AdminPanel.Data.Migrations
 
                     b.HasIndex("SizeId");
 
-                    b.ToTable("StockTransactionSizes");
+                    b.ToTable("StockTransactionSizes", (string)null);
 
                     b.HasData(
                         new
@@ -668,7 +668,7 @@ namespace AdminPanel.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Subcategories");
+                    b.ToTable("Subcategories", (string)null);
 
                     b.HasData(
                         new
