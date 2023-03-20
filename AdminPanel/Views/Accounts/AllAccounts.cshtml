@@ -1,0 +1,30 @@
+﻿@using Models
+@model List<Admin>
+
+<div>
+    <div class="table-hover">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Förnamn</th>
+                    <th>Efternamn</th>
+                    <th>E-postadress</th>
+                    <th>Hantera</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var account in Model)
+                {
+                    <tr>
+                        <td>@account.FirstName</td>
+                        <td>@account.LastName</td>
+                        <td>@account.Email</td>
+                        <td><button class="btn btn-primary">Redigera</button><button class="btn btn-danger">Ta bort konto</button></td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
