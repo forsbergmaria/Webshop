@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AdminPanel.Controllers
 {
@@ -11,6 +12,11 @@ namespace AdminPanel.Controllers
             _logger = logger;
         }
 
+        [Authorize]
+        public IActionResult Home()
+        {
+            return View();
+        }
         public IActionResult Index()
         {
             return View();
