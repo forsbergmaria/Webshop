@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Models;
 
@@ -30,22 +31,39 @@ namespace DataAccess
         public DbSet<Image> Images { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<IdentityRole> IdentityRoles { get; set; }
+        public override DbSet<IdentityUserRole<string>> UserRoles { get; set; }  
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<IdentityRole>().HasData(
+                    new IdentityRole
+                    {
+                        Id = "jdigru",
+                        Name = "Testadmin"
+                    }
+                );
 
             modelBuilder.Entity<Admin>().HasData(
                 new Admin
                 {
                     FirstName = "Anton",
                     LastName = "Kraft",
-                    HasFullAccess = false,
                     Id = "jfkdgjk8jd5509",
                     UserName = "username",
                     PasswordHash = "sdfghjklqwertyui12345678",
                     Email = "antonkraft25@gmail.com"
                 }
+                );
+
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                    new IdentityUserRole<string>
+                    {
+                        UserId = "jfkdgjk8jd5509",
+                        RoleId = "jdigru"
+                    }
                 );
 
             modelBuilder.Entity<Category>().HasMany(c => c.Subcategories);

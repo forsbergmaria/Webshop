@@ -12,7 +12,5 @@ namespace Models
 	{
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
-
-		public bool HasFullAccess { get; set; }
 	}
 }
