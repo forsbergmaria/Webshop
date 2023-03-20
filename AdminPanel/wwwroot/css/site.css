@@ -16,3 +16,21 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+#welcome-name {
+    text-align: center;
+}
+
+.nav-item:hover {
+    text-decoration: underline;
+    text-decoration-color: #000;
+}
+
+#logo {
+    width: 5%;
+    margin-left: 1em;
+}
+
+#logout-btn {
+    float: right;
+}
