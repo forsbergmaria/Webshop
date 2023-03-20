@@ -14,20 +14,20 @@
             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Kontoinställningar</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="" asp-action="">Administratörer</a>
+        <a class="nav-link text-dark" asp-controller="Accounts" asp-action="Index">Administratörer</a>
     </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="" asp-action="">Kategorier</a>
+            <a class="nav-link text-dark" asp-controller="Categories" asp-action="Index">Kategorier</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="" asp-action="">Produkter</a>
+            <a class="nav-link text-dark" asp-controller="Items" asp-action="Index">Produkter</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="" asp-action="">Beställningar</a>
+            <a class="nav-link text-dark" asp-controller="Orders" asp-action="Index">Beställningar</a>
         </li>
-    <li class="nav-item" id="logout-btn">
+    <li class="nav-item">
         <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link text-dark">Logga ut</button>
+            <button type="submit" class="nav-link btn btn-link text-dark">Logga ut</button>
         </form>
     </li>
 }
