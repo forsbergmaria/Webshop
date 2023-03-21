@@ -47,3 +47,7 @@ th {
 td {
     text-align: center;
 }
+
+#roles-list {
+    display: block;
+}

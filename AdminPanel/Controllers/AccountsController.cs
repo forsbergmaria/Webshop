@@ -1,7 +1,11 @@
 ﻿using DataAccess;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
+using Microsoft.EntityFrameworkCore;
 using Models;
 
 namespace AdminPanel.Controllers
@@ -84,6 +88,51 @@ namespace AdminPanel.Controllers
             _dbContext.SaveChanges();
 
             return RedirectToAction("Home", "Home");
+        }
+
+        public IActionResult RegisterForm()
+        {
+            var selectRole = _dbContext.IdentityRoles.ToList();
+            var selectList = new SelectList(selectRole, "Name").OrderByDescending(r => r.Text);
+            ViewBag.RolesList = selectList;
+
+            return View("RegisterAccount");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegisterAccount(RegisterViewModel registerViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                Admin user = new Admin();
+
+                user.FirstName = registerViewModel.FirstName;
+                user.LastName = registerViewModel.LastName;
+                user.UserName = registerViewModel.Email;
+                user.Email = registerViewModel.Email;
+                user.EmailConfirmed = true;
+                var roleName = registerViewModel.Role;
+
+                var result = await _userManager.CreateAsync(user, registerViewModel.Password);
+
+                var roleId = _dbContext.IdentityRoles.Where(r => r.Name.Equals(roleName)).FirstOrDefault();
+
+                if (result.Succeeded)
+                {
+
+                    var assignedRole = new IdentityUserRole<string>
+                    {
+                        RoleId = roleId.Id,
+                        UserId = user.Id
+                    };
+
+                    _dbContext.UserRoles.Add(assignedRole);
+                    _dbContext.SaveChanges();
+
+                    return RedirectToAction("AllAccounts", "Accounts");
+                }
+            }
+            return View(registerViewModel);
         }
     }
 }
