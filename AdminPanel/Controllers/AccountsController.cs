@@ -9,10 +9,11 @@ namespace AdminPanel.Controllers
     public class AccountsController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
-
-        public AccountsController(ApplicationDbContext dbContext)
+        private readonly UserManager<Admin> _userManager;
+        public AccountsController(ApplicationDbContext dbContext, UserManager<Admin> userManager)
         {
             _dbContext = dbContext;
+            _userManager = userManager;
         }
 
         [Authorize]
@@ -22,8 +23,11 @@ namespace AdminPanel.Controllers
         }
 
         [Authorize]
-        public IActionResult AllAccounts()
+        public async Task<IActionResult> AllAccounts()
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+
+
             List<Admin> users = _dbContext.Admins.ToList();
             List<IdentityRole> identityRoles = _dbContext.IdentityRoles.ToList();
             List<IdentityUserRole<string>> userRoles = _dbContext.UserRoles.ToList();
@@ -38,12 +42,30 @@ namespace AdminPanel.Controllers
                             Email = u.Email,
                             Role = i.Name
                         };
+            var identityRole = _dbContext.UserRoles.Where(u => u.UserId == currentUser.Id).FirstOrDefault();
+            var userRole = _dbContext.IdentityRoles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
+
+            if (userRole.Name == "Huvudadministratör")
+            {
+                ViewBag.Role = "Huvudadministratör";
+            }
+            else
+            {
+                ViewBag.Role = "Moderator";
+            }
+
 
             return View(query.ToList());
         }
 
         [Authorize]
         public IActionResult Register()
+        {
+            return View();
+        }
+
+        [Authorize]
+        public IActionResult Manage() 
         {
             return View();
         }
