@@ -42,6 +42,7 @@ namespace AdminPanel.Controllers
                             Email = u.Email,
                             Role = i.Name
                         };
+
             var identityRole = _dbContext.UserRoles.Where(u => u.UserId == currentUser.Id).FirstOrDefault();
             var userRole = _dbContext.IdentityRoles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
 
@@ -65,7 +66,7 @@ namespace AdminPanel.Controllers
         }
 
         [Authorize]
-        public IActionResult Manage() 
+        public IActionResult ManageAccount() 
         {
             return View();
         }

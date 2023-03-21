@@ -1,6 +1,9 @@
 ﻿@using Models
 @model List<AdminViewModel>
 
+<head>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
 <div>
     <div class="table-hover">
         <table class="table table-hover">
@@ -23,14 +26,14 @@
                         <td>@account.Email</td>
                         @if(account.Role == null)
                         {
-                            <td>Moderator</td>
+                            <td>@ViewBag.Role</td>
                         } else
                         {
                           <td>@account.Role</td>  
                         }
                         @if(ViewBag.Role == "Huvudadministratör")
                         {
-                            <td><button asp-controller="Account" asp-action="Manage" class="btn btn-primary">Redigera</button><button class="btn btn-danger">Ta bort konto</button></td>
+                            <td><button class="btn btn-primary manage-btn"><a asp-controller="Accounts" asp-action="ManageAccount">Redigera</a></button><button class="btn btn-danger manage-btn">Ta bort konto</button></td>
                         } else
                         {
                             <td>Du har inte behörighet att hantera konton</td>

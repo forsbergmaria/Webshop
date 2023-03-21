@@ -30,3 +30,12 @@ body {
     width: 5%;
     margin-left: 1em;
 }
+
+.manage-btn {
+    margin-left: 1em;
+}
+
+.manage-btn a {
+    color: #fff;
+    text-decoration: none;
+}
