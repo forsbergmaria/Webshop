@@ -37,6 +37,7 @@ namespace AdminPanel.Controllers
                         join i in identityRoles on ur.RoleId equals i.Id
                         select new AdminViewModel
                         {
+                            Id = u.Id,
                             FirstName = u.FirstName,
                             LastName = u.LastName,
                             Email = u.Email,
@@ -69,6 +70,20 @@ namespace AdminPanel.Controllers
         public IActionResult ManageAccount() 
         {
             return View();
+        }
+
+        [Authorize]
+        public IActionResult DeleteAccount(string id)
+        {
+            var userRole = _dbContext.UserRoles.Where(u => u.UserId.Equals(id)).FirstOrDefault();
+            _dbContext.Remove(userRole);
+            _dbContext.SaveChanges();
+
+            var user = _dbContext.Admins.Where(u => u.Id.Equals(id)).FirstOrDefault();
+            _dbContext.Remove(user);
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("Home", "Home");
         }
     }
 }
