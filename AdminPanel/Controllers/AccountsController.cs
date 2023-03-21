@@ -24,21 +24,6 @@ namespace AdminPanel.Controllers
         [Authorize]
         public IActionResult AllAccounts()
         {
-            //var allAccounts = _dbContext.Admins.ToList();
-            //var model = new Admin
-            //{
-            //    Id = allAccounts[0].Id,
-            //    UserName = allAccounts[0].UserName,
-            //    FirstName = allAccounts[0].FirstName,
-            //    LastName = allAccounts[0].LastName,
-            //    Email = allAccounts[0].Email
-            //};
-
-            //foreach(var account in allAccounts)
-            //{
-            //    model.
-            //}
-            //return View(model);
             List<Admin> users = _dbContext.Admins.ToList();
             List<IdentityRole> identityRoles = _dbContext.IdentityRoles.ToList();
             List<IdentityUserRole<string>> userRoles = _dbContext.UserRoles.ToList();

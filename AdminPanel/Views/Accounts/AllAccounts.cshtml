@@ -21,7 +21,13 @@
                         <td>@account.FirstName</td>
                         <td>@account.LastName</td>
                         <td>@account.Email</td>
-                        <td>@account.Role</td>
+                        @if(account.Role == null)
+                        {
+                            <td>Moderator</td>
+                        } else
+                        {
+                          <td>@account.Role</td>  
+                        }
                         @if(account.Role.Equals("Huvudadministratör"))
                         {
                             <td><button class="btn btn-primary">Redigera</button><button class="btn btn-danger">Ta bort konto</button></td>
