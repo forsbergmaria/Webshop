@@ -14,6 +14,7 @@
                 <tr>
                     <th>Brand</th>
                     <th>Category</th>
+                    <th>Subcategory</th>
                     <th>Color</th>
                     <th>Description</th>
                 </tr>
@@ -24,7 +25,11 @@
                 {
                     <tr>
                         <td>@item.Brand</td>
-                        <td>@item.Category</td>
+                        <td>@item.Category.Name</td>
+                            @if(item.Subcategory != null)
+                            {
+                                <td>@item.Subcategory.Name</td>
+                            }
                         <td>@item.Color</td>
                         <td>@item.Description</td>
                     </tr>
