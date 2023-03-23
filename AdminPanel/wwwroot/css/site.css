@@ -51,3 +51,7 @@ td {
 #roles-list {
     display: block;
 }
+
+#btn-register-submit {
+    margin-top: 1em;
+}

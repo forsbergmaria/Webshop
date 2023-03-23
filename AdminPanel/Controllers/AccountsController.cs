@@ -10,6 +10,7 @@ using Models;
 
 namespace AdminPanel.Controllers
 {
+    [AutoValidateAntiforgeryToken]
     public class AccountsController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
@@ -20,13 +21,13 @@ namespace AdminPanel.Controllers
             _userManager = userManager;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult Index()
         {
             return View();
         }
 
-        [Authorize]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public async Task<IActionResult> AllAccounts()
         {
             var currentUser = await _userManager.GetUserAsync(User);
@@ -60,23 +61,22 @@ namespace AdminPanel.Controllers
                 ViewBag.Role = "Moderator";
             }
 
-
             return View(query.ToList());
         }
 
-        [Authorize]
+        [Authorize(Roles = "Huvudadministratör")]
         public IActionResult Register()
         {
             return View();
         }
 
-        [Authorize]
+        [Authorize(Roles = "Huvudadministratör")]
         public IActionResult ManageAccount() 
         {
             return View();
         }
 
-        [Authorize]
+        [Authorize(Roles = "Huvudadministratör")]
         public IActionResult DeleteAccount(string id)
         {
             var userRole = _dbContext.UserRoles.Where(u => u.UserId.Equals(id)).FirstOrDefault();
@@ -90,16 +90,23 @@ namespace AdminPanel.Controllers
             return RedirectToAction("Home", "Home");
         }
 
+        [Authorize(Roles = "Huvudadministratör")]
         public IActionResult RegisterForm()
         {
             var selectRole = _dbContext.IdentityRoles.ToList();
             var selectList = new SelectList(selectRole, "Name").OrderByDescending(r => r.Text);
             ViewBag.RolesList = selectList;
 
+            //if (!User.Identity.IsAuthenticated)
+            //{
+            //    return View("Index", "Home");
+            //}
+
             return View("RegisterAccount");
         }
 
         [HttpPost]
+        [Authorize(Roles = "Huvudadministratör")]
         public async Task<IActionResult> RegisterAccount(RegisterViewModel registerViewModel)
         {
             if (ModelState.IsValid)

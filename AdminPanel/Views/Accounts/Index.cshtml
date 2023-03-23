@@ -1,11 +1,15 @@
-﻿<head>
+﻿
+<head>
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 
 <div class="container-fluid">
-    <div class="container-item">
+@if (User.IsInRole("Huvudadministratör"))
+{
+      <div class="container-item">
         <button class="btn btn-outline-secondary" id="register-btn"><a class="nav-link text-dark" asp-controller="Accounts" asp-action="RegisterForm">Registrera nytt administratörskonto</a></button>
-    </div>
+    </div>  
+}
     <div class="container-item">
         <button class="btn btn-outline-secondary" id="register-btn"><a class="nav-link text-dark" asp-controller="Accounts" asp-action="AllAccounts">Se alla administratörskonton</a></button>
     </div>
