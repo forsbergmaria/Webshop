@@ -236,7 +236,6 @@ namespace DataAccess
 
 			modelBuilder.Entity<StockTransactionSizes>().HasOne(i => i.Items);
             modelBuilder.Entity<StockTransactionSizes>().HasOne(i => i.Sizes);
-			modelBuilder.Entity<StockTransactionSizes>().HasKey(vf => new { vf.ItemId, vf.SizeId });
             modelBuilder.Entity<StockTransactionSizes>().HasData(
                     new StockTransactionSizes
                     {

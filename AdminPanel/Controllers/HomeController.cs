@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Models;
+using Data;
 
 namespace AdminPanel.Controllers
 {
@@ -21,10 +22,42 @@ namespace AdminPanel.Controllers
         public IActionResult Home()
         {
             var currentUser = _dbContext.Admins.Where(a => a.UserName.Equals(User.Identity.Name)).FirstOrDefault();
-            var model = new Admin
+            var items = _dbContext.Items.ToList();
+
+            var transactionList = new List<StockTransaction>();
+            var transactionListSizes = new List<StockTransactionSizes>();
+
+            foreach (var item in items)
             {
-                FirstName = currentUser.FirstName
-            };
+                transactionList = _dbContext.StockTransactions.Where(t => t.TransactionType == "Sales" && t.ItemId == item.ItemId 
+                && t.TransactionDate.Equals(DateTime.Today)).ToList();
+            }
+
+            foreach (var item in items)
+            {
+                transactionListSizes = _dbContext.StockTransactionSizes.Where(t => t.ItemId == item.ItemId
+                && t.TransactionType == "Sales").ToList();
+            }
+
+            int totalSoldUnits = transactionList.Sum(t => t.Quantity) + transactionListSizes.Sum(t => t.Quantity);
+
+            var itemsSold = new List<String>();
+
+            var query = from t in transactionList
+                        join i in items on t.ItemId equals i.ItemId orderby t.Quantity descending
+                        join ts in transactionListSizes on i.ItemId equals ts.ItemId orderby ts.Quantity descending
+                        select new List<string>
+                        {
+                            i.Name
+                        };
+
+                        var model = new HomeViewModel
+                        {
+                            UserFirstName = currentUser.FirstName,
+                            UnitsSold = totalSoldUnits,
+                            ItemsSold = (List<string>)query.Take(5)
+                        };
+            
 
             return View(model);     
         }
