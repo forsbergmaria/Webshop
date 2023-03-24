@@ -1,0 +1,21 @@
+﻿@model Models.Item;
+
+@{
+    ViewData["Title"] = "CV";
+}
+
+<h3 class="well"><strong>@Html.DisplayFor(model => model.Name)</strong></h3>
+
+<div class="panel panel-default" style="max-width: 400px">
+    <div class="panel-heading">ITEM</div>
+    <div class="panel-body">
+        <h5><strong>Info:</strong></h5>
+        <p>@Model.Color</p>
+        <p>@Model.Brand</p>
+        <h4><strong>@Model.Category</strong></h4>
+        <p>@Model.Description</p>
+    </div>
+</div>
+<div>
+    <p>@Html.ActionLink("TILLBAKA", "Index", "Item")</p>
+</div>

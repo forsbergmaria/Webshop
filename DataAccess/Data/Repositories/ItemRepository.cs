@@ -38,11 +38,10 @@ namespace Data
         {
             using (var context = new ApplicationDbContext())
             {
-                return context.Items.Include(i => i.ProductImages)
-                    .Include(i => i.Description)
+                return context.Items
                     .Include(i => i.Category)
                     .Include(i => i.Subcategory)
-                    .Include(i => i.Brand).FirstOrDefault(i => i.ItemId == id);
+                    .FirstOrDefault(i => i.ItemId == id);
             }
         }
 
