@@ -29,15 +29,19 @@ namespace AdminPanel.Controllers
 
             foreach (var item in items)
             {
-                transactionList = _dbContext.StockTransactions.Where(t => t.TransactionType == "Sales" && t.ItemId == item.ItemId 
-                && t.TransactionDate.Equals(DateTime.Today)).ToList();
+                    transactionListSizes = _dbContext.StockTransactionSizes.Where(t => t.TransactionType == "Försäljning" && t.ItemId == item.ItemId
+                    && t.TransactionDate.Date == DateTime.Today.Date).ToList();
+
+                
+                    transactionList = _dbContext.StockTransactions.Where(t => t.TransactionType == "Försäljning" && t.ItemId == item.ItemId
+                    && t.TransactionDate.Date == DateTime.Today.Date).ToList();
+
             }
 
-            foreach (var item in items)
-            {
-                transactionListSizes = _dbContext.StockTransactionSizes.Where(t => t.ItemId == item.ItemId
-                && t.TransactionType == "Sales").ToList();
-            }
+            //foreach (var item in items)
+            //{
+
+            //}
 
             int totalSoldUnits = transactionList.Sum(t => t.Quantity) + transactionListSizes.Sum(t => t.Quantity);
 
