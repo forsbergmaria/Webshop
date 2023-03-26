@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Models;
 using Data;
+using System.Linq;
 
 namespace AdminPanel.Controllers
 {
@@ -41,33 +42,17 @@ namespace AdminPanel.Controllers
 
 
                 }
-
             }
-
-            //foreach (var item in items)
-            //{
-
-            //}
 
             int totalSoldUnits = transactionList.Sum(t => t.Quantity) + transactionListSizes.Sum(t => t.Quantity);
 
-            var itemsSold = new List<String>();
 
-            var query = from t in transactionList
-                        join i in items on t.ItemId equals i.ItemId orderby t.Quantity descending
-                        join ts in transactionListSizes on i.ItemId equals ts.ItemId orderby ts.Quantity descending
-                        select new List<string>
-                        {
-                            i.Name
-                        };
+            var model = new HomeViewModel
+            {
+                UserFirstName = currentUser.FirstName,
+                UnitsSold = totalSoldUnits
+            };
 
-                        var model = new HomeViewModel
-                        {
-                            UserFirstName = currentUser.FirstName,
-                            UnitsSold = totalSoldUnits,
-                            ItemsSold = (List<string>)query.Take(5)
-                        };
-            
 
             return View(model);     
         }
