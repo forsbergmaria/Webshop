@@ -12,6 +12,8 @@ namespace Models
     {
         [Key]
         public int SubcategoryId { get; set; }
+        [Required(ErrorMessage = "Vänligen fyll i ett namn på underkategorin")]
+        [Display(Name = "Underkategorinamn*")]
         public string Name { get; set; }
         public int CategoryId { get; set; }
 

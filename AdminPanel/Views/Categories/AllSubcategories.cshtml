@@ -1,0 +1,52 @@
+﻿@using Models
+@model SubcategoryViewModel
+
+
+<head>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<h2>Visar underkategorier för kategorin "@Model.CategoryName.ToLower()"</h2>
+<div>
+    <div class="table-hover">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Underkategori</th>
+                    @if (User.IsInRole("Huvudadministratör")) 
+                    {
+                        <th>Hantera</th>
+                    }
+                    
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var subcategory in Model.Subcategories)
+                {
+                    <tr>
+
+                    @if (Model.Subcategories.Count < 1)
+                    {
+                       <td>Det finns inga underkateogier för @Model.CategoryName.ToLower()</td> 
+                    }
+                        <td>@subcategory.Name</td>
+
+                        
+                       
+                            
+                            @if (User.IsInRole("Huvudadministratör"))
+                            {
+                                <td>
+                                <button class="btn btn-primary manage-btn"><a asp-controller="" asp-action="" asp-route-id="@subcategory.CategoryId">Redigera</a></button>
+                                <button class="btn btn-danger manage-btn"><a asp-controller="" asp-action="" asp-route-id="@subcategory.CategoryId" onclick="return confirm('Är du säker på att du vill ta bort denna kategori? Det går inte att ångra.')">Ta bort kategori</a></button>
+                                </td>
+                            } 
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button class="btn btn-primary"><a asp-controller="Categories" asp-action="CreateSubcategory">Skapa en ny underkategori</a></button>
+    </div>
+</div>
+
