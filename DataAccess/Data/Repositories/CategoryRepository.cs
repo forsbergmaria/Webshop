@@ -21,7 +21,8 @@ namespace Data
         {
             using (var context = new ApplicationDbContext())
             {
-                return context.Categories.Include(i => i.Name)
+                return context.Categories
+                    .Include(c => c.Subcategories)
                     .FirstOrDefault(i => i.CategoryId == id);
             }
         }
