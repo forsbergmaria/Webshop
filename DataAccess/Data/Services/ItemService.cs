@@ -1,6 +1,7 @@
 ﻿using Data;
 using Models;
 using Models.ViewModels;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace DataAccess.Data.Services
@@ -9,17 +10,23 @@ namespace DataAccess.Data.Services
     {
         private ItemRepository itemRepository { get { return new ItemRepository(); } }
         private CategoryRepository categoryRepository { get { return new CategoryRepository(); } }
-        public List<Item> SearchByCategory(string searchString)
+        public List<Item> ItemTextSearch(string searchstring)
         {
-            List<Item> listofitems = itemRepository.GetAllItems();
-
-            if (!String.IsNullOrEmpty(searchString))
+            List<Item> items = itemRepository.GetAllItems();
+            if(string.IsNullOrEmpty(searchstring))
             {
-                listofitems = listofitems.FindAll(c => c.Category.Name.ToLower()
-                .Contains(searchString.ToLower())).ToList();
+                return items;
             }
-
-            return listofitems;
+            else
+            {
+                var filteredItems = items.Where(c => c.Name.ToLower().Contains(searchstring) ||
+                c.Brand.ToLower().Contains(searchstring) ||
+                c.Category.Name.ToLower().Contains(searchstring) ||
+                c.Description.ToLower().Contains(searchstring) ||
+                c.Subcategory.Name != null && c.Subcategory.Name.ToLower().Contains(searchstring) ||
+                c.Color != null && c.Color.ToLower().Contains(searchstring)).ToList();
+                return filteredItems;
+            }
         }
 
         public List<SelectListItem> PopulateCategoryList()

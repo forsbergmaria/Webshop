@@ -8,7 +8,23 @@
 </head>
 <body>
     <div>
- <div class="table-hover">
+
+            <div class="panel-heading">Sök efter item</div>
+    <div class="panel-body">
+        @using (Html.BeginForm("Index", "Item", FormMethod.Post))
+        {
+            <div>
+                <div>
+                    <p>Sök:</p>
+                    @Html.TextBox("searchstring")
+                    <input type="submit" value="Sök" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+        <div class="table-hover">
         <table class="table table-hover">
             <thead>
                 <tr>
