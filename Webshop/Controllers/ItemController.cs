@@ -10,12 +10,12 @@ namespace Webshop.Controllers
     public class ItemController : Controller
     {
         ItemRepository itemRepository { get { return new ItemRepository(); } }
+        ItemService itemService { get { return new ItemService(); } }
         CategoryRepository categoryRepository { get { return new CategoryRepository(); } }
 
-        FilterService filterService { get { return new FilterService(); } }
-        public IActionResult Index()
+        public ActionResult Index(string searchstring)
         {
-            var items = itemRepository.GetAllItems();
+            var items = itemService.ItemTextSearch(searchstring);
             return View(items);
         }
         public IActionResult Details(int id)
