@@ -52,15 +52,6 @@ namespace AdminPanel.Controllers
             var identityRole = _dbContext.UserRoles.Where(u => u.UserId == currentUser.Id).FirstOrDefault();
             var userRole = _dbContext.IdentityRoles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
 
-            if (userRole.Name == "Huvudadministratör")
-            {
-                ViewBag.Role = "Huvudadministratör";
-            }
-            else
-            {
-                ViewBag.Role = "Moderator";
-            }
-
             return View(query.ToList());
         }
 
@@ -96,11 +87,6 @@ namespace AdminPanel.Controllers
             var selectRole = _dbContext.IdentityRoles.ToList();
             var selectList = new SelectList(selectRole, "Name").OrderByDescending(r => r.Text);
             ViewBag.RolesList = selectList;
-
-            //if (!User.Identity.IsAuthenticated)
-            //{
-            //    return View("Index", "Home");
-            //}
 
             return View("RegisterAccount");
         }
