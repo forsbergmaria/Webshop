@@ -1,7 +1,8 @@
 ﻿@using Models
-@model Subcategory
+@model CreateSubcategory2ViewModel
 
 <body>
+    <h2>Skapa en ny underkategori för "@ViewBag.SelectedCategory.ToLower()"</h2>
     <form method="post" asp-controller="Categories" asp-action="CreateSubcategoryFromCategory">
         @Html.AntiForgeryToken()
         @Html.ValidationSummary("", new { @class = "text-danger" })

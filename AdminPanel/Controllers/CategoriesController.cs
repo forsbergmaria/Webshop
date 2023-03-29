@@ -71,23 +71,32 @@ namespace AdminPanel.Controllers
             return View("CreateSubcategory");
         }
 
-        public IActionResult CreateSubcategoryFromCategory(int id, Subcategory subcategory)
+        public IActionResult CreateSubcategoryFromCategoryForm(int id)
         {
-            var category = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+            var selectedCategory = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+            TempData["id"] = id;
+            ViewBag.SelectedCategory = selectedCategory.Name;
 
-            var model = new Subcategory
+            return View("CreateSubcategoryFromCategory");
+        }
+
+        [HttpPost]
+        public IActionResult CreateSubcategoryFromCategory(CreateSubcategory2ViewModel model)
+        {
+            int id = (int)TempData["id"];
+            var subcategory = new Subcategory
             {
                 CategoryId = id,
-                Name = subcategory.Name,
+                Name = model.Name
             };
 
             if (ModelState.IsValid)
             {
-                _dbContext.Subcategories.Add(model);
+                _dbContext.Subcategories.Add(subcategory);
                 _dbContext.SaveChanges();
             }
 
-            return View();
+            return RedirectToAction("AllCategories");
         }
 
         [HttpPost]

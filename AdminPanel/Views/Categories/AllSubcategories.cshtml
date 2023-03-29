@@ -5,7 +5,14 @@
 <head>
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
-<h2>Visar underkategorier för kategorin "@Model.Category.Name.ToLower()"</h2>
+
+@if (Model.Subcategories.Count < 1)
+{
+    <h4>Det finns inga underkategorier för "@Model.Category.Name.ToLower()"</h4>
+} 
+else
+{
+    <h2>Visar underkategorier för kategorin "@Model.Category.Name.ToLower()"</h2>
 <div>
     <div class="table-hover">
         <table class="table table-hover">
@@ -46,7 +53,9 @@
                 }
             </tbody>
         </table>
-        <button class="btn btn-primary"><a asp-controller="Categories" asp-action="CreateSubcategoryFromCategory" asp-route-id="@Model.Category.CategoryId">Skapa en ny underkategori</a></button>
     </div>
 </div>
+}
+
+<button class="btn btn-primary"><a asp-controller="Categories" asp-action="CreateSubcategoryFromCategoryForm" asp-route-id="@Model.Category.CategoryId">Skapa en ny underkategori</a></button>
 

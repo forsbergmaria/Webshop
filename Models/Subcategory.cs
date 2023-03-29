@@ -11,6 +11,7 @@ namespace Models
     public class Subcategory
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SubcategoryId { get; set; }
         [Required(ErrorMessage = "Vänligen fyll i ett namn på underkategorin")]
         [Display(Name = "Underkategorinamn*")]
