@@ -8,7 +8,7 @@ namespace Models
 {
     public class SubcategoryViewModel
     {
-        public string CategoryName { get; set; }
+        public Category Category { get; set; }
         public List<Subcategory> Subcategories { get; set; }
     }
 }

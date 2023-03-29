@@ -108,14 +108,14 @@ namespace AdminPanel.Controllers
 
                 var result = await _userManager.CreateAsync(user, registerViewModel.Password);
 
-                var roleId = _dbContext.IdentityRoles.Where(r => r.Name.Equals(roleName)).FirstOrDefault();
+                var role = _dbContext.IdentityRoles.Where(r => r.Name.Equals(roleName)).FirstOrDefault();
 
                 if (result.Succeeded)
                 {
 
                     var assignedRole = new IdentityUserRole<string>
                     {
-                        RoleId = roleId.Id,
+                        RoleId = role.Id,
                         UserId = user.Id
                     };
 

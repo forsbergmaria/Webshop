@@ -1,0 +1,19 @@
+﻿@using Models
+@model Subcategory
+
+<body>
+    <form method="post" asp-controller="Categories" asp-action="CreateSubcategoryFromCategory">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary("", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Lägg till" class="btn btn-success" id="btn-subcategory2-submit" />
+            </div>
+        </div>
+    </form>
+</body>
