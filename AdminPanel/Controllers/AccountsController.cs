@@ -61,12 +61,7 @@ namespace AdminPanel.Controllers
             return View();
         }
 
-        [Authorize(Roles = "Huvudadministratör")]
-        public IActionResult ManageAccount() 
-        {
-            return View();
-        }
-
+        [HttpDelete]
         [Authorize(Roles = "Huvudadministratör")]
         public IActionResult DeleteAccount(string id)
         {
@@ -132,7 +127,7 @@ namespace AdminPanel.Controllers
         public async Task<IActionResult> SearchAdmin(string searchString)
         {
             var query = _dbContext.Admins.AsQueryable();
-            if(!string.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
                 var searchTerms = searchString.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var term in searchTerms)
@@ -147,16 +142,16 @@ namespace AdminPanel.Controllers
             List<IdentityUserRole<string>> userRoles = _dbContext.UserRoles.ToList();
 
             var query2 = from u in admins
-                        join ur in userRoles on u.Id equals ur.UserId
-                        join i in identityRoles on ur.RoleId equals i.Id
-                        select new AdminViewModel
-                        {
-                            Id = u.Id,
-                            FirstName = u.FirstName,
-                            LastName = u.LastName,
-                            Email = u.Email,
-                            Role = i.Name
-                        };
+                         join ur in userRoles on u.Id equals ur.UserId
+                         join i in identityRoles on ur.RoleId equals i.Id
+                         select new AdminViewModel
+                         {
+                             Id = u.Id,
+                             FirstName = u.FirstName,
+                             LastName = u.LastName,
+                             Email = u.Email,
+                             Role = i.Name
+                         };
             var currentUser = await _userManager.GetUserAsync(User);
             var identityRole = _dbContext.UserRoles.Where(u => u.UserId == currentUser.Id).FirstOrDefault();
             var userRole = _dbContext.IdentityRoles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
@@ -165,6 +160,77 @@ namespace AdminPanel.Controllers
             ViewBag.SearchString = searchString;
 
             return View(query2.ToList());
+        }
+
+        [Authorize(Roles = "Huvudadministratör")]
+        public IActionResult UpdateAccountForm(string id)
+        {
+            var user = _dbContext.Admins.Where(a => a.Id == id).FirstOrDefault();
+            var identityRole = _dbContext.UserRoles.Where(u => u.UserId == id).FirstOrDefault();
+            var userRole = _dbContext.IdentityRoles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
+
+            var admin = new AdminViewModel
+            {
+                Id = id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Role = userRole.Name
+            };
+
+            var selectRole = _dbContext.IdentityRoles.ToList();
+            var selectList = new SelectList(selectRole, "Name").OrderByDescending(r => r.Text);
+            ViewBag.RolesList = selectList;
+            //var currentUser = await _userManager.GetUserAsync(User);
+            //var identityRole = _dbContext.UserRoles.Where(u => u.UserId == currentUser.Id).FirstOrDefault();
+            //var userRole = _dbContext.IdentityRoles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
+            //var model = new AdminViewModel
+            //{
+            //    Id = id,
+            //    FirstName = user.FirstName,
+            //    LastName = user.LastName,
+            //    Email = user.Email,
+            //    Role = user
+            //};  
+            TempData["id"] = id;
+            return View("UpdateAccount", admin);
+        }
+
+        [Authorize(Roles = "Huvudadministratör")]
+        public async Task<IActionResult> UpdateAccount(AdminViewModel model)
+        {
+            var admin = new AdminViewModel
+            {
+                Id = TempData["id"].ToString(),
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                Role = model.Role
+            };
+
+            var user = new Admin();
+            user.Email = model.Email;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.UserName = model.Email;
+            var userRole = model.Role;
+
+            var role = _dbContext.IdentityRoles.Where(r => r.Name == userRole).FirstOrDefault();
+
+                
+
+                if (ModelState.IsValid)
+                {
+                    var assignedRole = new IdentityUserRole<string>
+                    {
+                        RoleId = role.Id,
+                        UserId = user.Id
+                    };
+                _dbContext.Admins.Update(user);
+                    _dbContext.UserRoles.Update(assignedRole);
+                    _dbContext.SaveChanges();
+                }
+                return RedirectToAction("AllAccounts");
         }
     }
 }

@@ -41,8 +41,17 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "UpdateAccount",
+        pattern: "/Accounts/UpdateAccount/{id?}",
+        defaults: new { controller = "Accounts", action = "UpdateAccount" });
+});
 
 app.MapControllerRoute(
     name: "default",
