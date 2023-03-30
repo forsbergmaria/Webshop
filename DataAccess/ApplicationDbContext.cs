@@ -66,7 +66,9 @@ namespace DataAccess
                     }
                 );
 
-            modelBuilder.Entity<Category>().HasMany(c => c.Subcategories);
+            modelBuilder.Entity<Category>().HasMany(c => c.Subcategories)
+                .WithOne(c => c.Categories)
+                .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Category>().HasData(
                 new Category
                 {
