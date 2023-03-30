@@ -45,7 +45,7 @@
                                 <button class="btn btn-light subcategory-btn"><a asp-controller="Categories" asp-action="AllSubcategories" asp-route-id="@category.CategoryId">Se underkategorier</a></button>
                                 @if (User.IsInRole("Huvudadministratör"))
                                 {
-                                    <button class="btn btn-primary manage-btn"><a asp-controller="" asp-action="" asp-route-id="@category.CategoryId">Redigera</a></button>
+                                    <button class="btn btn-primary manage-btn"><a asp-controller="Categories" asp-action="UpdateCategoryForm" asp-route-id="@category.CategoryId">Redigera</a></button>
                                     <button class="btn btn-danger manage-btn"><a asp-controller="Categories" asp-action="DeleteCategory" asp-route-id="@category.CategoryId" onclick="return confirm('Är du säker på att du vill ta bort denna kategori? Även eventuella tillhörande underkategorier kommer att tas bort och detta går inte att ångra.')">Ta bort kategori</a></button>
                                 }
                             </td>

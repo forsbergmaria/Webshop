@@ -238,6 +238,64 @@ namespace AdminPanel.Controllers
             return RedirectToAction("AllCategories");
         }
 
+        public IActionResult UpdateCategoryForm(int id)
+        {
+          var category = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+
+      
+            TempData["id"] = id;
+            return View("UpdateCategory", category);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateCategory(Category category)
+        {
+            int id = (int)TempData["id"];
+            var cat = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+           
+            if (ModelState.IsValid)
+            {
+                cat.Name = category.Name;
+                _dbContext.SaveChanges();
+            }
+
+            return RedirectToAction("AllCategories");
+        }
+
+        public IActionResult UpdateSubcategoryForm(int id)
+        {
+            var categories = _dbContext.Categories.ToList();
+            var options = new List<string>();
+
+            foreach (var item in categories)
+            {
+                options.Add(item.Name);
+            }
+
+            var subcategory = _dbContext.Subcategories.Where(c => c.SubcategoryId == id).FirstOrDefault();
+            var selectList = new SelectList(options).OrderByDescending(c => c.Text);
+            ViewBag.CategoryList = selectList;
+
+            TempData["id"] = id;
+            return View("UpdateSubcategory", subcategory);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateSubcategory(Subcategory subcategory)
+        {
+            int id = (int)TempData["id"];
+            var sub = _dbContext.Subcategories.Where(c => c.SubcategoryId == id).FirstOrDefault();
+            var newCategory = _dbContext.Categories.Where(c => c.Name == subcategory.Categories.Name).FirstOrDefault();
+
+            if (ModelState.IsValid)
+            {
+                sub.CategoryId = newCategory.CategoryId;
+                sub.Name = subcategory.Name;
+                _dbContext.SaveChanges();
+            }
+
+            return RedirectToAction("AllCategories");
+        }
 
     }
 }

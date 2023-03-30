@@ -51,7 +51,7 @@ else
                             @if (User.IsInRole("Huvudadministratör"))
                             {
                                 <td>
-                                <button class="btn btn-primary manage-btn"><a asp-controller="" asp-action="" asp-route-id="@subcategory.CategoryId">Redigera</a></button>
+                                <button class="btn btn-primary manage-btn"><a asp-controller="Categories" asp-action="UpdateSubcategoryForm" asp-route-id="@subcategory.SubcategoryId">Redigera</a></button>
                                 <button class="btn btn-danger manage-btn"><a asp-controller="Categories" asp-action="DeleteSubcategory" asp-route-id="@subcategory.SubcategoryId" onclick="return confirm('Är du säker på att du vill ta bort denna underkategori? Detta går inte att ångra.')">Ta bort underkategori</a></button>
                                 </td>
                             } 
