@@ -19,6 +19,7 @@
             <thead>
                 <tr>
                     <th>Kategorinamn</th>
+                    <th>Publicerad i webbshoppen?</th>
                     <th>Hantera</th>
                 </tr>
             </thead>
@@ -32,6 +33,14 @@
 
                         <tr>
                             <td>@category.Name</td>
+                            @if(category.IsPublished == true)
+                            {
+                                <td><strong>JA:</strong> <a asp-controller="Categories" asp-action="CategoryPublisherManager" asp-route-id="@category.CategoryId">Avpublicera</a></td>
+                            }
+                            else
+                            {
+                                <td><strong>NEJ:</strong> <a asp-controller="Categories" asp-action="CategoryPublisherManager" asp-route-id="@category.CategoryId">Publicera</a></td>
+                            }
                             <td>
                                 <button class="btn btn-light subcategory-btn"><a asp-controller="Categories" asp-action="AllSubcategories" asp-route-id="@category.CategoryId">Se underkategorier</a></button>
                                 @if (User.IsInRole("Huvudadministratör"))

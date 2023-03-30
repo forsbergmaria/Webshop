@@ -220,6 +220,15 @@ namespace AdminPanel.Controllers
             return View(model);
         }
 
+        public IActionResult CategoryPublisherManager(int id)
+        {
+            var category = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+            category.IsPublished = !category.IsPublished;
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("AllCategories");
+       
+        }
 
     }
 }
