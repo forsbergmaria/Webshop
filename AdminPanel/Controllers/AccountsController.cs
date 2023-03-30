@@ -127,5 +127,44 @@ namespace AdminPanel.Controllers
             }
             return View(registerViewModel);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchAdmin(string searchString)
+        {
+            var query = _dbContext.Admins.AsQueryable();
+            if(!string.IsNullOrEmpty(searchString))
+            {
+                var searchTerms = searchString.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var term in searchTerms)
+                {
+                    query = query.Where(a => a.FirstName.Contains(term) || a.LastName.Contains(term));
+                }
+            }
+
+            var admins = await query.ToListAsync();
+
+            List<IdentityRole> identityRoles = _dbContext.IdentityRoles.ToList();
+            List<IdentityUserRole<string>> userRoles = _dbContext.UserRoles.ToList();
+
+            var query2 = from u in admins
+                        join ur in userRoles on u.Id equals ur.UserId
+                        join i in identityRoles on ur.RoleId equals i.Id
+                        select new AdminViewModel
+                        {
+                            Id = u.Id,
+                            FirstName = u.FirstName,
+                            LastName = u.LastName,
+                            Email = u.Email,
+                            Role = i.Name
+                        };
+            var currentUser = await _userManager.GetUserAsync(User);
+            var identityRole = _dbContext.UserRoles.Where(u => u.UserId == currentUser.Id).FirstOrDefault();
+            var userRole = _dbContext.IdentityRoles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
+
+
+            ViewBag.SearchString = searchString;
+
+            return View(query2.ToList());
+        }
     }
 }

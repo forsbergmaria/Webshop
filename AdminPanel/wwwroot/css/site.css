@@ -48,10 +48,15 @@ td {
     text-align: center;
 }
 
-#roles-list {
+#roles-list, #category-list {
     display: block;
 }
 
-#btn-register-submit {
+/*#btn-register-submit {
+    margin-top: 1em;
+}*/
+
+.btn- {
+    text-align: center;
     margin-top: 1em;
 }

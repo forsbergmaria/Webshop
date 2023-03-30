@@ -6,13 +6,7 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <div>
-    <form method="get" asp-controller="Accounts" asp-action="SearchAdmin">
-        <div class="form-group">
-            <label for="firstName">Sök efter administratör:</label>
-            <input type="text" name="searchString" class="form-control" />
-        </div>
-        <button type="submit" class="btn btn-primary">Sök</button>
-    </form>
+<h3>Visar sökresultat för "@ViewBag.SearchString":</h3>
     <div class="table-hover">
         <table class="table table-hover">
             <thead>
@@ -25,7 +19,7 @@
                     {
                         <th>Hantera</th>
                     }
-                    
+
                 </tr>
             </thead>
             <tbody>
@@ -40,8 +34,10 @@
 
                         @if (User.IsInRole("Huvudadministratör"))
                         {
-                            <td><button class="btn btn-primary manage-btn"><a asp-controller="Accounts" asp-action="ManageAccount" asp-route-id="@account.Id">Redigera</a></button>
-                                <button class="btn btn-danger manage-btn"><a asp-controller="Accounts" asp-action="DeleteAccount" asp-route-id="@account.Id" onclick="return confirm('Är du säker på att du vill ta bort det här kontot? Det går inte att ångra.')">Ta bort konto</a></button></td>
+                            <td>
+                                <button class="btn btn-primary manage-btn"><a asp-controller="Accounts" asp-action="ManageAccount" asp-route-id="@account.Id">Redigera</a></button>
+                                <button class="btn btn-danger manage-btn"><a asp-controller="Accounts" asp-action="DeleteAccount" asp-route-id="@account.Id" onclick="return confirm('Är du säker på att du vill ta bort det här kontot? Det går inte att ångra.')">Ta bort konto</a></button>
+                            </td>
                         }
 
                     </tr>
