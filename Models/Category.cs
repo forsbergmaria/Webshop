@@ -17,6 +17,8 @@ namespace Models
         [Required(ErrorMessage = "Vänligen fyll i ett kategorinamn")]
         [Display(Name = "Kategorinamn*")]
         public string Name { get; set; }
+
+        public bool IsPublished { get; set; }
         public ICollection<Subcategory>? Subcategories { get; set;}
     }
 }

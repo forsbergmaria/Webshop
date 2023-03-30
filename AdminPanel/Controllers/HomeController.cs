@@ -25,26 +25,18 @@ namespace AdminPanel.Controllers
             var currentUser = _dbContext.Admins.Where(a => a.UserName.Equals(User.Identity.Name)).FirstOrDefault();
             var items = _dbContext.Items.ToList();
 
-            var transactionList = new List<StockTransaction>();
-            var transactionListSizes = new List<StockTransactionSizes>();
+            var transactionList = new List<ItemTransaction>();
 
             foreach (var item in items)
             {
-                if(item.HasSize == true)
-                {
-                    transactionListSizes = _dbContext.StockTransactionSizes.Where(t => t.TransactionType == "Försäljning"
-                    && t.TransactionDate.Date == DateTime.Today.Date).ToList();
-                } 
-                else
-                {
-                    transactionList = _dbContext.StockTransactions.Where(t => t.TransactionType == "Försäljning"
-                    && t.TransactionDate.Date == DateTime.Today.Date).ToList();
 
-
+                {
+                    transactionList = _dbContext.ItemTransactions.Where(t => t.TransactionType == "Försäljning"
+                    && t.TransactionDate.Date == DateTime.Today.Date).ToList();
                 }
             }
 
-            int totalSoldUnits = transactionList.Sum(t => t.Quantity) + transactionListSizes.Sum(t => t.Quantity);
+            int totalSoldUnits = transactionList.Sum(t => t.Quantity);
 
 
             var model = new HomeViewModel
