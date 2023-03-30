@@ -40,7 +40,7 @@
 
                         @if (User.IsInRole("Huvudadministratör"))
                         {
-                            <td><button class="btn btn-primary manage-btn"><a asp-controller="Accounts" asp-action="ManageAccount" asp-route-id="@account.Id">Redigera</a></button>
+                            <td><button class="btn btn-primary manage-btn"><a asp-controller="Accounts" asp-action="UpdateAccountForm" asp-route-id="@account.Id">Redigera</a></button>
                                 <button class="btn btn-danger manage-btn"><a asp-controller="Accounts" asp-action="DeleteAccount" asp-route-id="@account.Id" onclick="return confirm('Är du säker på att du vill ta bort det här kontot? Det går inte att ångra.')">Ta bort konto</a></button></td>
                         }
 
