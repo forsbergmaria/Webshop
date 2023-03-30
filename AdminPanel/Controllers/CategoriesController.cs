@@ -227,8 +227,17 @@ namespace AdminPanel.Controllers
             _dbContext.SaveChanges();
 
             return RedirectToAction("AllCategories");
-       
         }
+
+        public IActionResult SubcategoryPublisherManager(int id)
+        {
+            var subcategory = _dbContext.Subcategories.Where(c => c.SubcategoryId == id).FirstOrDefault();
+            subcategory.IsPublished = !subcategory.IsPublished;
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("AllCategories");
+        }
+
 
     }
 }
