@@ -2,6 +2,7 @@
 @model CreateSubcategoryViewModel
 
 <body>
+    <h2>Skapa ny underkategori</h2>
     <form method="post" asp-controller="Categories" asp-action="CreateSubcategory">
         @Html.AntiForgeryToken()
         @Html.ValidationSummary("", new { @class = "text-danger" })

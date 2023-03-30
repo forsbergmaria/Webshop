@@ -1,3 +1,4 @@
+using Data;
 using DataAccess;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireModeratorRole",
         policy => policy.RequireRole("Moderator"));
 });
+
+builder.Services.AddTransient<CategoryRepository>();
 
 var app = builder.Build();
 

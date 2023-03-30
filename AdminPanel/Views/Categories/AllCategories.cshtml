@@ -5,6 +5,7 @@
 <head>
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
+<h2>Visar alla kategorier</h2>
 <form method="get" asp-controller="Categories" asp-action="SearchCategory">
     <div class="form-group">
         <label for="searchString">Sök efter kategori:</label>
@@ -25,22 +26,24 @@
 
                 @foreach (var category in Model.OrderBy(c => c.Name))
                 {
-                    <tr>
-                        <td>@category.Name</td>
+                    if (!category.Name.Equals("Odefinierad"))
+                    {
 
-                        
-                       
+
+                        <tr>
+                            <td>@category.Name</td>
                             <td>
                                 <button class="btn btn-light subcategory-btn"><a asp-controller="Categories" asp-action="AllSubcategories" asp-route-id="@category.CategoryId">Se underkategorier</a></button>
-                            @if (User.IsInRole("Huvudadministratör"))
-                            {
-                                <button class="btn btn-primary manage-btn"><a asp-controller="Accounts" asp-action="ManageAccount" asp-route-id="@category.CategoryId">Redigera</a></button>
-                                <button class="btn btn-danger manage-btn"><a asp-controller="Accounts" asp-action="DeleteAccount" asp-route-id="@category.CategoryId" onclick="return confirm('Är du säker på att du vill ta bort denna kategori? Det går inte att ångra.')">Ta bort kategori</a></button>
-                            }
-                        </td>
-                            
+                                @if (User.IsInRole("Huvudadministratör"))
+                                {
+                                    <button class="btn btn-primary manage-btn"><a asp-controller="" asp-action="" asp-route-id="@category.CategoryId">Redigera</a></button>
+                                    <button class="btn btn-danger manage-btn"><a asp-controller="Categories" asp-action="DeleteCategory" asp-route-id="@category.CategoryId" onclick="return confirm('Är du säker på att du vill ta bort denna kategori? Även eventuella tillhörande underkategorier kommer att tas bort och detta går inte att ångra.')">Ta bort kategori</a></button>
+                                }
+                            </td>
 
-                    </tr>
+
+                        </tr>
+                    }
                 }
             </tbody>
         </table>

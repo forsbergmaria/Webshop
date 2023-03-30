@@ -85,7 +85,8 @@ namespace DataAccess
                 }
                 );
 
-            modelBuilder.Entity<Subcategory>().HasData(
+            modelBuilder.Entity<Subcategory>()
+                .HasData(
                 new Subcategory
                 {
                     SubcategoryId = 1,
@@ -104,6 +105,7 @@ namespace DataAccess
                 );
 
             modelBuilder.Entity<Item>().HasOne(i => i.Category);
+            modelBuilder.Entity<Item>().HasOne(i => i.Subcategory);
             modelBuilder.Entity<Item>().HasMany(i => i.ProductImages);
             modelBuilder.Entity<Item>().HasData(
                 new Item

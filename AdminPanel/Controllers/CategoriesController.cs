@@ -12,10 +12,12 @@ namespace AdminPanel.Controllers
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly CategoryRepository _categoryRepository;
 
-        public CategoriesController(ApplicationDbContext dbContext)
+        public CategoriesController(ApplicationDbContext dbContext, CategoryRepository categoryRepository)
         {
             _dbContext = dbContext;
+            _categoryRepository = categoryRepository;
         }
 
         [Authorize(Roles = "Huvudadministratör, Moderator")]
@@ -119,6 +121,61 @@ namespace AdminPanel.Controllers
             return View();
         }
 
+        public IActionResult DeleteCategory(int categoryId)
+        {
+            var category = _dbContext.Categories.Where(c => c.CategoryId == categoryId).FirstOrDefault();
+            var undefined = _dbContext.Categories.Where(c => c.Name.Equals("Undefined")).FirstOrDefault();
+            var subcategories = _dbContext.Subcategories.Where(c => c.Categories.CategoryId == categoryId).ToList();
+            var items = _dbContext.Items.ToList();
+
+            List<Item> itemsList = new List<Item>();
+
+            foreach (var item in items )
+            {
+                foreach (var sub in subcategories )
+                {
+                    if (item.CategoryId == categoryId || item.SubcategoryId == sub.SubcategoryId)
+                    {
+                        itemsList.Add(item);
+                    }
+                }
+
+            }
+            foreach (var item in itemsList)
+            {
+                item.CategoryId = category.CategoryId;
+                item.Subcategory = null;
+            }
+
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("AllCategories");
+        }
+
+        public IActionResult DeleteSubcategory(int id)
+        {
+            var undefined = _dbContext.Categories.Where(c => c.Name.Equals("Odefinierad")).FirstOrDefault();
+            var subcategory = _dbContext.Subcategories.Where(c => c.SubcategoryId == id).FirstOrDefault();
+            var items = _dbContext.Items.ToList();
+
+            List<Item> itemsList = new List<Item>();
+            foreach (var item in items)
+            {
+                itemsList.Add(item);
+            }
+            foreach (var item in itemsList)
+            {
+                item.SubcategoryId = subcategory.SubcategoryId;
+                item.SubcategoryId = null;
+            }
+            _dbContext.SaveChanges();
+            
+            _dbContext.Subcategories.Remove(subcategory);
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("AllCategories");
+        }
+
         [HttpGet]
         public async Task<IActionResult> SearchCategory(string searchString)
         {
@@ -166,5 +223,7 @@ namespace AdminPanel.Controllers
 
             return View(model);
         }
+
+
     }
 }

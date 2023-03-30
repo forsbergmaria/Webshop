@@ -5,7 +5,6 @@
 <head>
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
-
 @if (Model.Subcategories.Count < 1)
 {
     <h4>Det finns inga underkategorier för "@Model.Category.Name.ToLower()"</h4>
@@ -44,7 +43,7 @@ else
                             {
                                 <td>
                                 <button class="btn btn-primary manage-btn"><a asp-controller="" asp-action="" asp-route-id="@subcategory.CategoryId">Redigera</a></button>
-                                <button class="btn btn-danger manage-btn"><a asp-controller="" asp-action="" asp-route-id="@subcategory.CategoryId" onclick="return confirm('Är du säker på att du vill ta bort denna kategori? Det går inte att ångra.')">Ta bort kategori</a></button>
+                                <button class="btn btn-danger manage-btn"><a asp-controller="Categories" asp-action="DeleteSubcategory" asp-route-id="@subcategory.SubcategoryId" onclick="return confirm('Är du säker på att du vill ta bort denna underkategori? Detta går inte att ångra.')">Ta bort underkategori</a></button>
                                 </td>
                             } 
 
