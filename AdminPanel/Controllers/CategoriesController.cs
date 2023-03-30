@@ -121,32 +121,29 @@ namespace AdminPanel.Controllers
             return View();
         }
 
-        public IActionResult DeleteCategory(int categoryId)
+        public IActionResult DeleteCategory(int id)
         {
-            var category = _dbContext.Categories.Where(c => c.CategoryId == categoryId).FirstOrDefault();
-            var undefined = _dbContext.Categories.Where(c => c.Name.Equals("Undefined")).FirstOrDefault();
-            var subcategories = _dbContext.Subcategories.Where(c => c.Categories.CategoryId == categoryId).ToList();
+            var category = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+            var undefined = _dbContext.Categories.Where(c => c.Name.Equals("Odefinierad")).FirstOrDefault();
+            var subcategories = _dbContext.Subcategories.Where(c => c.Categories.CategoryId == id).ToList();
             var items = _dbContext.Items.ToList();
 
             List<Item> itemsList = new List<Item>();
 
             foreach (var item in items )
             {
-                foreach (var sub in subcategories )
+                if (item.CategoryId == id)
                 {
-                    if (item.CategoryId == categoryId || item.SubcategoryId == sub.SubcategoryId)
-                    {
-                        itemsList.Add(item);
-                    }
+                    itemsList.Add(item);
                 }
-
             }
             foreach (var item in itemsList)
             {
-                item.CategoryId = category.CategoryId;
+                item.CategoryId = undefined.CategoryId;
                 item.Subcategory = null;
             }
 
+            _dbContext.Remove(category);
             _dbContext.SaveChanges();
 
             return RedirectToAction("AllCategories");
@@ -168,7 +165,6 @@ namespace AdminPanel.Controllers
                 item.SubcategoryId = subcategory.SubcategoryId;
                 item.SubcategoryId = null;
             }
-            _dbContext.SaveChanges();
             
             _dbContext.Subcategories.Remove(subcategory);
             _dbContext.SaveChanges();
