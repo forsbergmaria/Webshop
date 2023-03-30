@@ -13,6 +13,13 @@
 else
 {
     <h2>Visar underkategorier för kategorin "@Model.Category.Name.ToLower()"</h2>
+    <form method="get" asp-controller="Categories" asp-action="SearchSubcategory">
+        <div class="form-group">
+            <label for="searchString">Sök efter underkategori för "@Model.Category.Name":</label>
+            <input type="text" name="searchString" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Sök</button>
+    </form>
 <div>
     <div class="table-hover">
         <table class="table table-hover">
@@ -28,18 +35,10 @@ else
             </thead>
             <tbody>
 
-                @foreach (var subcategory in Model.Subcategories)
+                @foreach (var subcategory in Model.Subcategories.OrderBy(c => c.Name))
                 {
                     <tr>
-
-                    @if (Model.Subcategories.Count < 1)
-                    {
-                       <td>Det finns inga underkateogier för @Model.Category.Name.ToLower()</td> 
-                    }
                         <td>@subcategory.Name</td>
-
-                        
-                       
                             
                             @if (User.IsInRole("Huvudadministratör"))
                             {

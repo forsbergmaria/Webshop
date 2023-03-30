@@ -1,8 +1,10 @@
 ﻿using Data;
 using DataAccess;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Models;
 
 namespace AdminPanel.Controllers
@@ -117,5 +119,52 @@ namespace AdminPanel.Controllers
             return View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> SearchCategory(string searchString)
+        {
+            var query = _dbContext.Categories.AsQueryable();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                var searchTerms = searchString.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var term in searchTerms)
+                {
+                    query = query.Where(a => a.Name.Contains(term));
+                }
+            }
+
+            var categories = await query.ToListAsync();
+
+            ViewBag.SearchString = searchString;
+
+            return View(categories);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchSubcategory(int id, string searchString)
+        {
+            var query = _dbContext.Subcategories.AsQueryable();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                var searchTerms = searchString.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var term in searchTerms)
+                {
+                    query = query.Where(a => a.Name.Contains(term));
+                }
+            }
+
+            var cat = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+
+            var subCategories = await query.ToListAsync();
+
+            var model = new SubcategoryViewModel
+            {
+                Category = cat,
+                Subcategories = subCategories
+            };
+
+            ViewBag.SearchString = searchString;
+
+            return View(model);
+        }
     }
 }
