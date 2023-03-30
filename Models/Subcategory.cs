@@ -17,6 +17,7 @@ namespace Models
         [Display(Name = "Underkategorinamn*")]
         public string Name { get; set; }
         public int CategoryId { get; set; }
+        public bool IsPublished { get; set; }
 
         [ForeignKey(nameof(CategoryId))]
         public virtual Category Categories { get; set; }
