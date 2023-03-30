@@ -20,16 +20,22 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">HERRKLÄDER</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">DAMKLÄDER</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Item" asp-action="Index">Items</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Item" asp-action="Index">KATEGORIER</a>
                         </li>
                     </ul>
-                    <partial name="_LoginPartial" />
+                            @using (Html.BeginForm("Index", "Item", FormMethod.Post))
+                         {
+                            <div>
+                                    @Html.TextBox("searchstring")
+                                    <input type="submit" value="Sök" />
+                            </div>
+                         }
                 </div>
             </div>
         </nav>
