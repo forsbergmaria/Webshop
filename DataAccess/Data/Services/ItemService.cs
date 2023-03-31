@@ -1,4 +1,5 @@
 ﻿using Data;
+using DataAccess.Data.Repositories;
 using Models;
 using Models.ViewModels;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace DataAccess.Data.Services
     {
         private ItemRepository itemRepository { get { return new ItemRepository(); } }
         private CategoryRepository categoryRepository { get { return new CategoryRepository(); } }
+        private SizeRepository sizeRepository { get { return new SizeRepository(); } }
         public List<Item> ItemTextSearch(string searchstring)
         {
             List<Item> items = itemRepository.GetAllItems();
@@ -66,6 +68,23 @@ namespace DataAccess.Data.Services
                 viewmodel.Subcategories.Add(sub);
             }
             return viewmodel;
+        }
+
+        public ItemDetailsView GetDetailsView(int id)
+        {
+            Item item = itemRepository.GetItem(id);
+            ItemDetailsView details = new ItemDetailsView();
+            if (item.IsPublished == true)
+            {
+                if(item.HasSize == true)
+                {
+                    details.Sizes = sizeRepository.GetAllSizes();
+                }
+                details.Quantity = 1;
+                details.Item = item;
+            }
+            
+            return details;
         }
     }
 }
