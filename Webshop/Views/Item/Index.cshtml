@@ -1,59 +1,43 @@
 ﻿@model List<Models.Item>
-<!DOCTYPE html>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
-</head>
-<body>
-    <div>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Shop Homepage - Start Bootstrap Template</title>
+    </head>
+    <body>
+        <!-- Section-->
+           <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
 
-            <div class="panel-heading">Sök efter item</div>
-    <div class="panel-body">
-        @using (Html.BeginForm("Index", "Item", FormMethod.Post))
-        {
-            <div>
-                <div>
-                    <p>Sök:</p>
-                    @Html.TextBox("searchstring")
-                    <input type="submit" value="Sök" />
-                </div>
-            </div>
-        }
-    </div>
-</div>
+        @foreach(var item in Model)
+                 {
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" src=@item.ProductImages alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">@item.Name</h5>
+                                    <!-- Product price-->
+                                    @item.PriceWithoutVAT kr
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Lägg i varukorg</a></div>
+                            </div>
+                            <p>@Html.ActionLink("Info", "Details", new { id = item.ItemId }, "Item")</p>
+                        </div>
+                    </div>
+                 }
 
-        <div class="table-hover">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Brand</th>
-                    <th>Category</th>
-                    <th>Subcategory</th>
-                    <th>Color</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.Brand</td>
-                        <td>@item.Category.Name</td>
-                            @if(item.Subcategory != null)
-                            {
-                                <td>@item.Subcategory.Name</td>
-                            }
-                        <td>@item.Color</td>
-                        <td>@item.Description</td>
-                    </tr>
-                }
-
-            </tbody>
-        </table>
-    </div>
-    </div>
-</body>
-</html>
+                <div class="col mb-5">
+             <div class="card h-100">           
+         </section>
+    </body>
