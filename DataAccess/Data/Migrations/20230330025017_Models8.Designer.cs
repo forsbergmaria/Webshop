@@ -4,6 +4,7 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdminPanel.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230330025017_Models8")]
+    partial class Models8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +55,7 @@ namespace AdminPanel.Data.Migrations
                         new
                         {
                             Id = "jdigru",
-                            ConcurrencyStamp = "9f0367f8-3d85-4216-baee-c9b7b31bde6e",
+                            ConcurrencyStamp = "7ef31417-cd6a-4965-8757-9362097025ad",
                             Name = "Huvudadministratör"
                         });
                 });
@@ -453,7 +456,7 @@ namespace AdminPanel.Data.Migrations
                             TransactionId = 1,
                             ItemId = 3,
                             Quantity = 16,
-                            TransactionDate = new DateTime(2023, 3, 30, 16, 44, 47, 320, DateTimeKind.Local).AddTicks(9857),
+                            TransactionDate = new DateTime(2023, 3, 30, 4, 50, 17, 445, DateTimeKind.Local).AddTicks(1557),
                             TransactionType = "In"
                         });
                 });
@@ -654,13 +657,13 @@ namespace AdminPanel.Data.Migrations
                         {
                             Id = "jfkdgjk8jd5509",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "652f822e-800d-47e6-9a15-45b020532f16",
+                            ConcurrencyStamp = "add2dced-ebf7-4f44-abce-031975ef9f95",
                             Email = "antonkraft25@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             PasswordHash = "sdfghjklqwertyui12345678",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a15e2520-563a-466a-83d3-d0241d8a7f39",
+                            SecurityStamp = "94cee179-89be-42e7-9f87-cd8eda549e1a",
                             TwoFactorEnabled = false,
                             UserName = "username",
                             FirstName = "Anton",

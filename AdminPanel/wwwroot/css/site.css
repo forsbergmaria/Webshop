@@ -16,3 +16,47 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+#welcome-name {
+    text-align: center;
+}
+
+.nav-item:hover {
+    text-decoration: underline;
+    text-decoration-color: #000;
+}
+
+#logo {
+    width: 5%;
+    margin-left: 1em;
+}
+
+.manage-btn {
+    margin-left: 1em;
+}
+
+.manage-btn a {
+    color: #fff;
+    text-decoration: none;
+}
+
+th {
+    text-align: center;
+}
+
+td {
+    text-align: center;
+}
+
+#roles-list, #category-list {
+    display: block;
+}
+
+/*#btn-register-submit {
+    margin-top: 1em;
+}*/
+
+.btn- {
+    text-align: center;
+    margin-top: 1em;
+}

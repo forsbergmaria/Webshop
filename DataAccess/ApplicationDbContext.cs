@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Models;
 
@@ -22,18 +23,28 @@ namespace DataAccess
 
         public DbSet<Order> Orders { get; set; }
         public DbSet<Item> Items { get; set; }
-        public DbSet<StockTransaction> StockTransactions { get; set; }
-        public DbSet<StockTransactionSizes> StockTransactionSizes { get; set; }
+        public DbSet<ItemTransaction> ItemTransactions { get; set; }
+        public DbSet<TransactionWithSizes> TransactionsWithSizes { get; set; }
         public DbSet<OrderContainsItem> OrderContainsItem { get; set; }
         public DbSet<Size> Sizes { get; set; }
         public DbSet<Subcategory> Subcategories { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<IdentityRole> IdentityRoles { get; set; }
+        public override DbSet<IdentityUserRole<string>> UserRoles { get; set; }  
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<IdentityRole>().HasData(
+                    new IdentityRole
+                    {
+                        Id = "jdigru",
+                        Name = "Huvudadministratör"
+                    }
+                );
 
             modelBuilder.Entity<Admin>().HasData(
                 new Admin
@@ -47,38 +58,54 @@ namespace DataAccess
                 }
                 );
 
-            modelBuilder.Entity<Category>().HasMany(c => c.Subcategories);
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                    new IdentityUserRole<string>
+                    {
+                        UserId = "jfkdgjk8jd5509",
+                        RoleId = "jdigru"
+                    }
+                );
+
+            modelBuilder.Entity<Category>().HasMany(c => c.Subcategories)
+                .WithOne(c => c.Categories)
+                .OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Category>().HasData(
                 new Category
                 {
                     CategoryId = 1,
-                    Name = "Kläder"
+                    Name = "Kläder",
+                    IsPublished = true
                 },
 
                 new Category
                 {
                     CategoryId = 2,
-                    Name = "Kosttillskott"
+                    Name = "Kosttillskott",
+                    IsPublished = true
                 }
                 );
 
-            modelBuilder.Entity<Subcategory>().HasData(
+            modelBuilder.Entity<Subcategory>()
+                .HasData(
                 new Subcategory
                 {
                     SubcategoryId = 1,
                     Name = "T-shirts",
-                    CategoryId = 1
+                    CategoryId = 1,
+                    IsPublished = true
                 },
 
                 new Subcategory
                 {
                     SubcategoryId = 2,
                     Name = "Proteinpulver",
-                    CategoryId = 1
+                    CategoryId = 1,
+                    IsPublished= true
                 }
                 );
 
             modelBuilder.Entity<Item>().HasOne(i => i.Category);
+            modelBuilder.Entity<Item>().HasOne(i => i.Subcategory);
             modelBuilder.Entity<Item>().HasMany(i => i.ProductImages);
             modelBuilder.Entity<Item>().HasData(
                 new Item
@@ -203,9 +230,9 @@ namespace DataAccess
                 }
                 );
 
-            modelBuilder.Entity<StockTransaction>().HasOne(i => i.Items);
-            modelBuilder.Entity<StockTransaction>().HasData(
-                    new StockTransaction
+            modelBuilder.Entity<ItemTransaction>().HasOne(i => i.Items);
+            modelBuilder.Entity<ItemTransaction>().HasData(
+                    new ItemTransaction
                     {
                         TransactionId = 1,
                         ItemId = 3,
@@ -215,13 +242,12 @@ namespace DataAccess
                     }
                 );
 
-			modelBuilder.Entity<StockTransactionSizes>().HasOne(i => i.Items);
-            modelBuilder.Entity<StockTransactionSizes>().HasOne(i => i.Sizes);
-			modelBuilder.Entity<StockTransactionSizes>().HasKey(vf => new { vf.ItemId, vf.SizeId });
-            modelBuilder.Entity<StockTransactionSizes>().HasData(
-                    new StockTransactionSizes
+			modelBuilder.Entity<TransactionWithSizes>().HasOne(i => i.Items);
+            modelBuilder.Entity<TransactionWithSizes>().HasOne(i => i.Sizes);
+            modelBuilder.Entity<TransactionWithSizes>().HasData(
+                    new TransactionWithSizes
                     {
-                        TransactionId = 1,
+                        TransactionId = 2,
                         ItemId = 1,
                         SizeId = 1,
                         Quantity = 18,
@@ -229,9 +255,9 @@ namespace DataAccess
                         TransactionDate = DateTime.Parse("2023-03-11")
                     },
 
-                    new StockTransactionSizes
+                    new TransactionWithSizes
                     {
-                        TransactionId = 2,
+                        TransactionId = 3,
                         ItemId = 1,
                         SizeId = 2,
                         Quantity = 4,
@@ -239,18 +265,18 @@ namespace DataAccess
                         TransactionDate = DateTime.Parse("2023-03-11")
                     },
 
-                    new StockTransactionSizes
+                    new TransactionWithSizes
                     {
-                        TransactionId = 3,
+                        TransactionId = 4,
                         ItemId = 1,
                         SizeId = 3,
                         Quantity = 0,
 						TransactionType = "In",
 						TransactionDate = DateTime.Parse("2023-03-12")
 					},
-                     new StockTransactionSizes
+                     new TransactionWithSizes
                      {
-                         TransactionId = 4,
+                         TransactionId = 5,
                          ItemId = 2,
                          SizeId = 1,
                          Quantity = 13,
@@ -258,9 +284,9 @@ namespace DataAccess
 						 TransactionDate = DateTime.Parse("2023-03-11")
 					 },
 
-                    new StockTransactionSizes
+                    new TransactionWithSizes
                     {
-                        TransactionId = 5,
+                        TransactionId = 6,
                         ItemId = 2,
                         SizeId = 2,
                         Quantity = 0,
@@ -268,9 +294,9 @@ namespace DataAccess
 						TransactionDate = DateTime.Parse("2023-03-12")
 					},
 
-                    new StockTransactionSizes
+                    new TransactionWithSizes
                     {
-                        TransactionId = 6,
+                        TransactionId = 7,
                         ItemId = 2,
                         SizeId = 3,
                         Quantity = 23,

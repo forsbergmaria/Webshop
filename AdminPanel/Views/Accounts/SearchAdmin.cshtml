@@ -1,0 +1,48 @@
+﻿@using Models
+@model List<AdminViewModel>
+
+
+<head>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<div>
+<h3>Visar sökresultat för "@ViewBag.SearchString":</h3>
+    <div class="table-hover">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Förnamn</th>
+                    <th>Efternamn</th>
+                    <th>E-postadress</th>
+                    <th>Administratörsroll</th>
+                    @if (User.IsInRole("Huvudadministratör"))
+                    {
+                        <th>Hantera</th>
+                    }
+
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var account in Model)
+                {
+                    <tr>
+                        <td>@account.FirstName</td>
+                        <td>@account.LastName</td>
+                        <td>@account.Email</td>
+                        <td>@account.Role</td>
+
+                        @if (User.IsInRole("Huvudadministratör"))
+                        {
+                            <td>
+                                <button class="btn btn-primary manage-btn"><a asp-controller="Accounts" asp-action="ManageAccount" asp-route-id="@account.Id">Redigera</a></button>
+                                <button class="btn btn-danger manage-btn"><a asp-controller="Accounts" asp-action="DeleteAccount" asp-route-id="@account.Id" onclick="return confirm('Är du säker på att du vill ta bort det här kontot? Det går inte att ångra.')">Ta bort konto</a></button>
+                            </td>
+                        }
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -14,7 +14,11 @@ namespace Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CategoryId { get; set; }
+        [Required(ErrorMessage = "Vänligen fyll i ett kategorinamn")]
+        [Display(Name = "Kategorinamn*")]
         public string Name { get; set; }
+
+        public bool IsPublished { get; set; }
         public ICollection<Subcategory>? Subcategories { get; set;}
     }
 }

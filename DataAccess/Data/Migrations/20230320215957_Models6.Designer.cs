@@ -4,6 +4,7 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdminPanel.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230320215957_Models6")]
+    partial class Models6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,8 +55,8 @@ namespace AdminPanel.Data.Migrations
                         new
                         {
                             Id = "jdigru",
-                            ConcurrencyStamp = "9f0367f8-3d85-4216-baee-c9b7b31bde6e",
-                            Name = "Huvudadministratör"
+                            ConcurrencyStamp = "71fb510d-fb25-4629-be6b-174181b2dc05",
+                            Name = "Testadmin"
                         });
                 });
 
@@ -255,9 +258,6 @@ namespace AdminPanel.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
 
-                    b.Property<bool>("IsPublished")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -270,13 +270,11 @@ namespace AdminPanel.Data.Migrations
                         new
                         {
                             CategoryId = 1,
-                            IsPublished = true,
                             Name = "Kläder"
                         },
                         new
                         {
                             CategoryId = 2,
-                            IsPublished = true,
                             Name = "Kosttillskott"
                         });
                 });
@@ -409,52 +407,6 @@ namespace AdminPanel.Data.Migrations
                             PriceWithoutVAT = 0m,
                             SubcategoryId = 2,
                             VAT = 0m
-                        });
-                });
-
-            modelBuilder.Entity("Models.ItemTransaction", b =>
-                {
-                    b.Property<int>("TransactionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("TransactionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TransactionType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TransactionId");
-
-                    b.HasIndex("ItemId");
-
-                    b.ToTable("ItemTransactions");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("ItemTransaction");
-
-                    b.UseTphMappingStrategy();
-
-                    b.HasData(
-                        new
-                        {
-                            TransactionId = 1,
-                            ItemId = 3,
-                            Quantity = 16,
-                            TransactionDate = new DateTime(2023, 3, 30, 16, 44, 47, 320, DateTimeKind.Local).AddTicks(9857),
-                            TransactionType = "In"
                         });
                 });
 
@@ -594,6 +546,131 @@ namespace AdminPanel.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Models.StockTransaction", b =>
+                {
+                    b.Property<int>("TransactionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TransactionType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TransactionId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("StockTransactions");
+
+                    b.HasData(
+                        new
+                        {
+                            TransactionId = 1,
+                            ItemId = 3,
+                            Quantity = 16,
+                            TransactionDate = new DateTime(2023, 3, 20, 22, 59, 56, 585, DateTimeKind.Local).AddTicks(5349),
+                            TransactionType = "In"
+                        });
+                });
+
+            modelBuilder.Entity("Models.StockTransactionSizes", b =>
+                {
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SizeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TransactionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
+
+                    b.Property<string>("TransactionType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ItemId", "SizeId");
+
+                    b.HasIndex("SizeId");
+
+                    b.ToTable("StockTransactionSizes");
+
+                    b.HasData(
+                        new
+                        {
+                            ItemId = 1,
+                            SizeId = 1,
+                            Quantity = 18,
+                            TransactionDate = new DateTime(2023, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TransactionId = 1,
+                            TransactionType = "In"
+                        },
+                        new
+                        {
+                            ItemId = 1,
+                            SizeId = 2,
+                            Quantity = 4,
+                            TransactionDate = new DateTime(2023, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TransactionId = 2,
+                            TransactionType = "In"
+                        },
+                        new
+                        {
+                            ItemId = 1,
+                            SizeId = 3,
+                            Quantity = 0,
+                            TransactionDate = new DateTime(2023, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TransactionId = 3,
+                            TransactionType = "In"
+                        },
+                        new
+                        {
+                            ItemId = 2,
+                            SizeId = 1,
+                            Quantity = 13,
+                            TransactionDate = new DateTime(2023, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TransactionId = 4,
+                            TransactionType = "In"
+                        },
+                        new
+                        {
+                            ItemId = 2,
+                            SizeId = 2,
+                            Quantity = 0,
+                            TransactionDate = new DateTime(2023, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TransactionId = 5,
+                            TransactionType = "In"
+                        },
+                        new
+                        {
+                            ItemId = 2,
+                            SizeId = 3,
+                            Quantity = 23,
+                            TransactionDate = new DateTime(2023, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TransactionId = 6,
+                            TransactionType = "In"
+                        });
+                });
+
             modelBuilder.Entity("Models.Subcategory", b =>
                 {
                     b.Property<int>("SubcategoryId")
@@ -604,9 +681,6 @@ namespace AdminPanel.Data.Migrations
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsPublished")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -623,14 +697,12 @@ namespace AdminPanel.Data.Migrations
                         {
                             SubcategoryId = 1,
                             CategoryId = 1,
-                            IsPublished = true,
                             Name = "T-shirts"
                         },
                         new
                         {
                             SubcategoryId = 2,
                             CategoryId = 1,
-                            IsPublished = true,
                             Name = "Proteinpulver"
                         });
                 });
@@ -654,85 +726,17 @@ namespace AdminPanel.Data.Migrations
                         {
                             Id = "jfkdgjk8jd5509",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "652f822e-800d-47e6-9a15-45b020532f16",
+                            ConcurrencyStamp = "ee124651-710c-457a-955a-375bebe56b67",
                             Email = "antonkraft25@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             PasswordHash = "sdfghjklqwertyui12345678",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a15e2520-563a-466a-83d3-d0241d8a7f39",
+                            SecurityStamp = "7473fdd3-dfa4-4c02-9103-86ffca068dc8",
                             TwoFactorEnabled = false,
                             UserName = "username",
                             FirstName = "Anton",
                             LastName = "Kraft"
-                        });
-                });
-
-            modelBuilder.Entity("Models.TransactionWithSizes", b =>
-                {
-                    b.HasBaseType("Models.ItemTransaction");
-
-                    b.Property<int>("SizeId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("SizeId");
-
-                    b.HasDiscriminator().HasValue("TransactionWithSizes");
-
-                    b.HasData(
-                        new
-                        {
-                            TransactionId = 2,
-                            ItemId = 1,
-                            Quantity = 18,
-                            TransactionDate = new DateTime(2023, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TransactionType = "In",
-                            SizeId = 1
-                        },
-                        new
-                        {
-                            TransactionId = 3,
-                            ItemId = 1,
-                            Quantity = 4,
-                            TransactionDate = new DateTime(2023, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TransactionType = "In",
-                            SizeId = 2
-                        },
-                        new
-                        {
-                            TransactionId = 4,
-                            ItemId = 1,
-                            Quantity = 0,
-                            TransactionDate = new DateTime(2023, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TransactionType = "In",
-                            SizeId = 3
-                        },
-                        new
-                        {
-                            TransactionId = 5,
-                            ItemId = 2,
-                            Quantity = 13,
-                            TransactionDate = new DateTime(2023, 3, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TransactionType = "In",
-                            SizeId = 1
-                        },
-                        new
-                        {
-                            TransactionId = 6,
-                            ItemId = 2,
-                            Quantity = 0,
-                            TransactionDate = new DateTime(2023, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TransactionType = "In",
-                            SizeId = 2
-                        },
-                        new
-                        {
-                            TransactionId = 7,
-                            ItemId = 2,
-                            Quantity = 23,
-                            TransactionDate = new DateTime(2023, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TransactionType = "In",
-                            SizeId = 3
                         });
                 });
 
@@ -815,17 +819,6 @@ namespace AdminPanel.Data.Migrations
                     b.Navigation("Subcategory");
                 });
 
-            modelBuilder.Entity("Models.ItemTransaction", b =>
-                {
-                    b.HasOne("Models.Item", "Items")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Items");
-                });
-
             modelBuilder.Entity("Models.OrderContainsItem", b =>
                 {
                     b.HasOne("Models.Item", "Items")
@@ -845,6 +838,36 @@ namespace AdminPanel.Data.Migrations
                     b.Navigation("Orders");
                 });
 
+            modelBuilder.Entity("Models.StockTransaction", b =>
+                {
+                    b.HasOne("Models.Item", "Items")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("Models.StockTransactionSizes", b =>
+                {
+                    b.HasOne("Models.Item", "Items")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.Size", "Sizes")
+                        .WithMany()
+                        .HasForeignKey("SizeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Items");
+
+                    b.Navigation("Sizes");
+                });
+
             modelBuilder.Entity("Models.Subcategory", b =>
                 {
                     b.HasOne("Models.Category", "Categories")
@@ -854,17 +877,6 @@ namespace AdminPanel.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Categories");
-                });
-
-            modelBuilder.Entity("Models.TransactionWithSizes", b =>
-                {
-                    b.HasOne("Models.Size", "Sizes")
-                        .WithMany()
-                        .HasForeignKey("SizeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Sizes");
                 });
 
             modelBuilder.Entity("Models.Category", b =>

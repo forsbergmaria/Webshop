@@ -1,3 +1,4 @@
+using Data;
 using DataAccess;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,9 +12,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<Admin>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<Admin>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireHuvudadministratörRole",
+        policy => policy.RequireRole("Huvudadministratör"));
+    options.AddPolicy("RequireModeratorRole",
+        policy => policy.RequireRole("Moderator"));
+});
+
+builder.Services.AddTransient<CategoryRepository>();
 
 var app = builder.Build();
 
@@ -34,12 +44,21 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "UpdateAccount",
+        pattern: "/Accounts/UpdateAccount/{id?}",
+        defaults: new { controller = "Accounts", action = "UpdateAccount" });
+});
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Home}/{id?}");
 app.MapRazorPages();
 
 app.Run();
