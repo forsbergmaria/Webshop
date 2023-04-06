@@ -208,7 +208,10 @@ namespace AdminPanel.Controllers
                 Role = model.Role
             };
 
-            var user = new Admin();
+            if (ModelState.IsValid)
+            {
+                var user = new Admin();
+
             user.Email = model.Email;
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
@@ -219,14 +222,13 @@ namespace AdminPanel.Controllers
 
                 
 
-                if (ModelState.IsValid)
-                {
+
                     var assignedRole = new IdentityUserRole<string>
                     {
                         RoleId = role.Id,
                         UserId = user.Id
                     };
-                _dbContext.Admins.Update(user);
+
                     _dbContext.UserRoles.Update(assignedRole);
                     _dbContext.SaveChanges();
                 }
