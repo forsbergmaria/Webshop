@@ -1,0 +1,28 @@
+﻿@model Models.ViewModels.SelectCategoryModel;
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+</head>
+    <body>
+        <div>
+            @using (Html.BeginForm("Filter", "Item", FormMethod.Post))
+             {
+            <b>Filtrera kategori: </b> 
+                        @Html.DropDownListFor(m => m.CategoryId, new SelectList(Model.Categories, "CategoryId", "Name"))
+                        <input type="submit" value="Sök" />
+             }
+        @if(Model.Items != null)
+        {
+            @foreach(var item in Model.Items)
+            {
+                <p>@item.Brand</p>
+                <p>@item.Color</p>
+                <p>@item.Description</p>
+            }
+        }
+    </div>
+    </body>
+</html>

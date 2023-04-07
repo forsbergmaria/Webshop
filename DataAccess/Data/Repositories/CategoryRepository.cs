@@ -21,7 +21,8 @@ namespace Data
         {
             using (var context = new ApplicationDbContext())
             {
-                return context.Categories.Include(i => i.Name)
+                return context.Categories
+                    .Include(c => c.Subcategories)
                     .FirstOrDefault(i => i.CategoryId == id);
             }
         }
@@ -68,12 +69,62 @@ namespace Data
         }
 
         //Creates a new subcategory
-        public void AddSubcategory(Subcategory subcategory)
+        public void AddSubcategory(Subcategory subcategory, int id)
         {
             using (var context = new ApplicationDbContext())
             {
                 context.Subcategories.Add(subcategory);
                 context.SaveChanges();
+            }
+        }
+
+        //Returns a list of subcategories from the database
+        public List<Subcategory> GetAllSubcategories()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                return context.Subcategories.ToList();
+            }
+        }
+
+        //Returns a specific subcategory from the database
+        public Subcategory GetSubcategory(int id)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                return context.Subcategories.Include(i => i.Name)
+                    .FirstOrDefault(i => i.CategoryId == id);
+            }
+        }
+
+        //Removes a subcategory from the database
+        public bool DeleteSubcategory(int id)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var subcategory = context.Subcategories.FirstOrDefault(c => c.SubcategoryId == id);
+                var category = context.Items.Where(i => i.SubcategoryId == id).ToList();
+                if (subcategory != null && category != null)
+                {
+                    return false;
+                }
+                else
+                {
+                    context.Subcategories.Remove(subcategory);
+                    context.SaveChanges();
+                    return true;
+                }
+            }
+        }
+
+        //Modify existing category
+        public Subcategory ModifySubcategory(Subcategory subcategory)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                context.Entry(subcategory).State = EntityState.Modified;
+                context.SaveChanges();
+                return subcategory;
             }
         }
 

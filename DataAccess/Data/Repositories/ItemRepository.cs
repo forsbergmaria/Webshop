@@ -29,7 +29,9 @@ namespace Data
         {
             using (var context = new ApplicationDbContext())
             {
-                return context.Items.ToList();
+                return context.Items
+                    .Include(c => c.Category).
+                    Include(c => c.Subcategory).ToList();
             }
         }
 
@@ -38,9 +40,10 @@ namespace Data
         {
             using (var context = new ApplicationDbContext())
             {
-                return context.Items.Include(i => i.ProductImages)
-                    .Include(i => i.Description)
-                    .Include(i => i.Brand).FirstOrDefault(i => i.ItemId == id);
+                return context.Items
+                    .Include(i => i.Category)
+                    .Include(i => i.Subcategory)
+                    .FirstOrDefault(i => i.ItemId == id);
             }
         }
 
@@ -83,8 +86,5 @@ namespace Data
                 context.SaveChanges();
             }
         }
-
-        //Gets sizes of specific item
-
     }
 }
