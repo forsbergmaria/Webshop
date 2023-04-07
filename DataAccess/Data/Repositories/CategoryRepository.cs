@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using System.Text;
 
 namespace Data
 {
@@ -27,23 +28,42 @@ namespace Data
             }
         }
 
-        //Removes a category from the database
-        public bool DeleteCategory(int id)
+        public Category GetCategoryByName(string name)
         {
             using (var context = new ApplicationDbContext())
             {
-                var category = context.Categories.FirstOrDefault(c => c.CategoryId == id);
-                var itemsInCategory = context.Items.Where(i => i.CategoryId == id).ToList();
-                if (category != null && itemsInCategory != null)
+                return context.Categories.Where(c => c.Name == name).FirstOrDefault();
+            }
+        }
+
+        //Removes a category from the database and assigns belonging items to an undefined category
+        public void DeleteCategory(int id)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var category = context.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+                var undifined = GetCategoryByName("Odefinierad");
+
+                var subcategories = context.Subcategories.Where(c => c.Categories.CategoryId == id).ToList();
+                var items = context.Items.ToList();
+
+                List<Item> itemsList = new List<Item>();
+
+                foreach (var item in items)
                 {
-                    return false;
+                    if (item.CategoryId == id)
+                    {
+                        itemsList.Add(item);
+                    }
                 }
-                else
+                foreach (var item in itemsList)
                 {
-                    context.Categories.Remove(category);
-                    context.SaveChanges();
-                    return true;
+                    item.CategoryId = undifined.CategoryId;
+                    item.Subcategory = null;
                 }
+
+                context.Remove(category);
+                context.SaveChanges();
             }
         }
 
@@ -112,22 +132,27 @@ namespace Data
         }
 
         //Removes a subcategory from the database
-        public bool DeleteSubcategory(int id)
+        public void DeleteSubcategory(int id)
         {
             using (var context = new ApplicationDbContext())
             {
-                var subcategory = context.Subcategories.FirstOrDefault(c => c.SubcategoryId == id);
-                var category = context.Items.Where(i => i.SubcategoryId == id).ToList();
-                if (subcategory != null && category != null)
+                var undefined = GetCategoryByName("Odefinierad");
+                var subcategory = context.Subcategories.Where(c => c.SubcategoryId == id).FirstOrDefault();
+                var items = context.Items.ToList();
+
+                List<Item> itemsList = new List<Item>();
+                foreach (var item in items)
                 {
-                    return false;
+                    itemsList.Add(item);
                 }
-                else
+                foreach (var item in itemsList)
                 {
-                    context.Subcategories.Remove(subcategory);
-                    context.SaveChanges();
-                    return true;
+                    item.SubcategoryId = subcategory.SubcategoryId;
+                    item.SubcategoryId = null;
                 }
+
+                context.Subcategories.Remove(subcategory);
+                context.SaveChanges();
             }
         }
 

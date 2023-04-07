@@ -120,51 +120,31 @@ namespace AdminPanel.Controllers
 
         public IActionResult DeleteCategory(int id)
         {
-            var category = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
-            var undefined = _dbContext.Categories.Where(c => c.Name.Equals("Odefinierad")).FirstOrDefault();
-            var subcategories = _dbContext.Subcategories.Where(c => c.Categories.CategoryId == id).ToList();
-            var items = _dbContext.Items.ToList();
-
-            List<Item> itemsList = new List<Item>();
-
-            foreach (var item in items )
-            {
-                if (item.CategoryId == id)
-                {
-                    itemsList.Add(item);
-                }
-            }
-            foreach (var item in itemsList)
-            {
-                item.CategoryId = undefined.CategoryId;
-                item.Subcategory = null;
-            }
-
-            _dbContext.Remove(category);
-            _dbContext.SaveChanges();
+            _categoryRepository.DeleteCategory(id);
 
             return RedirectToAction("AllCategories");
         }
 
         public IActionResult DeleteSubcategory(int id)
         {
-            var undefined = _dbContext.Categories.Where(c => c.Name.Equals("Odefinierad")).FirstOrDefault();
-            var subcategory = _dbContext.Subcategories.Where(c => c.SubcategoryId == id).FirstOrDefault();
-            var items = _dbContext.Items.ToList();
+            _categoryRepository.DeleteSubcategory(id);
 
-            List<Item> itemsList = new List<Item>();
-            foreach (var item in items)
-            {
-                itemsList.Add(item);
-            }
-            foreach (var item in itemsList)
-            {
-                item.SubcategoryId = subcategory.SubcategoryId;
-                item.SubcategoryId = null;
-            }
+            //var undefined = _dbContext.Categories.Where(c => c.Name.Equals("Odefinierad")).FirstOrDefault();
+            //var subcategory = _dbContext.Subcategories.Where(c => c.SubcategoryId == id).FirstOrDefault();
+            //var items = _dbContext.Items.ToList();
+
+            //List<Item> itemsList = new List<Item>();
+            //foreach (var item in items)
+            //{
+            //    itemsList.Add(item);
+            //}
+            //foreach (var item in itemsList)
+            //{
+            //    item.SubcategoryId = null;
+            //}
             
-            _dbContext.Subcategories.Remove(subcategory);
-            _dbContext.SaveChanges();
+            //_dbContext.Subcategories.Remove(subcategory);
+            //_dbContext.SaveChanges();
 
             return RedirectToAction("AllCategories");
         }
