@@ -78,6 +78,7 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        [HttpPost]
         public void AssignRole(string userId, string roleId)
         {
             using (var context = new ApplicationDbContext())
