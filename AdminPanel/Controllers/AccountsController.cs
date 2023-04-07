@@ -92,13 +92,6 @@ namespace AdminPanel.Controllers
                 if (result.Succeeded)
                 {
                     _userRepository.AssignRole(user.Id, role.Id);
-                    //var assignedRole = new IdentityUserRole<string>
-                    //{
-                    //    RoleId = role.Id,
-                    //    UserId = user.Id
-                    //};
-
-                    //_dbContext.UserRoles.Add(assignedRole);
                     _dbContext.SaveChanges();
 
                     return RedirectToAction("AllAccounts", "Accounts");
