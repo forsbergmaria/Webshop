@@ -28,7 +28,15 @@ namespace DataAccess.Data.Repositories
             }
         }
 
-        public IdentityRole GetIdentityRole(string id)
+        public IdentityRole GetIdentityRoleByName(string roleName)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                return context.IdentityRoles.Where(r => r.Name == roleName).FirstOrDefault();
+            } 
+        }
+
+        public IdentityRole GetIdentityRoleForUser(string id)
         {
             using (var context = new ApplicationDbContext())
             {
@@ -36,11 +44,11 @@ namespace DataAccess.Data.Repositories
             }
         }
 
-        public string GetIdentityRoleName(string id)
+        public string GetIdentityRoleNameForUser(string id)
         {
             using (var context = new ApplicationDbContext())
             {
-                var identityRole = GetIdentityRole(id);
+                var identityRole = GetIdentityRoleForUser(id);
 
                 return identityRole.Name;
             }
@@ -70,6 +78,22 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        public void AssignRole(string userId, string roleId)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var identityRole = GetIdentityRoleForUser(userId);
+                var assignedRole = new IdentityUserRole<string>
+                {
+                    RoleId = roleId,
+                    UserId = userId
+                };
+
+                context.UserRoles.Add(assignedRole);
+                context.SaveChanges();
+            }
+        }
+
         [HttpDelete]
         public void DeleteAccount(string id)
         {
@@ -84,6 +108,7 @@ namespace DataAccess.Data.Repositories
                 context.SaveChanges();
             }
         }
+
 
     }
 }

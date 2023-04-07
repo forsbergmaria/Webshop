@@ -55,29 +55,23 @@ namespace AdminPanel.Controllers
         }
 
         [Authorize(Roles = "Huvudadministratör")]
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        [Authorize(Roles = "Huvudadministratör")]
         public IActionResult DeleteAccount(string id)
         {
             _userRepository.DeleteAccount(id);
-            return RedirectToAction("Home", "Home");
+            return RedirectToAction("AllAccounts");
         }
 
         [Authorize(Roles = "Huvudadministratör")]
-        public IActionResult RegisterForm()
+        public IActionResult Register()
         {
-            var selectRole = _dbContext.IdentityRoles.ToList();
+            var selectRole = _userRepository.GetAllIdentityRoles();
             var selectList = new SelectList(selectRole, "Name").OrderByDescending(r => r.Text);
             ViewBag.RolesList = selectList;
 
             return View("RegisterAccount");
         }
 
-        [HttpPost]
+
         [Authorize(Roles = "Huvudadministratör")]
         public async Task<IActionResult> RegisterAccount(RegisterViewModel registerViewModel)
         {
@@ -93,19 +87,18 @@ namespace AdminPanel.Controllers
                 var roleName = registerViewModel.Role;
 
                 var result = await _userManager.CreateAsync(user, registerViewModel.Password);
-
-                var role = _dbContext.IdentityRoles.Where(r => r.Name.Equals(roleName)).FirstOrDefault();
+                var role = _userRepository.GetIdentityRoleByName(roleName);
 
                 if (result.Succeeded)
                 {
+                    _userRepository.AssignRole(user.Id, role.Id);
+                    //var assignedRole = new IdentityUserRole<string>
+                    //{
+                    //    RoleId = role.Id,
+                    //    UserId = user.Id
+                    //};
 
-                    var assignedRole = new IdentityUserRole<string>
-                    {
-                        RoleId = role.Id,
-                        UserId = user.Id
-                    };
-
-                    _dbContext.UserRoles.Add(assignedRole);
+                    //_dbContext.UserRoles.Add(assignedRole);
                     _dbContext.SaveChanges();
 
                     return RedirectToAction("AllAccounts", "Accounts");
