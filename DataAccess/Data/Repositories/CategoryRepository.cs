@@ -73,6 +73,11 @@ namespace Data
         {
             using (var context = new ApplicationDbContext())
             {
+                var subcat = new Subcategory
+                {
+                    CategoryId = id,
+                    Name = subcategory.Name
+                };
                 context.Subcategories.Add(subcategory);
                 context.SaveChanges();
             }
@@ -94,6 +99,15 @@ namespace Data
             {
                 return context.Subcategories.Include(i => i.Name)
                     .FirstOrDefault(i => i.CategoryId == id);
+            }
+        }
+
+        // Returns a list of subcategories linked with the provided categoryId
+        public List<Subcategory> GetAllLinkedSubcategories(int categoryId)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                return context.Subcategories.Where(c => c.CategoryId == categoryId).ToList();
             }
         }
 

@@ -11,13 +11,12 @@ namespace AdminPanel.Controllers
 {
     public class CategoriesController : Controller
     {
+        CategoryRepository _categoryRepository { get { return new CategoryRepository(); } }
         private readonly ApplicationDbContext _dbContext;
-        private readonly CategoryRepository _categoryRepository;
 
-        public CategoriesController(ApplicationDbContext dbContext, CategoryRepository categoryRepository)
+        public CategoriesController(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-            _categoryRepository = categoryRepository;
         }
 
         [Authorize(Roles = "Huvudadministratör, Moderator")]
@@ -28,18 +27,18 @@ namespace AdminPanel.Controllers
 
         public IActionResult AllCategories()
         {
-            List<Category> categories = _dbContext.Categories.ToList();
+            var categories = _categoryRepository.GetAllCategories();
             return View(categories);
         }
 
         public IActionResult AllSubcategories(int id)
         {
-            var cat = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+            var category = _categoryRepository.GetCategory(id);
 
             var model = new SubcategoryViewModel
             {
-                Category = cat,
-                Subcategories = _dbContext.Subcategories.Where(c => c.CategoryId == id).ToList()
+                Category = category,
+                Subcategories = _categoryRepository.GetAllLinkedSubcategories(id)
             };
 
             return View(model);
@@ -55,8 +54,7 @@ namespace AdminPanel.Controllers
         {
             if(ModelState.IsValid)
             {
-                _dbContext.Categories.Add(category);
-                _dbContext.SaveChanges();
+                _categoryRepository.AddCategory(category);
             }
             return View();
 
@@ -64,7 +62,7 @@ namespace AdminPanel.Controllers
 
         public IActionResult CreateSubcategory()
         {
-            var selectCategory = _dbContext.Categories.ToList();
+            var selectCategory = _categoryRepository.GetAllCategories();
             var categories = new List<string>();
             foreach (var category in selectCategory)
             {
@@ -77,7 +75,7 @@ namespace AdminPanel.Controllers
 
         public IActionResult CreateSubcategoryFromCategoryForm(int id)
         {
-            var selectedCategory = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+            var selectedCategory = _categoryRepository.GetCategory(id);
             TempData["id"] = id;
             ViewBag.SelectedCategory = selectedCategory.Name;
 
@@ -96,8 +94,7 @@ namespace AdminPanel.Controllers
 
             if (ModelState.IsValid)
             {
-                _dbContext.Subcategories.Add(subcategory);
-                _dbContext.SaveChanges();
+                _categoryRepository.AddSubcategory(subcategory, id);
             }
 
             return RedirectToAction("AllCategories");

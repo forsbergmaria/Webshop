@@ -12,6 +12,7 @@ namespace DataAccess.Data.Repositories
 {
     public class UserRepository
     {
+        // Returns a list of all the users from the database
         public List<Admin> GetAllUsers()
         {
             using (var context = new ApplicationDbContext())
@@ -20,6 +21,7 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Returns a specific user from the database 
         public Admin GetUserById(string id) 
         {
             using (var context = new ApplicationDbContext())
@@ -28,6 +30,7 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Returns a specific instance of the IdentityRole class
         public IdentityRole GetIdentityRoleByName(string roleName)
         {
             using (var context = new ApplicationDbContext())
@@ -36,6 +39,7 @@ namespace DataAccess.Data.Repositories
             } 
         }
 
+        // Returns an IdentityRole for a specific user
         public IdentityRole GetIdentityRoleForUser(string id)
         {
             using (var context = new ApplicationDbContext())
@@ -44,6 +48,7 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Returns the name of an IdentityRole for a specific user
         public string GetIdentityRoleNameForUser(string id)
         {
             using (var context = new ApplicationDbContext())
@@ -54,6 +59,7 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Returns the IdentityUserRole for a specific user
        public IdentityUserRole<string> GetIdentityUserRole(string id)
         {
             using (var context = new ApplicationDbContext())
@@ -62,6 +68,7 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Returns a list of all IdentityRoles from the database
         public List<IdentityRole> GetAllIdentityRoles()
         {
             using (var context = new ApplicationDbContext())
@@ -70,6 +77,7 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Returns a list of all IdentityUserRoles from the database
         public List<IdentityUserRole<string>> GetAllIdentityUserRoles()
         {
             using (var context = new ApplicationDbContext())
@@ -78,6 +86,7 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Assigns a role to a specific user
         [HttpPost]
         public void AssignRole(string userId, string roleId)
         {
@@ -95,6 +104,7 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Deletes a specific user from the database
         [HttpDelete]
         public void DeleteAccount(string id)
         {

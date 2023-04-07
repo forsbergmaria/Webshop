@@ -30,7 +30,7 @@
             </thead>
             <tbody>
 
-                @foreach (var account in Model.OrderByDescending(l => l.LastName))
+                @foreach (var account in Model.OrderBy(l => l.LastName))
                 {
                     <tr>
                         <td>@account.FirstName</td>
