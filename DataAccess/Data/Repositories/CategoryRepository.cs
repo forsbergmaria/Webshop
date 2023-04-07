@@ -89,15 +89,10 @@ namespace Data
         }
 
         //Creates a new subcategory
-        public void AddSubcategory(Subcategory subcategory, int id)
+        public void AddSubcategory(Subcategory subcategory)
         {
             using (var context = new ApplicationDbContext())
             {
-                var subcat = new Subcategory
-                {
-                    CategoryId = id,
-                    Name = subcategory.Name
-                };
                 context.Subcategories.Add(subcategory);
                 context.SaveChanges();
             }

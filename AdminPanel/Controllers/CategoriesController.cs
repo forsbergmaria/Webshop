@@ -94,7 +94,7 @@ namespace AdminPanel.Controllers
 
             if (ModelState.IsValid)
             {
-                _categoryRepository.AddSubcategory(subcategory, id);
+                _categoryRepository.AddSubcategory(subcategory);
             }
 
             return RedirectToAction("AllCategories");
@@ -103,7 +103,7 @@ namespace AdminPanel.Controllers
         [HttpPost]
         public IActionResult CreateSubcategory(CreateSubcategoryViewModel model) 
         {
-            var category = _dbContext.Categories.Where(c => c.Name == model.CategoryName).FirstOrDefault();
+            var category = _categoryRepository.GetCategoryByName(model.CategoryName);
             var subcategory = new Subcategory
             {
                 CategoryId = category.CategoryId,
@@ -112,8 +112,7 @@ namespace AdminPanel.Controllers
 
             if(ModelState.IsValid)
             {
-                _dbContext.Subcategories.Add(subcategory);
-                _dbContext.SaveChanges();
+                _categoryRepository.AddSubcategory(subcategory);
             }
             return View();
         }
@@ -128,23 +127,6 @@ namespace AdminPanel.Controllers
         public IActionResult DeleteSubcategory(int id)
         {
             _categoryRepository.DeleteSubcategory(id);
-
-            //var undefined = _dbContext.Categories.Where(c => c.Name.Equals("Odefinierad")).FirstOrDefault();
-            //var subcategory = _dbContext.Subcategories.Where(c => c.SubcategoryId == id).FirstOrDefault();
-            //var items = _dbContext.Items.ToList();
-
-            //List<Item> itemsList = new List<Item>();
-            //foreach (var item in items)
-            //{
-            //    itemsList.Add(item);
-            //}
-            //foreach (var item in itemsList)
-            //{
-            //    item.SubcategoryId = null;
-            //}
-            
-            //_dbContext.Subcategories.Remove(subcategory);
-            //_dbContext.SaveChanges();
 
             return RedirectToAction("AllCategories");
         }
@@ -199,7 +181,7 @@ namespace AdminPanel.Controllers
 
         public IActionResult CategoryPublisherManager(int id)
         {
-            var category = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+            var category = _categoryRepository.GetCategory(id);
             category.IsPublished = !category.IsPublished;
             _dbContext.SaveChanges();
 
@@ -208,7 +190,7 @@ namespace AdminPanel.Controllers
 
         public IActionResult SubcategoryPublisherManager(int id)
         {
-            var subcategory = _dbContext.Subcategories.Where(c => c.SubcategoryId == id).FirstOrDefault();
+            var subcategory = _categoryRepository.GetSubcategory(id);
             subcategory.IsPublished = !subcategory.IsPublished;
             _dbContext.SaveChanges();
 
@@ -217,7 +199,7 @@ namespace AdminPanel.Controllers
 
         public IActionResult UpdateCategoryForm(int id)
         {
-          var category = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+            var category = _categoryRepository.GetCategory(id);
 
       
             TempData["id"] = id;
@@ -228,12 +210,13 @@ namespace AdminPanel.Controllers
         public IActionResult UpdateCategory(Category category)
         {
             int id = (int)TempData["id"];
-            var cat = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+            var cat = _categoryRepository.GetCategory(id);
            
             if (ModelState.IsValid)
             {
-                cat.Name = category.Name;
-                _dbContext.SaveChanges();
+                _categoryRepository.ModifyCategory(category);
+                //cat.Name = category.Name;
+                //_dbContext.SaveChanges();
             }
 
             return RedirectToAction("AllCategories");
