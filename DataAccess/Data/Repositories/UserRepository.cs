@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace DataAccess.Data.Repositories
 {
@@ -19,21 +20,41 @@ namespace DataAccess.Data.Repositories
             }
         }
 
-        public string GetUserRole(string id)
+        public Admin GetUserById(string id) 
         {
             using (var context = new ApplicationDbContext())
             {
-                var users = GetAllUsers();
-                List<IdentityRole> identityRoles = context.IdentityRoles.ToList();
-                List<IdentityUserRole<string>> userRoles = context.UserRoles.ToList();
-                var identityRole = context.UserRoles.Where(u => u.UserId == id).FirstOrDefault();
-                var userRole = context.IdentityRoles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
-
-                return userRole.Name;
+                return context.Admins.Where(u => u.Id == id).FirstOrDefault();
             }
         }
 
-        public List<IdentityRole> GetAllRoles()
+        public IdentityRole GetIdentityRole(string id)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                return context.IdentityRoles.Where(i => i.Id == id).FirstOrDefault();
+            }
+        }
+
+        public string GetIdentityRoleName(string id)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var identityRole = GetIdentityRole(id);
+
+                return identityRole.Name;
+            }
+        }
+
+       public IdentityUserRole<string> GetIdentityUserRole(string id)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                return context.UserRoles.Where(u => u.UserId == id).FirstOrDefault();
+            }
+        }
+
+        public List<IdentityRole> GetAllIdentityRoles()
         {
             using (var context = new ApplicationDbContext())
             {
@@ -41,12 +62,28 @@ namespace DataAccess.Data.Repositories
             }
         }
 
-        public List<IdentityUserRole<string>> GetAllIdentityRoles()
+        public List<IdentityUserRole<string>> GetAllIdentityUserRoles()
         {
             using (var context = new ApplicationDbContext())
             {
                 return context.UserRoles.ToList();
             }
         }
+
+        [HttpDelete]
+        public void DeleteAccount(string id)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var userRole = GetIdentityUserRole(id);
+                context.Remove(userRole);
+                context.SaveChanges();
+
+                var user = GetUserById(id);
+                context.Remove(user);
+                context.SaveChanges();
+            }
+        }
+
     }
 }

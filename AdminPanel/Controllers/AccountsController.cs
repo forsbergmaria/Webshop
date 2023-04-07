@@ -36,8 +36,8 @@ namespace AdminPanel.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(User);
             var users = _userRepository.GetAllUsers();
-            var userRoles = _userRepository.GetAllRoles();
-            var identityRoles = _userRepository.GetAllIdentityRoles();
+            var userRoles = _userRepository.GetAllIdentityRoles();
+            var identityRoles = _userRepository.GetAllIdentityUserRoles();
 
             var query = from u in users
                         join ur in identityRoles on u.Id equals ur.UserId
@@ -60,18 +60,10 @@ namespace AdminPanel.Controllers
             return View();
         }
 
-        [HttpDelete]
         [Authorize(Roles = "Huvudadministratör")]
         public IActionResult DeleteAccount(string id)
         {
-            var userRole = _dbContext.UserRoles.Where(u => u.UserId.Equals(id)).FirstOrDefault();
-            _dbContext.Remove(userRole);
-            _dbContext.SaveChanges();
-
-            var user = _dbContext.Admins.Where(u => u.Id.Equals(id)).FirstOrDefault();
-            _dbContext.Remove(user);
-            _dbContext.SaveChanges();
-
+            _userRepository.DeleteAccount(id);
             return RedirectToAction("Home", "Home");
         }
 
