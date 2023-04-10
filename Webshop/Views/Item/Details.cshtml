@@ -1,21 +1,38 @@
-﻿@model Models.Item;
+﻿@model Models.ViewModels.ItemDetailsView;
 
 @{
     ViewData["Title"] = "CV";
 }
 
-<h3 class="well"><strong>@Html.DisplayFor(model => model.Name)</strong></h3>
-
-<div class="panel panel-default" style="max-width: 400px">
-    <div class="panel-heading">ITEM</div>
-    <div class="panel-body">
-        <h5><strong>Info:</strong></h5>
-        <p>@Model.Color</p>
-        <p>@Model.Brand</p>
-        <h4><strong>@Model.Category</strong></h4>
-        <p>@Model.Description</p>
-    </div>
-</div>
-<div>
-    <p>@Html.ActionLink("TILLBAKA", "Index", "Item")</p>
-</div>
+ <section class="py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="row gx-4 gx-lg-5 align-items-center">
+                    <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src=@Model.Item.ProductImages alt="..." /></div>
+                    <div class="col-md-6">
+                        <h1 class="display-5 fw-bolder">@Model.Item.Name</h1>
+                        <div class="fs-5 mb-5">
+                            <span>@Model.Item.PriceWithoutVAT</span>
+                        </div>
+                        <p class="lead">@Model.Item.Description</p>
+                        <div class="d-flex">
+                    @if (Model.Item.HasSize)
+                    {
+                        @foreach(var size in Model.Sizes)
+                            {
+                                <button class="btn btn-outline-dark flex-shrink-0" type="button">
+                                    @size.Name
+                                </button>
+                             }
+                    }
+                        </div>
+                        <div class="d-flex">
+                            <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
+                            <button class="btn btn-outline-dark flex-shrink-0" type="button">
+                                <i class="bi-cart-fill me-1"></i>
+                                Add to cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+</section>

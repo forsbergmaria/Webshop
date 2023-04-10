@@ -20,7 +20,7 @@ namespace Webshop.Controllers
         }
         public IActionResult Details(int id)
         {
-            var item = itemRepository.GetItem(id);
+            var item = itemService.GetDetailsView(id);
             return View(item);
         }
 
