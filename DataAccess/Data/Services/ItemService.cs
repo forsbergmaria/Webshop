@@ -21,12 +21,12 @@ namespace DataAccess.Data.Services
             }
             else
             {
-                var filteredItems = items.Where(c => c.Name.ToLower().Contains(searchstring) ||
-                c.Brand.ToLower().Contains(searchstring) ||
-                c.Category.Name.ToLower().Contains(searchstring) ||
-                c.Description.ToLower().Contains(searchstring) ||
-                c.Subcategory.Name != null && c.Subcategory.Name.ToLower().Contains(searchstring) ||
-                c.Color != null && c.Color.ToLower().Contains(searchstring)).ToList();
+                var filteredItems = items.Where(c => c.Name.ToLower().Contains(searchstring.ToLower()) ||
+                c.Brand.ToLower().Contains(searchstring.ToLower()) ||
+                c.Category.Name.ToLower().Contains(searchstring.ToLower()) ||
+                c.Description.ToLower().Contains(searchstring.ToLower()) ||
+                c.Subcategory.Name != null && c.Subcategory.Name.ToLower().Contains(searchstring.ToLower()) ||
+                c.Color != null && c.Color.ToLower().Contains(searchstring.ToLower())).ToList();
                 return filteredItems;
             }
         }
