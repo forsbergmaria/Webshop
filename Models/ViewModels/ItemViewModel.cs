@@ -18,5 +18,6 @@ namespace Models.ViewModels
         public Item? Item { get; set; }
         public List<Size>? Sizes { get; set; }
         public int Quantity { get; set; }
+        public List<Image>? Images { get; set; }
     }
 }
