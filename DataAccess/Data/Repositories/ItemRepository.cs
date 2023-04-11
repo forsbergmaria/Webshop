@@ -29,7 +29,9 @@ namespace Data
         {
             using (var context = new ApplicationDbContext())
             {
-                return context.Items.Include(c => c.Category).ToList();
+                return context.Items
+                    .Include(c => c.Category).
+                    Include(c => c.Subcategory).ToList();
             }
         }
 
