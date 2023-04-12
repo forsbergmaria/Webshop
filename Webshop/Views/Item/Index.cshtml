@@ -17,15 +17,15 @@
                     {
                       <div class="col">
                         <div class="card text-center">
-                          <img src="@item.ProductImages" class="card-img-top" alt="...">
+                          <img src="https://sachinchoolur.github.io/lightslider/img/cS-1.jpg" class="card-img-top" alt="...">
                           <div class="card-body">
-                            <h5 class="card-title">@Html.ActionLink(@item.Name, "Details", "Item", new {id = item.ItemId}, new {@class="btn btn-primary"})</h5>
+                            <h5 class="card-title">@Html.ActionLink(@item.Name, "Details", "Item", new {id = item.ItemId})</h5>
                             <p class="card-text">@item.PriceWithoutVAT kr</p>
                             <a href="#" class="btn btn-primary">Lägg i varukorg</a>
                           </div>
                         </div>
                       </div>
                     }
-    </div>
-    </div>
+            </div>
+         </div>
 </body>
