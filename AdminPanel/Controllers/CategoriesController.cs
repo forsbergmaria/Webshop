@@ -214,9 +214,8 @@ namespace AdminPanel.Controllers
            
             if (ModelState.IsValid)
             {
-                _categoryRepository.ModifyCategory(category);
-                //cat.Name = category.Name;
-                //_dbContext.SaveChanges();
+                cat.Name = category.Name;
+                _dbContext.SaveChanges();
             }
 
             return RedirectToAction("AllCategories");
