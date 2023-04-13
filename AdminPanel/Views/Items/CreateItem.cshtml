@@ -4,15 +4,17 @@
 <body>
     <form method="post" asp-controller="Items" asp-action="CreateItem" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
-        @Html.ValidationSummary("", new { @class = "text-danger" })
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
         <div class="form-group">
             @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
             @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.Brand, new { @class = "col-md-2 control-label" })
             @Html.TextBoxFor(m => m.Brand, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Brand, "", new { @class = "text-danger" })
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
@@ -29,10 +31,12 @@
         <div class="form-group">
             @Html.LabelFor(m => m.PriceWithoutVAT, new { @class = "col-md-2 control-label" })
             @Html.TextBoxFor(m => m.PriceWithoutVAT, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.PriceWithoutVAT, "", new { @class = "text-danger" })
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.VAT, new { @class = "col-md-2 control-label" })
             @Html.TextBoxFor(m => m.VAT, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.VAT, "", new { @class = "text-danger" })
         </div>
         <div class="form-check>
             @Html.LabelFor(m => m.HasSize, new { @class = "col-md-2 control-label" })
@@ -41,6 +45,7 @@
         <div class="form-group">
             @Html.LabelFor(m => m.Category, new { @class = "col-md-2 control-label" })
             @Html.DropDownList("Category", ViewBag.Categories, "Välj en kategori", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Category, "", new { @class = "text-danger" })
         <div class="input-group-append">
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newCategoryModal">
                 Skapa en ny kategori

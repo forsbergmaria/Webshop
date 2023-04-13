@@ -33,8 +33,13 @@ namespace AdminPanel.Controllers
 
         public IActionResult CreateItem(ItemViewModel model) 
         {
-            int categoryId = int.Parse(model.Category);
+             decimal.TryParse(model.VAT, out decimal percentDecimal);
+                
+             // Lägger till 1 till procenten och dividerar med 100 för att få faktorvärdet
+             decimal factorValue = 1 + (percentDecimal / 100);
 
+    if (ModelState.IsValid)
+            {
             var item = new Item
             {
                 Name = model.Name,
@@ -42,16 +47,17 @@ namespace AdminPanel.Controllers
                 ArticleNr = model.ArticleNr,
                 PriceWithoutVAT = model.PriceWithoutVAT,
                 Description = model.Description,
-                CategoryId = categoryId,
+                CategoryId = int.Parse(model.Category),
                 Color = model.Color,
                 HasSize = model.HasSize,
-                VAT = model.VAT,
+                VAT = factorValue,
                 ProductImages = model.ProductImages,
                 IsPublished = false
             };
-            
-            _itemRepository.AddItem(item);
-            return RedirectToAction("AllItems");
+                _itemRepository.AddItem(item);
+            }
+
+                return RedirectToAction("AllItems");
         }
 
         public IActionResult AllItems() 

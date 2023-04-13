@@ -55,7 +55,7 @@
                         }
                         @{
                             var salesPrice = item.PriceWithoutVAT * item.VAT;
-                            <td>@salesPrice.ToString()</td>
+                            <td>@Math.Round(salesPrice, 2).ToString()</td>
                         }
 
                         <td>@item.Category.Name</td>
