@@ -52,9 +52,9 @@ td {
     display: block;
 }
 
-/*#btn-register-submit {
-    margin-top: 1em;
-}*/
+.form-control, form-check, dropdown {
+    display: block;
+}
 
 .btn- {
     text-align: center;

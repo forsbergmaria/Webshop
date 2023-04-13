@@ -33,7 +33,15 @@
                 @foreach (var item in Model.OrderBy(i => i.Name))
                 {
                     <tr>
-                        <td><img>@item.ProductImages?.Where(i => i.ItemId == item.ItemId).FirstOrDefault()<img /></td>
+                        @if (item.ProductImages.Any())
+                        {
+                            @foreach (var img in item.ProductImages)
+                            {
+                               <td><img src="@Url.Content(img.Path)"></td> 
+                            }
+                        }
+                        
+                        
                         <td>@item.Name</td>
                         <td>@item.Brand</td>
                         <td>@item.ArticleNr</td>

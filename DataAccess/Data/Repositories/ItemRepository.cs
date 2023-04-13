@@ -31,6 +31,7 @@ namespace Data
             {
                 return context.Items
                     .Include(c => c.Category).
+                    Include(i => i.ProductImages).
                     Include(c => c.Subcategory).ToList();
             }
         }
@@ -84,6 +85,14 @@ namespace Data
             {
                 context.Items.Add(item);
                 context.SaveChanges();
+            }
+        }
+
+        public Image GetImage(int id)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                return context.Images.Where(i => i.ImageId == id).FirstOrDefault();
             }
         }
     }
