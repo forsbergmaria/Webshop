@@ -80,6 +80,10 @@ namespace DataAccess.Data.Services
                 {
                     details.Sizes = sizeRepository.GetAllSizes();
                 }
+                if(item.ProductImages != null)
+                {
+                    details.Images = item.ProductImages.ToList();
+                }
                 details.Quantity = 1;
                 details.Item = item;
             }

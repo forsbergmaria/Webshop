@@ -1,18 +1,81 @@
 html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
+    font-size: 14px;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: #403f3f;
+}
+
+.btn {
+    background-color: #0097B2;
+}
+
+    .btn:hover {
+        background-color: #196480;
+    }
+
+p {
+    color: white;
+}
+
+.card {
+    background-color: #403f3f;
+    color: white;
+}
+
+nav {
+    background-color: #545454;
+    color: white;
+}
+
+.nav-link {
+    color: white;
+}
+
+    .nav-link:hover {
+        color: #b3b3b3;
+    }
+
+input {
+    background-color: #b3b3b3;
+    border: none;
+}
+
+    textarea:focus, input:focus {
+        outline: none;
+    }
+
+.cart-btn {
+    background-color: #545454;
+    border: none;
+    color: white;
+    font-size: 3.5vh;
+    margin-left: 1.5vw;
+}
+
+.search-btn {
+    background-color: #b3b3b3;
+    border: none;
+    color: white;
+    font-size: 3.5vh;
+}
+
+.search-component {
+    
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+
+    li {
+        margin-left: 4vw;
+        font-size: 18px;
+        color: blue;
+    }
+
 }
