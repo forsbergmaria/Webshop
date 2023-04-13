@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Models;
 using System.Net.Sockets;
+using System.Web.Razor.Tokenizer.Symbols;
 
 namespace AdminPanel.Controllers
 {
@@ -32,19 +33,23 @@ namespace AdminPanel.Controllers
 
         public IActionResult CreateItem(ItemViewModel model) 
         {
-            var category = _categoryRepository.GetCategoryByName(model.Category);
-            Item item = new Item();
-            item.Name = model.Name;
-            item.ArticleNr = model.ArticleNr;
-            item.PriceWithoutVAT = model.PriceWithoutVAT;
-            item.Description = model.Description;
-            item.CategoryId = category.CategoryId;
-            item.Color = model.Color;
-            item.HasSize = model.HasSize;
-            item.VAT = model.VAT;
-            item.ProductImages = model.ProductImages;
-            item.IsPublished = false;
+            int categoryId = int.Parse(model.Category);
 
+            var item = new Item
+            {
+                Name = model.Name,
+                Brand = model.Brand,
+                ArticleNr = model.ArticleNr,
+                PriceWithoutVAT = model.PriceWithoutVAT,
+                Description = model.Description,
+                CategoryId = categoryId,
+                Color = model.Color,
+                HasSize = model.HasSize,
+                VAT = model.VAT,
+                ProductImages = model.ProductImages,
+                IsPublished = false
+            };
+            
             _itemRepository.AddItem(item);
             return RedirectToAction("AllItems");
         }

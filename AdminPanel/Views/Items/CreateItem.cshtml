@@ -38,9 +38,14 @@
             @Html.LabelFor(m => m.HasSize, new { @class = "col-md-2 control-label" })
             @Html.CheckBoxFor(m => m.HasSize, new { @class = "form-check-input" })
         </div>
-        <div class="dropdown">
+        <div class="form-group">
             @Html.LabelFor(m => m.Category, new { @class = "col-md-2 control-label" })
             @Html.DropDownList("Category", ViewBag.Categories, "Välj en kategori", new { @class = "form-control" })
+        <div class="input-group-append">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newCategoryModal">
+                Skapa en ny kategori
+            </button>
+        </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.ProductImages, new { @class = "col-md-2 control-label" })
@@ -48,7 +53,7 @@
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Skapa produkt" class="btn btn-primary" id="btn-addItem-submit" />
+                <input type="submit" value="Skapa produkt" class="btn btn-primary" id="btn-addItem-submit"/>
             </div>
         </div>
     </form>
