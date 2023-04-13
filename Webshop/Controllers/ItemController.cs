@@ -16,6 +16,7 @@ namespace Webshop.Controllers
         public ActionResult Index(string searchstring)
         {
             var items = itemService.ItemTextSearch(searchstring);
+            ViewBag.Searchstring = searchstring;
             return View(items);
         }
         public IActionResult Details(int id)
