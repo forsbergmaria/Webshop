@@ -1,8 +1,11 @@
 html {
+    position: relative;
+    min-height: 100%;
     font-size: 14px;
 }
 
 body {
+    margin-bottom: 60px;
     background-color: #403f3f;
 }
 
@@ -49,27 +52,30 @@ input {
     background-color: #545454;
     border: none;
     color: white;
-    font-size: 3vh;
+    font-size: 3.5vh;
+    margin-left: 1.5vw;
 }
 
 .search-btn {
     background-color: #b3b3b3;
     border: none;
     color: white;
-    font-size: 3vh;
+    font-size: 3.5vh;
+}
+
+.search-component {
+    
 }
 
 @media (min-width: 768px) {
     html {
         font-size: 16px;
     }
-}
 
-html {
-    position: relative;
-    min-height: 100%;
-}
+    li {
+        margin-left: 4vw;
+        font-size: 18px;
+        color: blue;
+    }
 
-body {
-    margin-bottom: 60px;
 }
