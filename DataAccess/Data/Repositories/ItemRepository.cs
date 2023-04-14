@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using System.Web.Mvc;
 
 namespace Data
 {
@@ -85,14 +86,25 @@ namespace Data
             {
                 context.Items.Add(item);
                 context.SaveChanges();
+
+                var items = item.ProductImages.ToList();
+                foreach (var productImage in items)
+                {
+                    var img = new Image
+                    {
+                        ItemId = item.ItemId,
+                        Path = productImage.Path
+                    };
+                }   
+                context.SaveChanges();
             }
         }
 
-        public Image GetImage(int id)
+        public ICollection<Image> GetImagesByItemId(int id)
         {
             using (var context = new ApplicationDbContext())
             {
-                return context.Images.Where(i => i.ImageId == id).FirstOrDefault();
+                return context.Images.Where(i => i.ItemId == id).ToList();
             }
         }
     }

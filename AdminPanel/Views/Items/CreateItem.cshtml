@@ -54,7 +54,7 @@
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.ProductImages, new { @class = "col-md-2 control-label" })
-            <input asp-for="ProductImages" type="file" multiple class="form-control-file" />
+            <input asp-for="ProductImages" type="file" name="files" multiple class="form-control-file" accept="image/jpeg, image/png, image/jpg"/>
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

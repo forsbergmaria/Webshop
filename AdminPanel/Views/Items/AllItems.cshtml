@@ -35,10 +35,7 @@
                     <tr>
                         @if (item.ProductImages.Any())
                         {
-                            @foreach (var img in item.ProductImages)
-                            {
-                               <td><img src="@Url.Content(img.Path)"></td> 
-                            }
+                               <td><img src="@Url.Content(item.ProductImages.FirstOrDefault().Path)"></td> 
                         }
                         
                         

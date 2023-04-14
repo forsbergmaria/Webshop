@@ -11,6 +11,8 @@ namespace Models
 {
     public class ItemViewModel
     {
+        public int ItemId { get; set; }
+
         [Required(ErrorMessage = "Vänligen ange ett produktnamn")]
         [Display(Name = "Produktnamn*")]
         public string Name { get; set; }

@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Models;
+using System.Drawing.Imaging;
 using System.Net.Sockets;
 using System.Web.Razor.Tokenizer.Symbols;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace AdminPanel.Controllers
 {
@@ -12,6 +15,13 @@ namespace AdminPanel.Controllers
     {
         ItemRepository _itemRepository { get { return new ItemRepository(); } }
         CategoryRepository _categoryRepository { get { return new CategoryRepository(); } }
+        private readonly IWebHostEnvironment _env;
+
+        public ItemsController(IWebHostEnvironment env)
+        {
+            _env = env;
+        }
+
         [Authorize]
         public IActionResult Index()
         {
@@ -31,7 +41,8 @@ namespace AdminPanel.Controllers
             return View("CreateItem");
         }
 
-        public IActionResult CreateItem(ItemViewModel model) 
+        [HttpPost]
+        public async Task<IActionResult> CreateItem(ItemViewModel model, List<IFormFile> files) 
         {
              decimal.TryParse(model.VAT, out decimal percentDecimal);
                 
@@ -40,21 +51,43 @@ namespace AdminPanel.Controllers
 
     if (ModelState.IsValid)
             {
-            var item = new Item
-            {
-                Name = model.Name,
-                Brand = model.Brand,
-                ArticleNr = model.ArticleNr,
-                PriceWithoutVAT = model.PriceWithoutVAT,
-                Description = model.Description,
-                CategoryId = int.Parse(model.Category),
-                Color = model.Color,
-                HasSize = model.HasSize,
-                VAT = factorValue,
-                ProductImages = model.ProductImages,
-                IsPublished = false
-            };
+                ICollection<Image> images = new List<Image>();
+
+                foreach (var file in files)
+                {
+                    var fileName = Path.GetFileName(file.FileName);
+                    var filePath = Path.Combine(_env.WebRootPath, "images/productImages", fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    var productImage = new Image
+                    {
+                        Path = "/images/productImages/" + fileName,
+                    };
+
+                    images.Add(productImage);
+                }
+
+                var item = new Item
+                {
+                    Name = model.Name,
+                    Brand = model.Brand,
+                    ArticleNr = model.ArticleNr,
+                    PriceWithoutVAT = model.PriceWithoutVAT,
+                    Description = model.Description,
+                    CategoryId = int.Parse(model.Category),
+                    Color = model.Color,
+                    HasSize = model.HasSize,
+                    ProductImages = images,
+                    VAT = factorValue,
+                    IsPublished = false
+                };
+
                 _itemRepository.AddItem(item);
+
             }
 
                 return RedirectToAction("AllItems");
@@ -64,11 +97,6 @@ namespace AdminPanel.Controllers
         {
             List<Item> items = _itemRepository.GetAllItems();
             return View(items);
-        }
-        
-        public Image GetImage(int id)
-        {
-            return _itemRepository.GetImage(id);
         }
     }
 }
