@@ -65,7 +65,7 @@ namespace AdminPanel.Controllers
 
                     var productImage = new Image
                     {
-                        Path = "/images/productImages/" + fileName,
+                        Path = "/images/productImages/" + fileName
                     };
 
                     images.Add(productImage);
@@ -91,6 +91,26 @@ namespace AdminPanel.Controllers
             }
 
                 return RedirectToAction("AllItems");
+        }
+
+        public async Task<IActionResult> DeleteItem(int id)
+        {
+            var item = _itemRepository.GetItem(id);
+            var imagesList = _itemRepository.GetImagesByItemId(item.ItemId);
+         if (imagesList != null)
+            {
+                foreach (var image in imagesList)
+                {
+                var fileName = image.Path;
+                var webRootPath = _env.WebRootPath;
+                var filePath = webRootPath + fileName;
+                _itemRepository.DeleteImageFromDirectory(filePath);
+                }
+            }
+
+            _itemRepository.DeleteItem(id);
+
+            return RedirectToAction("AllItems");
         }
 
         public IActionResult AllItems() 
