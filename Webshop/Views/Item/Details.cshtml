@@ -5,31 +5,35 @@
 }
 
  <section class="py-5">
-            <div class="container px-4 px-lg-5 my-5">
+            <div class="container">
                 <div class="row gx-4 gx-lg-5 align-items-center">
-                    <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src=@Model.Item.ProductImages alt="..." /></div>
-                    <div class="col-md-6">
+                    <div class="col-lg-5"><img class="card-img-top mb-5 mb-md-0" src="https://sachinchoolur.github.io/lightslider/img/cS-1.jpg" alt="..." />
+                    <div class="w-100"></div>
+                    <div class="col-lg-2"><p>här är mina bilder</p></div>
+                    </div>
+                    <div class="col-lg-5">
                         <h1 class="display-5 fw-bolder">@Model.Item.Name</h1>
-                        <div class="fs-5 mb-5">
-                            <span>@Model.Item.PriceWithoutVAT</span>
+                        <div class="fs-5 mb-1">
+                            <span>@Model.Item.PriceWithoutVAT kr</span>
                         </div>
                         <p class="lead">@Model.Item.Description</p>
-                        <div class="d-flex">
                     @if (Model.Item.HasSize)
                     {
+                        <p>Välj storlek:</p>
+                      <div class="mb-4">
                         @foreach(var size in Model.Sizes)
                             {
                                 <button class="btn btn-outline-dark flex-shrink-0" type="button">
                                     @size.Name
                                 </button>
                              }
+                      </div>
                     }
-                        </div>
                         <div class="d-flex">
                             <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
                             <button class="btn btn-outline-dark flex-shrink-0" type="button">
                                 <i class="bi-cart-fill me-1"></i>
-                                Add to cart
+                                Lägg i varukorg
                             </button>
                         </div>
                     </div>
