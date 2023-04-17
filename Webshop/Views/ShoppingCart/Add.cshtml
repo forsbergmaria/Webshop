@@ -1,0 +1,15 @@
+﻿@using Models
+@model List<Item>
+
+    <h1>Produkter</h1>
+
+    @foreach (var item in Model) {
+        <div>
+            <h2>@item.Name</h2>
+            <p>@item.PriceWithoutVAT</p>
+            <form method="post" action="@Url.Action("AddToCart", "ShoppingCart")">
+                <input type="hidden" name="id" value="@item.ItemId"/>
+                <button type="submit">Lägg till i varukorg</button>
+            </form>
+        </div>
+    }
