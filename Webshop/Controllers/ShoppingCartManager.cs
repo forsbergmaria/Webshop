@@ -26,18 +26,6 @@ namespace Webshop.Controllers
 
             var shoppingCart = httpContext.Session.GetObjectFromJson<List<int>>("ShoppingCart") ?? new List<int>();
 
-            Item item = new Item
-            {
-                Name = "hej",
-                ItemId = 5,
-                IsPublished = true,
-                HasSize = true,
-                Brand = "hejej",
-                PriceWithoutVAT = 450,
-            };
-
-            shoppingCart.Add(3);
-
             var existingItems = itemRepository.GetAllItems().Where(id => shoppingCart.Contains(id.ItemId)).ToList();
 
             return existingItems;
@@ -100,6 +88,16 @@ namespace Webshop.Controllers
         public async Task<IActionResult> Add(int id)
         {
             await _cm.AddToCart(id);
+
+            var existingCookie = Request.Cookies["ShoppingCart"];
+
+            if(existingCookie != null)
+            {
+                CookieOptions opt = new CookieOptions();
+                opt.Expires = DateTime.Now.AddDays(3);
+                Response.Cookies.Append("ShoppingCart", existingCookie, opt);
+            }
+
             return RedirectToAction("Index");
         }
 
