@@ -38,8 +38,6 @@ namespace Webshop.Controllers
 
             var shoppingCart = httpContext.Session.GetObjectFromJson<List<int>>("ShoppingCart") ?? new List<int>();
 
-            _ca.HttpContext.Session.SetObjectAsJson("ShoppingCart", shoppingCart);
-
             if (!shoppingCart.Contains(id))
             {
                 shoppingCart.Add(id);
