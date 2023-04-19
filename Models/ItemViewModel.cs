@@ -41,6 +41,8 @@ namespace Models
         [Required(ErrorMessage = "Vänligen välj en kategori")]
         [Display(Name = "Produktkategori")]
         public string Category { get; set; }
+        [Display(Name = "Underkategori")]
+        public string? Subcategory { get; set; }
         [Display(Name = "Produktbilder")]
         public ICollection<Image>? ProductImages { get; set; }
     }

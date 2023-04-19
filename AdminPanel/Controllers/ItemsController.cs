@@ -113,6 +113,73 @@ namespace AdminPanel.Controllers
             return RedirectToAction("AllItems");
         }
 
+        public IActionResult ModifyItemForm(int id)
+        {
+            var categories = _categoryRepository.GetAllCategories();
+            var selectList = categories.Select(c => new SelectListItem
+            {
+                Value = c.CategoryId.ToString(),
+                Text = c.Name
+            }).OrderByDescending(c => c.Text);
+
+            var subcategories = _categoryRepository.GetAllLinkedSubcategories(int.Parse(selectList.First().Value));
+            var selectSubList = subcategories.Select(c => new SelectListItem
+            {
+                Value = c.SubcategoryId.ToString(),
+                Text = c.Name
+            }).OrderByDescending(c => c.Text);
+
+            ViewBag.Categories = selectList;
+            ViewBag.Subcategories = selectSubList;
+
+            var item = _itemRepository.GetItem(id);
+            decimal vatRate = item.VAT;
+            int vatRatePercent = (int)((vatRate - 1) * 100);
+            string vatRateStr = $"{vatRatePercent}";
+
+            var model = new ItemViewModel
+            {
+                Name = item.Name,
+                Brand = item.Brand,
+                ArticleNr = item.ArticleNr,
+                PriceWithoutVAT = item.PriceWithoutVAT,
+                Description = item.Description,
+                Category = item.Category.Name,
+                Color = item.Color,
+                HasSize = item.HasSize,
+                ProductImages = _itemRepository.GetImagesByItemId(id),
+                VAT = vatRateStr,
+            };
+
+            TempData["id"] = id;
+
+            return View("ModifyItem", model);
+        }
+
+        public IActionResult ModifyItem(ItemViewModel model)
+        {
+            int id = (int)TempData["id"];
+            var item = _itemRepository.GetItem(id);
+            item.Name = model.Name;
+            item.Brand = model.Brand;
+            item.ArticleNr = model.ArticleNr;
+            item.PriceWithoutVAT = model.PriceWithoutVAT;
+            item.Description = model.Description;
+            item.CategoryId = _categoryRepository.GetCategoryByName(model.Name).CategoryId;
+            item.Color = model.Color;
+            item.HasSize = model.HasSize;
+            item.ProductImages = model.ProductImages;
+
+            return RedirectToAction("AllItems");
+        }
+
+        [HttpGet]
+        public JsonResult GetSubCategories(int id)
+        {
+            var subcategories = _categoryRepository.GetAllLinkedSubcategories(id);
+            return Json(subcategories);
+        }
+
         public IActionResult AllItems() 
         {
             List<Item> items = _itemRepository.GetAllItems();

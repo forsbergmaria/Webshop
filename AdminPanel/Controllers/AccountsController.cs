@@ -115,7 +115,7 @@ namespace AdminPanel.Controllers
 
             var admins = await query.ToListAsync();
 
-            List<IdentityRole> identityRoles = _dbContext.IdentityRoles.ToList();
+            List<IdentityRole> identityRoles = _dbContext.Roles.ToList();
             List<IdentityUserRole<string>> userRoles = _dbContext.UserRoles.ToList();
 
             var query2 = from u in admins
@@ -131,7 +131,7 @@ namespace AdminPanel.Controllers
                          };
             var currentUser = await _userManager.GetUserAsync(User);
             var identityRole = _dbContext.UserRoles.Where(u => u.UserId == currentUser.Id).FirstOrDefault();
-            var userRole = _dbContext.IdentityRoles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
+            var userRole = _dbContext.Roles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
 
 
             ViewBag.SearchString = searchString;
@@ -144,7 +144,7 @@ namespace AdminPanel.Controllers
         {
             var user = _dbContext.Admins.Where(a => a.Id == id).FirstOrDefault();
             var identityRole = _dbContext.UserRoles.Where(u => u.UserId == id).FirstOrDefault();
-            var userRole = _dbContext.IdentityRoles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
+            var userRole = _dbContext.Roles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
 
             var admin = new AdminViewModel
             {
@@ -155,7 +155,7 @@ namespace AdminPanel.Controllers
                 Role = userRole.Name
             };
 
-            var selectRole = _dbContext.IdentityRoles.ToList();
+            var selectRole = _dbContext.Roles.ToList();
             var selectList = new SelectList(selectRole, "Name").OrderByDescending(r => r.Text);
             ViewBag.RolesList = selectList;
             //var currentUser = await _userManager.GetUserAsync(User);
@@ -195,7 +195,7 @@ namespace AdminPanel.Controllers
             user.UserName = model.Email;
             var userRole = model.Role;
 
-            var role = _dbContext.IdentityRoles.Where(r => r.Name == userRole).FirstOrDefault();
+            var role = _dbContext.Roles.Where(r => r.Name == userRole).FirstOrDefault();
 
                 
 

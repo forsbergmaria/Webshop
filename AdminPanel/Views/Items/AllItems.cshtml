@@ -56,7 +56,7 @@
                         }
 
                         <td>@item.Category.Name</td>
-                        <td><button class="btn btn-primary manage-btn"><a asp-controller="Items" asp-action="UpdateItemsForm" asp-route-id="@item.ItemId">Redigera</a></button>
+                        <td><button class="btn btn-primary manage-btn"><a asp-controller="Items" asp-action="ModifyItemForm" asp-route-id="@item.ItemId">Redigera</a></button>
                             <button class="btn btn-danger manage-btn"><a asp-controller="Items" asp-action="DeleteItem" asp-route-id="@item.ItemId" onclick="return confirm('Är du säker på att du vill ta bort den här produkten? Det går inte att ångra.')">Ta bort produkt</a></button></td>
 
 
