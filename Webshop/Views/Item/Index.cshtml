@@ -20,7 +20,10 @@
                           <div class="card-body">
                             <h5 class="card-title">@Html.ActionLink(@item.Name, "Details", "Item", new {id = item.ItemId})</h5>
                             <p class="card-text">@item.PriceWithoutVAT kr</p>
-                            <a href="#" class="btn btn-primary">Lägg i varukorg</a>
+                                        <form method="post" action="@Url.Action("Add", "ShoppingCart")">
+                                            <input type="hidden" name="id" value="@item.ItemId"/>
+                                            <button type="submit">Lägg till i varukorg</button>
+                                        </form>
                           </div>
                         </div>
                       </div>
