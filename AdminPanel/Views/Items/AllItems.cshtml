@@ -1,0 +1,69 @@
+﻿@using Models
+@model List<Item>
+
+<head>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<div>
+    <form method="get" asp-controller="Items" asp-action="SearchItems">
+        <div class="form-group">
+            <label for="searchString">Sök efter produkt:</label>
+            <input type="text" name="searchString" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Sök</button>
+    </form>
+    <div class="table-hover">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Produktbild</th>
+                    <th>Produktnamn</th>
+                    <th>Varumärke</th>
+                    <th>Artikelnummer</th>
+                    <th>Färg</th>
+                    <th>Försäljningspris</th>
+                    <th>Huvudkategori</th>
+                    <th>Hantera</th>
+             
+                    
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model.OrderBy(i => i.Name))
+                {
+                    <tr>
+                        @if (item.ProductImages.Any())
+                        {
+                               <td><img src="@Url.Content(item.ProductImages.FirstOrDefault().Path)"></td> 
+                        }
+                        
+                        
+                        <td>@item.Name</td>
+                        <td>@item.Brand</td>
+                        <td>@item.ArticleNr</td>
+                        @if (item.Color == null)
+                        {
+                            <td>Ingen</td>
+                        } 
+                        else
+                        {
+                            <td>@item.Color</td>
+                        }
+                        @{
+                            var salesPrice = item.PriceWithoutVAT * item.VAT;
+                            <td>@Math.Round(salesPrice, 2).ToString() SEK</td>
+                        }
+
+                        <td>@item.Category.Name</td>
+                        <td><button class="btn btn-primary manage-btn"><a asp-controller="Items" asp-action="ModifyItemForm" asp-route-id="@item.ItemId">Redigera</a></button>
+                            <button class="btn btn-danger manage-btn"><a asp-controller="Items" asp-action="DeleteItem" asp-route-id="@item.ItemId" onclick="return confirm('Är du säker på att du vill ta bort den här produkten? Det går inte att ångra.')">Ta bort produkt</a></button></td>
+
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

@@ -1,0 +1,66 @@
+﻿@using Models
+@model ItemViewModel
+
+<body>
+    <form method="post" asp-controller="Items" asp-action="CreateItem" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Brand, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.Brand, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Brand, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
+            @Html.TextAreaFor(m => m.Description, new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Color, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.Color, new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ArticleNr, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.ArticleNr, new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.PriceWithoutVAT, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.PriceWithoutVAT, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.PriceWithoutVAT, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.VAT, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.VAT, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.VAT, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-check>
+            @Html.LabelFor(m => m.HasSize, new { @class = "col-md-2 control-label" })
+            @Html.CheckBoxFor(m => m.HasSize, new { @class = "form-check-input" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Category, new { @class = "col-md-2 control-label" })
+            @Html.DropDownList("Category", ViewBag.Categories, "Välj en kategori", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Category, "", new { @class = "text-danger" })
+        <div class="input-group-append">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newCategoryModal">
+                Skapa en ny kategori
+            </button>
+        </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ProductImages, new { @class = "col-md-2 control-label" })
+            <input asp-for="ProductImages" type="file" name="files" multiple class="form-control-file" accept="image/jpeg, image/png, image/jpg"/>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Skapa produkt" class="btn btn-primary" id="btn-addItem-submit"/>
+            </div>
+        </div>
+    </form>
+</body>
+

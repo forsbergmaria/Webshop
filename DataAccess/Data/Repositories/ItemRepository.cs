@@ -1,11 +1,14 @@
 ﻿using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using System.Web.Mvc;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Data
 {
     public class ItemRepository
     {
+
         //Checks if any Items exist in the database
         public bool ItemsExist()
         {
@@ -31,6 +34,7 @@ namespace Data
             {
                 return context.Items
                     .Include(c => c.Category).
+                    Include(i => i.ProductImages).
                     Include(c => c.Subcategory).ToList();
             }
         }
@@ -47,22 +51,35 @@ namespace Data
             }
         }
 
-        //Removes an item from the database
+        //Removes an item and it's images from the database
         public bool DeleteItem(int id)
         {
             using (var context = new ApplicationDbContext())
             {
+                var images = context.Images.Where(i => i.ItemId == id).ToList();
                 var item = context.Items.FirstOrDefault(c => c.ItemId == id);
-                if (item != null)
+                if (item == null)
                 {
                     return false;
                 }
                 else
-                {
+                {   
+                    foreach (var image in images)
+                    {
+                        context.Images.Remove(image);
+                    }
                     context.Items.Remove(item);
                     context.SaveChanges();
                     return true;
                 }
+            }
+        }
+
+        public void DeleteImageFromDirectory(string path)
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
             }
         }
 
@@ -84,6 +101,28 @@ namespace Data
             {
                 context.Items.Add(item);
                 context.SaveChanges();
+
+                var items = item.ProductImages.ToList();
+                foreach (var productImage in items)
+                {
+                    var img = new Image
+                    {
+                        ItemId = item.ItemId,
+                        Path = productImage.Path
+                    };
+
+                    item.ProductImages.Add(img);
+                }   
+                context.SaveChanges();
+            }
+        }
+
+        public List<Image> GetImagesByItemId(int id)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var images = context.Images.Where(i => i.ItemId == id).ToList();
+                return images;
             }
         }
     }
