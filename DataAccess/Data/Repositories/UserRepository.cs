@@ -111,26 +111,6 @@ namespace DataAccess.Data.Repositories
             }
         }
 
-        public void ModifyUserRole(IdentityUserRole<string> identityRole)
-        {
-            using (var context = new ApplicationDbContext())
-            {
-                context.Entry(identityRole).State = EntityState.Modified;
-                context.SaveChanges();
-            }
-        }
-
-        public void ModifyUser(Admin user)
-        {
-            using (var context = new ApplicationDbContext())
-            {
-            _userManager.UpdateAsync(user);
-            context.SaveChanges();
-            }
-
-           
-        }
-
         // Deletes a specific user from the database
         [HttpDelete]
         public void DeleteAccount(string id)

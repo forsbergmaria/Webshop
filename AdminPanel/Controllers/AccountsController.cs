@@ -141,11 +141,10 @@ namespace AdminPanel.Controllers
         }
 
         [Authorize(Roles = "Huvudadministratör")]
-        public IActionResult UpdateAccountForm(string id)
+        public async Task<IActionResult> UpdateAccountForm(string id)
         {
-            var user = _dbContext.Admins.Where(a => a.Id == id).FirstOrDefault();
-            var identityRole = _dbContext.UserRoles.Where(u => u.UserId == id).FirstOrDefault();
-            var userRole = _dbContext.Roles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
+            var user = await _userManager.FindByIdAsync(id);
+            var role = _userRepository.GetIdentityRoleNameForUser(user.Id);
 
             var admin = new AdminViewModel
             {
@@ -153,10 +152,10 @@ namespace AdminPanel.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                Role = userRole.Name
+                Role = role
             };
 
-            var selectRole = _dbContext.Roles.ToList();
+            var selectRole = _userRepository.GetAllIdentityRoles();
             var selectList = new SelectList(selectRole, "Name").OrderByDescending(r => r.Text);
             ViewBag.RolesList = selectList;
 
