@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Models;
 using System.Web.Mvc;
-using Microsoft.AspNetCore.Hosting;
 
 namespace Data
 {
