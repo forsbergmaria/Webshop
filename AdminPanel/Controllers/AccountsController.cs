@@ -14,7 +14,8 @@ namespace AdminPanel.Controllers
 {
     [AutoValidateAntiforgeryToken]
     public class AccountsController : Controller
-    { UserRepository _userRepository { get { return new UserRepository(); } }
+    {
+        UserRepository _userRepository { get { return new UserRepository(_userManager); } }
 
 
         private readonly ApplicationDbContext _dbContext;
@@ -174,42 +175,28 @@ namespace AdminPanel.Controllers
         }
 
         [Authorize(Roles = "Huvudadministratör")]
-        public async Task<IActionResult> UpdateAccount(AdminViewModel model)
+        public async Task<IActionResult> UpdateAccount(AdminViewModel model, string id)
         {
-            var admin = new AdminViewModel
+            var currentUser = await _userManager.FindByIdAsync(TempData["id"].ToString());
+
+            currentUser.Email = model.Email;
+            currentUser.FirstName = model.FirstName;
+            currentUser.LastName = model.LastName;
+            currentUser.UserName = model.Email;
+
+            //var userRole = model.Role;
+            //var selectedRole = _userRepository.GetIdentityRoleByName(userRole);
+            var userRole = _userRepository.GetIdentityRoleNameForUser(currentUser.Id);
+            await _userManager.UpdateAsync(currentUser);
+            if (userRole != model.Role)
             {
-                Id = TempData["id"].ToString(),
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                Role = model.Role
-            };
+                await _userManager.RemoveFromRoleAsync(currentUser, userRole);
+                await _userManager.AddToRoleAsync(currentUser, model.Role);
+            }
+            
+            
 
-            if (ModelState.IsValid)
-            {
-                var user = new Admin();
-
-            user.Email = model.Email;
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-            user.UserName = model.Email;
-            var userRole = model.Role;
-
-            var role = _dbContext.Roles.Where(r => r.Name == userRole).FirstOrDefault();
-
-                
-
-
-                    var assignedRole = new IdentityUserRole<string>
-                    {
-                        RoleId = role.Id,
-                        UserId = user.Id
-                    };
-
-                    _dbContext.UserRoles.Update(assignedRole);
-                    _dbContext.SaveChanges();
-                }
-                return RedirectToAction("AllAccounts");
+            return RedirectToAction("AllAccounts");
         }
     }
 }
