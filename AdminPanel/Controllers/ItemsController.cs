@@ -9,6 +9,7 @@ using System.Web.Razor.Tokenizer.Symbols;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using DataAccess;
 
 namespace AdminPanel.Controllers
 {
@@ -17,10 +18,12 @@ namespace AdminPanel.Controllers
         ItemRepository _itemRepository { get { return new ItemRepository(); } }
         CategoryRepository _categoryRepository { get { return new CategoryRepository(); } }
         private readonly IWebHostEnvironment _env;
+        private readonly ApplicationDbContext _context;
 
-        public ItemsController(IWebHostEnvironment env)
+        public ItemsController(IWebHostEnvironment env, ApplicationDbContext context)
         {
             _env = env;
+            _context = context;
         }
 
         [Authorize]
@@ -219,6 +222,29 @@ namespace AdminPanel.Controllers
             _itemRepository.ModifyItem(item);
 
             return RedirectToAction("AllItems");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchItems(string searchString)
+        {
+            var query = _context.Items.Include(c => c.Category).Include(i => i.ProductImages)
+                .Include(s => s.Subcategory)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                var searchTerms = searchString.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var term in searchTerms)
+                {
+                    query = query.Where(a => a.Name.Contains(term));
+                }
+            }
+
+            var categories = await query.ToListAsync();
+
+            ViewBag.SearchString = searchString;
+
+            return View(categories);
         }
 
         [HttpGet]
