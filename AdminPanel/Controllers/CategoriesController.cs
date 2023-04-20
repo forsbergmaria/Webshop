@@ -25,12 +25,16 @@ namespace AdminPanel.Controllers
             return View();
         }
 
+        // Display all categories
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult AllCategories()
         {
             var categories = _categoryRepository.GetAllCategories();
             return View(categories);
         }
 
+        // Display all subcategories
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult AllSubcategories(int id)
         {
             var category = _categoryRepository.GetCategory(id);
@@ -44,12 +48,16 @@ namespace AdminPanel.Controllers
             return View(model);
         }
 
+        // Display a form for creating a new category
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateCategory()
         {
             return View();
         }
 
+        // Create a new category
         [HttpPost]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateCategory(Category category)
         {
             if(ModelState.IsValid)
@@ -60,6 +68,8 @@ namespace AdminPanel.Controllers
 
         }
 
+        // Display form for creating a new subcategory for a category
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateSubcategory()
         {
             var selectCategory = _categoryRepository.GetAllCategories();
@@ -73,6 +83,8 @@ namespace AdminPanel.Controllers
             return View("CreateSubcategory");
         }
 
+        // Display form for creating a new subcategory directly from the "AllSubcategories" view
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateSubcategoryFromCategoryForm(int id)
         {
             var selectedCategory = _categoryRepository.GetCategory(id);
@@ -82,7 +94,9 @@ namespace AdminPanel.Controllers
             return View("CreateSubcategoryFromCategory");
         }
 
+        // Create a new subcategory directly from the "AllSubcategories" view
         [HttpPost]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateSubcategoryFromCategory(CreateSubcategory2ViewModel model)
         {
             int id = (int)TempData["id"];
@@ -100,7 +114,9 @@ namespace AdminPanel.Controllers
             return RedirectToAction("AllCategories");
         }
 
+        // Create a new subcategory
         [HttpPost]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateSubcategory(CreateSubcategoryViewModel model) 
         {
             var category = _categoryRepository.GetCategoryByName(model.CategoryName);
@@ -117,6 +133,8 @@ namespace AdminPanel.Controllers
             return View();
         }
 
+        // Delete a category. Only accessible for head administrators
+        [Authorize(Roles = "Huvudadministratör")]
         public IActionResult DeleteCategory(int id)
         {
             _categoryRepository.DeleteCategory(id);
@@ -124,6 +142,8 @@ namespace AdminPanel.Controllers
             return RedirectToAction("AllCategories");
         }
 
+        // Delete a subcategory. Only accessible for head administrators
+        [Authorize(Roles = "Huvudadministratör")]
         public IActionResult DeleteSubcategory(int id)
         {
             _categoryRepository.DeleteSubcategory(id);
@@ -131,7 +151,9 @@ namespace AdminPanel.Controllers
             return RedirectToAction("AllCategories");
         }
 
+        // Search for a category, based on it's name
         [HttpGet]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public async Task<IActionResult> SearchCategory(string searchString)
         {
             var query = _dbContext.Categories.AsQueryable();
@@ -151,7 +173,9 @@ namespace AdminPanel.Controllers
             return View(categories);
         }
 
+        // Search for a subcategory, based on it's name
         [HttpGet]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public async Task<IActionResult> SearchSubcategory(int id, string searchString)
         {
             var query = _dbContext.Subcategories.AsQueryable();
@@ -179,24 +203,27 @@ namespace AdminPanel.Controllers
             return View(model);
         }
 
-        public IActionResult CategoryPublisherManager(int id)
-        {
-            var category = _categoryRepository.GetCategory(id);
-            category.IsPublished = !category.IsPublished;
-            _dbContext.SaveChanges();
+        //public IActionResult CategoryPublisherManager(int id)
+        //{
+        //    var category = _categoryRepository.GetCategory(id);
+        //    category.IsPublished = !category.IsPublished;
+        //    _dbContext.SaveChanges();
 
-            return RedirectToAction("AllCategories");
-        }
+        //    return RedirectToAction("AllCategories");
+        //}
 
-        public IActionResult SubcategoryPublisherManager(int id)
-        {
-            var subcategory = _categoryRepository.GetSubcategoryFromCategory(id);
-            subcategory.IsPublished = !subcategory.IsPublished;
-            _dbContext.SaveChanges();
+        //public IActionResult SubcategoryPublisherManager(int id)
+        //{
+        //    var subcategory = _categoryRepository.GetSubcategoryFromCategory(id);
+        //    subcategory.IsPublished = !subcategory.IsPublished;
+        //    _dbContext.SaveChanges();
 
-            return RedirectToAction("AllCategories");
-        }
+        //    return RedirectToAction("AllCategories");
+        //}
 
+
+        // Display a form for updating a category
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult UpdateCategoryForm(int id)
         {
             var category = _categoryRepository.GetCategory(id);
@@ -206,7 +233,9 @@ namespace AdminPanel.Controllers
             return View("UpdateCategory", category);
         }
 
+        // Updates a category
         [HttpPost]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult UpdateCategory(Category category)
         {
             int id = (int)TempData["id"];
@@ -221,6 +250,8 @@ namespace AdminPanel.Controllers
             return RedirectToAction("AllCategories");
         }
 
+        // Display a form for updating a subcategory
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult UpdateSubcategoryForm(int id)
         {
             var categories = _dbContext.Categories.ToList();
@@ -239,7 +270,9 @@ namespace AdminPanel.Controllers
             return View("UpdateSubcategory", subcategory);
         }
 
+        // Update a subcategory
         [HttpPost]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult UpdateSubcategory(Subcategory subcategory)
         {
             int id = (int)TempData["id"];

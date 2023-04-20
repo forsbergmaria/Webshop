@@ -9,21 +9,12 @@ namespace AdminPanel.Controllers
         ItemRepository _itemRepository { get { return new ItemRepository(); } }
         public IActionResult Index()
         {
-            var topFiveItems = _itemRepository.GetTopFiveMostSoldItems();
-            var soldItemCounts = _itemRepository.GetSoldItemCountForEachItem();
-
-            var model = new StatisticsViewModel
-            {
-                TopSoldItems = topFiveItems,
-                SoldItemCountForEachItem = soldItemCounts
-            };
-            return View(model);
+            return View();
         }
 
         public IActionResult ShowTotalPurchases(string startDate, string endDate)
         {
-           var sales = _itemRepository.GetTotalSalesSinceStart();
-            return View(sales);
+            return View();
         }
     }
 }

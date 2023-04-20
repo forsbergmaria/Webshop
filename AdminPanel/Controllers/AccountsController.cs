@@ -32,6 +32,7 @@ namespace AdminPanel.Controllers
             return View();
         }
 
+        // DIsplay all administrator accounts
         [Authorize(Roles = "Huvudadministratör, Moderator")]
         public async Task<IActionResult> AllAccounts()
         {
@@ -55,6 +56,7 @@ namespace AdminPanel.Controllers
             return View(query.ToList());
         }
 
+        // Delete an administrator account. Only accessible for head administrators
         [Authorize(Roles = "Huvudadministratör")]
         public IActionResult DeleteAccount(string id)
         {
@@ -62,6 +64,7 @@ namespace AdminPanel.Controllers
             return RedirectToAction("AllAccounts");
         }
 
+        // Display a form for creating a new administrator account. Only accessible for head administrators
         [Authorize(Roles = "Huvudadministratör")]
         public IActionResult Register()
         {
@@ -72,7 +75,7 @@ namespace AdminPanel.Controllers
             return View("RegisterAccount");
         }
 
-
+        // Create a new administrator account. Only accessible for head administrators
         [Authorize(Roles = "Huvudadministratör")]
         public async Task<IActionResult> RegisterAccount(RegisterViewModel registerViewModel)
         {
@@ -101,7 +104,9 @@ namespace AdminPanel.Controllers
             return View(registerViewModel);
         }
 
+        // Search for an administrator account, based on the first name or/and last name of the user
         [HttpGet]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public async Task<IActionResult> SearchAdmin(string searchString)
         {
             var query = _dbContext.Admins.AsQueryable();
@@ -140,6 +145,7 @@ namespace AdminPanel.Controllers
             return View(query2.ToList());
         }
 
+        // Display a form for modifying an administrator account. Only accessible for head administrators
         [Authorize(Roles = "Huvudadministratör")]
         public async Task<IActionResult> UpdateAccountForm(string id)
         {
@@ -163,6 +169,7 @@ namespace AdminPanel.Controllers
             return View("UpdateAccount", admin);
         }
 
+        // Modify an administrator account. Only accessible for head administrators
         [Authorize(Roles = "Huvudadministratör")]
         public async Task<IActionResult> UpdateAccount(AdminViewModel model, string id)
         {
@@ -181,8 +188,6 @@ namespace AdminPanel.Controllers
                 await _userManager.AddToRoleAsync(currentUser, model.Role);
             }
             
-            
-
             return RedirectToAction("AllAccounts");
         }
     }

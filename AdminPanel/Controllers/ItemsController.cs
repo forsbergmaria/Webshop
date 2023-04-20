@@ -26,12 +26,14 @@ namespace AdminPanel.Controllers
             _context = context;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult Index()
         {
             return View();
         }
 
+        // Display a form for creating a new item
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateItemForm()
         {
             var categories = _categoryRepository.GetAllCategories();
@@ -45,7 +47,9 @@ namespace AdminPanel.Controllers
             return View("CreateItem");
         }
 
+        // Create a new item
         [HttpPost]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public async Task<IActionResult> CreateItem(ItemViewModel model, List<IFormFile> files) 
         {
              decimal.TryParse(model.VAT, out decimal percentDecimal);
@@ -101,6 +105,8 @@ namespace AdminPanel.Controllers
                 return RedirectToAction("AllItems");
         }
 
+        // Delete an item and it's images, if there are any
+        [Authorize(Roles = "Huvudadministratör")]
         public IActionResult DeleteItem(int id)
         {
             var item = _itemRepository.GetItem(id);
@@ -121,6 +127,8 @@ namespace AdminPanel.Controllers
             return RedirectToAction("AllItems");
         }
 
+        // Delete an image from an item
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult DeleteImage(int id)
         {
             var image = _itemRepository.GetImageById(id);
@@ -132,6 +140,8 @@ namespace AdminPanel.Controllers
             return RedirectToAction("AllItems");
         }
 
+        // Display a form for modifying an item
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult ModifyItemForm(int id)
         {
             var categories = _categoryRepository.GetAllCategories();
@@ -176,6 +186,8 @@ namespace AdminPanel.Controllers
             return View("ModifyItem", model);
         }
 
+        // Modify an item
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public async Task<IActionResult> ModifyItem(ItemViewModel model, List<IFormFile> files)
         {
             ICollection<Image> images = new List<Image>();
@@ -224,7 +236,9 @@ namespace AdminPanel.Controllers
             return RedirectToAction("AllItems");
         }
 
+        // Search for an item based on it's name
         [HttpGet]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public async Task<IActionResult> SearchItems(string searchString)
         {
             var query = _context.Items.Include(c => c.Category).Include(i => i.ProductImages)
@@ -247,6 +261,7 @@ namespace AdminPanel.Controllers
             return View(categories);
         }
 
+        // Retrieve subcategories belonging to a specific category and convert it to JSON
         [HttpGet]
         public JsonResult GetSubcategories(int categoryId)
         {
@@ -260,6 +275,7 @@ namespace AdminPanel.Controllers
             return Json(subcategories);
         }
 
+        // Display all items
         public IActionResult AllItems() 
         {
             List<Item> items = _itemRepository.GetAllItems();

@@ -28,6 +28,7 @@ namespace Data
             }
         }
 
+        // Returns a specific category from the database, based on it's name
         public Category GetCategoryByName(string name)
         {
             using (var context = new ApplicationDbContext())
@@ -117,6 +118,7 @@ namespace Data
             }
         }
 
+        // Returns a specific subcategory from the database, based on it's id
         public Subcategory GetSubcategoryById(int subcategoryId)
         {
             using (var context = new ApplicationDbContext())
@@ -125,6 +127,7 @@ namespace Data
             }
         }
 
+        // Returns a specific subcategory from the database, based on it's name
         public Subcategory GetSubcategoryByName(string name)
         {
             using (var context = new ApplicationDbContext())

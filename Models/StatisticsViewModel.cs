@@ -8,7 +8,7 @@ namespace Models
 {
     public class StatisticsViewModel
     {
-        public List<Item> TopSoldItems { get; set; }
-        public Dictionary<int, int> SoldItemCountForEachItem { get; set; }
+        public List<Item>? TopSoldItems { get; set; }
+        public Dictionary<int, int>? SoldItemCountForEachItem { get; set; }
     }
 }

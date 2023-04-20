@@ -27,15 +27,6 @@ namespace DataAccess.Data.Repositories
             }
         }
 
-        // Returns a specific user from the database 
-        public Admin GetUserById(string id) 
-        {
-            using (var context = new ApplicationDbContext())
-            {
-                return context.Admins.Where(u => u.Id == id).FirstOrDefault();
-            }
-        }
-
         // Returns a specific instance of the IdentityRole class
         public IdentityRole GetIdentityRoleByName(string roleName)
         {
@@ -121,7 +112,7 @@ namespace DataAccess.Data.Repositories
                 context.Remove(userRole);
                 context.SaveChanges();
 
-                var user = GetUserById(id);
+                var user = _userManager.FindByIdAsync(id);
                 context.Remove(user);
                 context.SaveChanges();
             }

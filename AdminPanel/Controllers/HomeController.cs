@@ -19,7 +19,8 @@ namespace AdminPanel.Controllers
             _dbContext = dbContext;
         }
 
-        [Authorize]
+        // Display the homepage for logged in users
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult Home()
         {
             var currentUser = _dbContext.Admins.Where(a => a.UserName.Equals(User.Identity.Name)).FirstOrDefault();
@@ -50,11 +51,6 @@ namespace AdminPanel.Controllers
         }
     
         public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
         {
             return View();
         }
