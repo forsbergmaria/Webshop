@@ -35,10 +35,13 @@
                     <tr>
                         @if (item.ProductImages.Any())
                         {
-                               <td><img class="images-all-items" src="@Url.Content(item.ProductImages.FirstOrDefault().Path)"></td> 
+                            <td><img class="images-all-items" src="@Url.Content(item.ProductImages.FirstOrDefault().Path)"></td>
                         }
-                        
-                        
+                        else
+                        {
+                            <td><img class="images-all-items" src="~/images/productImages/noimage.jpg" /></td>
+                        }
+
                         <td>@item.Name</td>
                         <td>@item.Brand</td>
                         <td>@item.ArticleNr</td>
