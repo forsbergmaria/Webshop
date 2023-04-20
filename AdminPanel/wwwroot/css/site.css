@@ -60,3 +60,15 @@ td {
     text-align: center;
     margin-top: 1em;
 }
+
+.images-all-items {
+    width: 30%;
+}
+
+.images-modify-items {
+    width: 7%;
+}
+
+.remove-image-links {
+    display: block;
+}

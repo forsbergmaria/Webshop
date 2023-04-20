@@ -162,10 +162,31 @@ namespace AdminPanel.Controllers
             return View("ModifyItem", model);
         }
 
-        public IActionResult ModifyItem(ItemViewModel model)
+        public async Task<IActionResult> ModifyItem(ItemViewModel model, List<IFormFile> files)
         {
+            ICollection<Image> images = new List<Image>();
+
             var chosenCategory = _categoryRepository.GetCategory(int.Parse(model.Category));
-            
+            if (files.Count > 0)
+            {
+                foreach (var file in files)
+                {
+                    var fileName = Path.GetFileName(file.FileName);
+                    var filePath = Path.Combine(_env.WebRootPath, "images/productImages", fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    var productImage = new Image
+                    {
+                        Path = "/images/productImages/" + fileName
+                    };
+
+                    images.Add(productImage);
+                }
+            }
 
             int id = (int)TempData["id"];
             var item = _itemRepository.GetItem(id);
@@ -182,7 +203,7 @@ namespace AdminPanel.Controllers
             }
             item.Color = model.Color;
             item.HasSize = model.HasSize;
-            item.ProductImages = model.ProductImages;
+            item.ProductImages = images;
 
             _itemRepository.ModifyItem(item);
 

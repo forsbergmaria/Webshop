@@ -89,6 +89,19 @@ namespace Data
             {
                 context.Entry(item).State = EntityState.Modified;
                 context.SaveChanges();
+
+                var items = item.ProductImages.ToList();
+                foreach (var productImage in items)
+                {
+                    var img = new Image
+                    {
+                        ItemId = item.ItemId,
+                        Path = productImage.Path
+                    };
+
+                    item.ProductImages.Add(img);
+                }
+                context.SaveChanges();
                 return item;
             }
         }
