@@ -32,7 +32,7 @@ namespace AdminPanel.Controllers
             return View();
         }
 
-        // DIsplay all administrator accounts
+        // Display all administrator accounts
         [Authorize(Roles = "Huvudadministratör, Moderator")]
         public async Task<IActionResult> AllAccounts()
         {
