@@ -22,12 +22,9 @@ namespace Webshop.Controllers
 
         public List<Item> GetCartItems()
         {
-            var httpContext = _ca.HttpContext;
-
-            var shoppingCart = httpContext.Session.GetObjectFromJson<List<int>>("ShoppingCart") ?? new List<int>();
-
-            var existingItems = itemRepository.GetAllItems().Where(id => shoppingCart.Contains(id.ItemId)).ToList();
-
+            var shoppingCartCookie = _ca.HttpContext.Request.Cookies["ShoppingCart"];
+            var itemIds = shoppingCartCookie?.Split(',').Select(int.Parse) ?? new List<int>();
+            var existingItems = itemRepository.GetAllItems().Where(item => itemIds.Contains(item.ItemId)).ToList();
             return existingItems;
         }
 
@@ -38,6 +35,7 @@ namespace Webshop.Controllers
 
             var shoppingCart = httpContext.Session.GetObjectFromJson<List<int>>("ShoppingCart") ?? new List<int>();
 
+            //
             if (!shoppingCart.Contains(id))
             {
                 shoppingCart.Add(id);
@@ -82,22 +80,34 @@ namespace Webshop.Controllers
             return View(cartItems);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Add(int id)
+        public IActionResult Add(int id)
         {
-            await _cm.AddToCart(id);
-
             var existingCookie = Request.Cookies["ShoppingCart"];
+            string newCookieValue;
 
-            if(existingCookie != null)
+            if (existingCookie != null)
             {
-                CookieOptions opt = new CookieOptions();
-                opt.Expires = DateTime.Now.AddDays(3);
-                Response.Cookies.Append("ShoppingCart", existingCookie, opt);
+                newCookieValue = $"{existingCookie},{id}";
             }
+            else
+            {
+                newCookieValue = $"{id}";
+            }
+
+            var cookieOptions = new CookieOptions
+            {
+                Expires = DateTime.UtcNow.AddDays(7),
+                IsEssential = true,
+                HttpOnly = true,
+                SameSite = SameSiteMode.Strict,
+                Secure = true
+            };
+
+            Response.Cookies.Append("ShoppingCart", newCookieValue, cookieOptions);
 
             return RedirectToAction("Index");
         }
+
 
     }
 
