@@ -72,3 +72,16 @@ td {
 .remove-image-links {
     display: block;
 }
+
+.sidebar {
+    background-color: #f8f9fa; /* Bakgrundsfärg för sidomenyn */
+    padding: 20px; /* Inre marginal för sidomenyn */
+}
+
+    .sidebar .nav-link {
+        color: #343a40; /* Färg för länkarna i sidomenyn */
+    }
+
+.sidebar-divider {
+    border-top: 1px solid #dee2e6; /* Stil för avskiljaren */
+}

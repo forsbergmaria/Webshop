@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Models;
 using System.Web.Mvc;
+using System.Web.WebPages;
 
 namespace Data
 {
@@ -156,6 +157,75 @@ namespace Data
             {
                 var images = context.Images.Where(i => i.ItemId == id).ToList();
                 return images;
+            }
+        }
+
+        public int GetTotalSalesByDate(DateTime startDate, DateTime endDate)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var transactions = context.ItemTransactions.Where(t => t.TransactionDate.Date >= startDate
+                && t.TransactionDate.Date <= endDate).ToList();
+
+                return transactions.Count();
+            }
+        }
+
+        public List<Item> GetTopFiveMostSoldItems()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var topFiveItems = context.Items
+                    .Join(context.ItemTransactions.Where(t => t.TransactionType == "Försäljning"),
+                        item => item.ItemId,
+                        transaction => transaction.ItemId,
+                        (item, transaction) => new { Item = item, Quantity = transaction.Quantity })
+                    .GroupBy(x => x.Item)
+                    .OrderByDescending(g => g.Sum(x => x.Quantity))
+                    .Take(5)
+                    .Select(g => g.Key)
+                    .AsEnumerable() // Hämtar data från databasen och konverterar det till en samling på klienten
+                    .ToList(); // Konverterar samlingen till en lista
+
+                return topFiveItems;
+            }
+        }
+
+        public Dictionary<int, int> GetSoldItemCountForEachItem()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                // Hämta sålda transaktioner från databasen
+                var soldTransactions = context.ItemTransactions.Where(t => t.TransactionType == "Försäljning")
+                    .Where(t => t.Quantity > 0).ToList();
+
+                // Skapa en dictionary för att hålla reda på antalet sålda produkter per ItemId
+                var soldItemCountDict = new Dictionary<int, int>();
+
+                // Iterera över varje såld transaktion och räkna antalet sålda produkter för varje ItemId
+                foreach (var transaction in soldTransactions)
+                {
+                    if (soldItemCountDict.ContainsKey(transaction.ItemId))
+                    {
+                        soldItemCountDict[transaction.ItemId] += transaction.Quantity;
+                    }
+                    else
+                    {
+                        soldItemCountDict[transaction.ItemId] = transaction.Quantity;
+                    }
+                }
+
+                return soldItemCountDict;
+            }
+        }
+
+
+        public int GetTotalSalesSinceStart()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var transactions = context.ItemTransactions.Where(t => t.TransactionType == "Försäljning").ToList();
+                return transactions.Count();
             }
         }
     }
