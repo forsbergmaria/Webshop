@@ -159,17 +159,7 @@ namespace AdminPanel.Controllers
             var selectRole = _dbContext.Roles.ToList();
             var selectList = new SelectList(selectRole, "Name").OrderByDescending(r => r.Text);
             ViewBag.RolesList = selectList;
-            //var currentUser = await _userManager.GetUserAsync(User);
-            //var identityRole = _dbContext.UserRoles.Where(u => u.UserId == currentUser.Id).FirstOrDefault();
-            //var userRole = _dbContext.IdentityRoles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
-            //var model = new AdminViewModel
-            //{
-            //    Id = id,
-            //    FirstName = user.FirstName,
-            //    LastName = user.LastName,
-            //    Email = user.Email,
-            //    Role = user
-            //};  
+
             TempData["id"] = id;
             return View("UpdateAccount", admin);
         }
@@ -184,8 +174,6 @@ namespace AdminPanel.Controllers
             currentUser.LastName = model.LastName;
             currentUser.UserName = model.Email;
 
-            //var userRole = model.Role;
-            //var selectedRole = _userRepository.GetIdentityRoleByName(userRole);
             var userRole = _userRepository.GetIdentityRoleNameForUser(currentUser.Id);
             await _userManager.UpdateAsync(currentUser);
             if (userRole != model.Role)
