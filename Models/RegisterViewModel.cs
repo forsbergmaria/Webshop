@@ -21,17 +21,6 @@ namespace Models
         [Display(Name = "E-postadress*")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Vänligen fyll i ett lösenord")]
-        [DataType(DataType.Password)]
-        [Compare("ConfirmPassword")]
-        [Display(Name = "Lösenord*")]
-        public string Password { get; set; }
-
-        [Required(ErrorMessage = "Vänligen bekräfta lösenordet")]
-        [DataType(DataType.Password)]
-        [Display(Name = "Bekräfta lösenordet*")]
-        public string ConfirmPassword { get; set;}
-
         [Required(ErrorMessage = "Vänligen välj en administratörsroll")]
         [Display(Name = "Välj administratörsroll*")]
         public string Role { get; set; }

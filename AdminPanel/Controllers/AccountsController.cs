@@ -86,7 +86,7 @@ namespace AdminPanel.Controllers
                 user.EmailConfirmed = true;
                 var roleName = registerViewModel.Role;
 
-                var result = await _userManager.CreateAsync(user, registerViewModel.Password);
+                var result = await _userManager.CreateAsync(user);
                 var role = _userRepository.GetIdentityRoleByName(roleName);
 
                 if (result.Succeeded)
