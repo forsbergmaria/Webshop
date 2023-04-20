@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Web.Razor.Tokenizer.Symbols;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 
 namespace AdminPanel.Controllers
 {
@@ -71,6 +72,9 @@ namespace AdminPanel.Controllers
                     images.Add(productImage);
                 }
 
+                var chosenCategory = _categoryRepository.GetCategoryByName(model.Category);
+                var chosenSubcategory = _categoryRepository.GetSubcategoryByName(model.Subcategory);
+
                 var item = new Item
                 {
                     Name = model.Name,
@@ -78,12 +82,13 @@ namespace AdminPanel.Controllers
                     ArticleNr = model.ArticleNr,
                     PriceWithoutVAT = model.PriceWithoutVAT,
                     Description = model.Description,
-                    CategoryId = int.Parse(model.Category),
+                    CategoryId = chosenCategory.CategoryId,
                     Color = model.Color,
                     HasSize = model.HasSize,
                     ProductImages = images,
                     VAT = factorValue,
-                    IsPublished = false
+                    IsPublished = false,
+                    SubcategoryId = chosenSubcategory.SubcategoryId
                 };
 
                 _itemRepository.AddItem(item);
@@ -174,9 +179,15 @@ namespace AdminPanel.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetSubCategories(int id)
+        public JsonResult GetSubcategories(int categoryId)
         {
-            var subcategories = _categoryRepository.GetAllLinkedSubcategories(id);
+            var subcategories = _categoryRepository.GetAllLinkedSubcategories(categoryId)
+                .Select(c => new SelectListItem
+                {
+                    Value = c.SubcategoryId.ToString(),
+                    Text = c.Name
+                }).OrderByDescending(c => c.Text).ToList();
+
             return Json(subcategories);
         }
 

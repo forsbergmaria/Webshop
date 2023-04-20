@@ -2,6 +2,8 @@
 @model ItemViewModel
 
 <body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <form method="post" asp-controller="Items" asp-action="CreateItem" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -38,19 +40,23 @@
             @Html.TextBoxFor(m => m.VAT, new { @class = "form-control" })
             @Html.ValidationMessageFor(m => m.VAT, "", new { @class = "text-danger" })
         </div>
-        <div class="form-check>
-            @Html.LabelFor(m => m.HasSize, new { @class = "col-md-2 control-label" })
-            @Html.CheckBoxFor(m => m.HasSize, new { @class = "form-check-input" })
-        </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.Category, new { @class = "col-md-2 control-label" })
-            @Html.DropDownList("Category", ViewBag.Categories, "Välj en kategori", new { @class = "form-control" })
-            @Html.ValidationMessageFor(m => m.Category, "", new { @class = "text-danger" })
-        <div class="input-group-append">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newCategoryModal">
-                Skapa en ny kategori
-            </button>
+            <label for="Category">Category</label>
+            <select id="Category" name="Category" class="form-control">
+                <option value="">Select a category</option>
+                @foreach (var category in ViewBag.Categories)
+                {
+                    <option value="@category.Value">@category.Text</option>
+                }
+            </select>
         </div>
+
+        <!-- Skapa en dropdown-lista för underkategorier -->
+        <div class="form-group">
+            <label for="Subcategory">Subcategory</label>
+            <select id="Subcategory" name="Subcategory" class="form-control" disabled>
+                <option value="">Select a subcategory</option>
+            </select>
         </div>
         <div class="form-group">
             @Html.LabelFor(m => m.ProductImages, new { @class = "col-md-2 control-label" })
@@ -62,5 +68,31 @@
             </div>
         </div>
     </form>
+
+    @section scripts {
+        <script>
+            $(document).ready(function () {
+                // Hantera ändringar i kategoridropdown-listan
+                $("#Category").on("change", function () {
+                    var categoryId = $(this).val();
+                    // Göm underkategoridropdown-listan
+                    $("#Subcategory").prop("disabled", true);
+                    // Gör ett AJAX-anrop för att hämta underkategorier baserat på den valda kategorin
+                    $.getJSON("/Items/GetSubcategories", { categoryId: categoryId }, function (data) {
+                        // Rensa och aktivera underkategoridropdown-listan
+                        $("#Subcategory").empty().prop("disabled", false);
+                        // Lägg till option-element för varje underkategori
+                    $.each(data, function (index, subcategory) {
+                         // Loopa igenom varje enskild subcategory i data-objektet
+                    $("#Subcategory").append("<option value='" + subcategory.value + "'>" + subcategory.text + "</option>");
+                    console.log(subcategory);
+                        });
+                    });
+                });
+            });
+        </script>
+         }
 </body>
+
+
 

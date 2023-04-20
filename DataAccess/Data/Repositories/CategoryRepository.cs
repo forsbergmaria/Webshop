@@ -117,12 +117,20 @@ namespace Data
             }
         }
 
+        public Subcategory GetSubcategoryByName(string name)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                return context.Subcategories.Where(c => c.Name == name).First();
+            }
+        }
+
         // Returns a list of subcategories linked with the provided categoryId
         public List<Subcategory> GetAllLinkedSubcategories(int categoryId)
         {
             using (var context = new ApplicationDbContext())
-            {
-                return context.Subcategories.Where(c => c.CategoryId == categoryId).ToList();
+            {   
+                return context.Subcategories.Where(c => c.Categories.CategoryId == categoryId).ToList();
             }
         }
 
