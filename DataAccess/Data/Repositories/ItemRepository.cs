@@ -74,11 +74,31 @@ namespace Data
             }
         }
 
+        // Deletes a specific image from the directory
         public void DeleteImageFromDirectory(string path)
         {
             if (File.Exists(path))
             {
                 File.Delete(path);
+            }
+        }
+
+        // Deletes a specific image from the database
+        public void DeleteImageFromDB(int imageId)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var image = context.Images.Where(i => i.ImageId == imageId).First();
+                context.Images.Remove(image);
+                context.SaveChanges();
+            }
+        }
+
+        public Image GetImageById(int imageId)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                return context.Images.Where(i => i.ImageId == imageId).First();
             }
         }
 
@@ -105,6 +125,7 @@ namespace Data
                 return item;
             }
         }
+
 
         //Creates a new item
         public void AddItem (Item item)

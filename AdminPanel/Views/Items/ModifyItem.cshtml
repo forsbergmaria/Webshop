@@ -63,7 +63,7 @@
         @foreach (var image in Model.ProductImages.DistinctBy(p => p.Path))
         {
                 <img class="images-modify-items" src="@Url.Content(image.Path)" />
-                <a asp-controller="" asp-action="" class="remove-image-links">Ta bort bild</a>
+                <a asp-controller="Items" asp-action="DeleteImage" asp-route-id="@image.ImageId" class="remove-image-links">Ta bort bild</a>
         }
         <div class="form-group">
             @Html.LabelFor(m => m.ProductImages, new { @class = "col-md-2 control-label" })

@@ -98,7 +98,7 @@ namespace AdminPanel.Controllers
                 return RedirectToAction("AllItems");
         }
 
-        public async Task<IActionResult> DeleteItem(int id)
+        public IActionResult DeleteItem(int id)
         {
             var item = _itemRepository.GetItem(id);
             var imagesList = _itemRepository.GetImagesByItemId(item.ItemId);
@@ -114,6 +114,17 @@ namespace AdminPanel.Controllers
             }
 
             _itemRepository.DeleteItem(id);
+
+            return RedirectToAction("AllItems");
+        }
+
+        public IActionResult DeleteImage(int id)
+        {
+            var image = _itemRepository.GetImageById(id);
+            var webRoothPath = _env.WebRootPath;
+            var filePath = webRoothPath + image.Path;
+            _itemRepository.DeleteImageFromDirectory(filePath);
+            _itemRepository.DeleteImageFromDB(id);
 
             return RedirectToAction("AllItems");
         }
