@@ -1,0 +1,16 @@
+﻿@using Models
+@model List<Item>
+
+    <h1>Shopping Cart</h1>
+
+    @if(Model != null && Model.Count > 0) {
+        <ul>
+        @foreach(var item in Model)
+        {
+            <li>@item.Name</li>
+        }
+    </ul>
+    }
+    else {
+        <p>Varukorgen är tom</p>
+    }

@@ -1,4 +1,5 @@
 ﻿using Data;
+using DataAccess.Data.Repositories;
 using Models;
 using Models.ViewModels;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace DataAccess.Data.Services
     {
         private ItemRepository itemRepository { get { return new ItemRepository(); } }
         private CategoryRepository categoryRepository { get { return new CategoryRepository(); } }
+        private SizeRepository sizeRepository { get { return new SizeRepository(); } }
         public List<Item> ItemTextSearch(string searchstring)
         {
             List<Item> items = itemRepository.GetAllItems();
@@ -19,12 +21,12 @@ namespace DataAccess.Data.Services
             }
             else
             {
-                var filteredItems = items.Where(c => c.Name.ToLower().Contains(searchstring) ||
-                c.Brand.ToLower().Contains(searchstring) ||
-                c.Category.Name.ToLower().Contains(searchstring) ||
-                c.Description.ToLower().Contains(searchstring) ||
-                c.Subcategory.Name != null && c.Subcategory.Name.ToLower().Contains(searchstring) ||
-                c.Color != null && c.Color.ToLower().Contains(searchstring)).ToList();
+                var filteredItems = items.Where(c => c.Name.ToLower().Contains(searchstring.ToLower()) ||
+                c.Brand.ToLower().Contains(searchstring.ToLower()) ||
+                c.Category.Name.ToLower().Contains(searchstring.ToLower()) ||
+                c.Description.ToLower().Contains(searchstring.ToLower()) ||
+                c.Subcategory.Name != null && c.Subcategory.Name.ToLower().Contains(searchstring.ToLower()) ||
+                c.Color != null && c.Color.ToLower().Contains(searchstring.ToLower())).ToList();
                 return filteredItems;
             }
         }
@@ -66,6 +68,27 @@ namespace DataAccess.Data.Services
                 viewmodel.Subcategories.Add(sub);
             }
             return viewmodel;
+        }
+
+        public ItemDetailsView GetDetailsView(int id)
+        {
+            Item item = itemRepository.GetItem(id);
+            ItemDetailsView details = new ItemDetailsView();
+            if (item.IsPublished == true)
+            {
+                if(item.HasSize == true)
+                {
+                    details.Sizes = sizeRepository.GetAllSizes();
+                }
+                if(item.ProductImages != null)
+                {
+                    details.Images = item.ProductImages.ToList();
+                }
+                details.Quantity = 1;
+                details.Item = item;
+            }
+            
+            return details;
         }
     }
 }

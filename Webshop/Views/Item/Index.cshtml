@@ -1,59 +1,33 @@
 ﻿@model List<Models.Item>
-<!DOCTYPE html>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
-</head>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+    </head>
 <body>
-    <div>
-
-            <div class="panel-heading">Sök efter item</div>
-    <div class="panel-body">
-        @using (Html.BeginForm("Index", "Item", FormMethod.Post))
-        {
-            <div>
-                <div>
-                    <p>Sök:</p>
-                    @Html.TextBox("searchstring")
-                    <input type="submit" value="Sök" />
-                </div>
+    <div class="">
+        <div class="text-center">
+            <h2 class="display-10 pt-4 pb-4">"@ViewBag.Searchstring" gav följande sökresultat:</h2>
+        </div>
+            <div class="row row-cols-1 row-cols-md-4 g-4">
+                  @foreach(var item in Model)
+                    {
+                      <div class="col">
+                        <div class="card text-center">
+                          <img src="https://sachinchoolur.github.io/lightslider/img/cS-1.jpg" class="card-img-top" alt="...">
+                          <div class="card-body">
+                            <h5 class="card-title">@Html.ActionLink(@item.Name, "Details", "Item", new {id = item.ItemId})</h5>
+                            <p class="card-text">@item.PriceWithoutVAT kr</p>
+                                        <form method="post" action="@Url.Action("Add", "ShoppingCart")">
+                                            <input type="hidden" name="id" value="@item.ItemId"/>
+                                            <button type="submit">Lägg till i varukorg</button>
+                                        </form>
+                          </div>
+                        </div>
+                      </div>
+                    }
             </div>
-        }
-    </div>
-</div>
-
-        <div class="table-hover">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Brand</th>
-                    <th>Category</th>
-                    <th>Subcategory</th>
-                    <th>Color</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.Brand</td>
-                        <td>@item.Category.Name</td>
-                            @if(item.Subcategory != null)
-                            {
-                                <td>@item.Subcategory.Name</td>
-                            }
-                        <td>@item.Color</td>
-                        <td>@item.Description</td>
-                    </tr>
-                }
-
-            </tbody>
-        </table>
-    </div>
-    </div>
+         </div>
 </body>
-</html>
