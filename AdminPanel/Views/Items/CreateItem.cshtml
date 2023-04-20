@@ -1,0 +1,103 @@
+﻿@using Models
+@model ItemViewModel
+
+<body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <form method="post" asp-controller="Items" asp-action="CreateItem" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Name, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Brand, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.Brand, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Brand, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
+            @Html.TextAreaFor(m => m.Description, new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Color, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.Color, new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ArticleNr, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.ArticleNr, new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.PriceWithoutVAT, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.PriceWithoutVAT, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.PriceWithoutVAT, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.VAT, new { @class = "col-md-2 control-label" })
+            @Html.TextBoxFor(m => m.VAT, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.VAT, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Category)
+            <select id="Category" name="Category" class="form-control">
+                <option value="">Välj en kategori</option>
+                @foreach (var category in ViewBag.Categories)
+                {
+                    <option value="@category.Value">@category.Text</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Subcategory)
+            <select id="Subcategory" name="Subcategory" class="form-control" disabled>
+                <option value="">Välj en underkategori</option>
+            </select>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ProductImages, new { @class = "col-md-2 control-label" })
+            <input asp-for="ProductImages" type="file" name="files" multiple class="form-control-file" accept="image/jpeg, image/png, image/jpg, image/jfif"/>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Skapa produkt" class="btn btn-primary" id="btn-addItem-submit"/>
+            </div>
+        </div>
+    </form>
+
+    @section scripts {
+        <script>
+
+            $(document).ready(function () {
+                // Sparar det ursprungliga alternativet för "Välj en underkategori"
+                var originalSubcategoryOption = $("#Subcategory option:first-child").clone();
+
+                // Hanterar ändringar i huvuddropdown-listan för kategorier
+                $("#Category").on("change", function () {
+                    var categoryId = $(this).val();
+                    // Inaktiverar och återställer dropdown-listan för underkategorier
+                    $("#Subcategory").prop("disabled", true).empty().append(originalSubcategoryOption);
+                    // Kontrollerar om en kategori är vald
+                    if (categoryId !== "") {
+                        // Anropar GetJSON-metoden för att hämta underkategorier för den valda kategorin
+                        $.getJSON("/Items/GetSubcategories", { categoryId: categoryId }, function (data) {
+                            // Aktiverar dropdown-listan för underkategorier om det finns data
+                            if (data.length > 0) {
+                                $("#Subcategory").prop("disabled", false);
+                                // Lägger till underkategorier som option-element i dropdown-listan
+                                $.each(data, function (index, subcategory) {
+                                    $("#Subcategory").append("<option value='" + subcategory.value + "'>" + subcategory.text + "</option>");
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        </script>
+         }
+</body>
+
+
+

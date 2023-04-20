@@ -14,7 +14,8 @@ namespace AdminPanel.Controllers
 {
     [AutoValidateAntiforgeryToken]
     public class AccountsController : Controller
-    { UserRepository _userRepository { get { return new UserRepository(); } }
+    {
+        UserRepository _userRepository { get { return new UserRepository(_userManager); } }
 
 
         private readonly ApplicationDbContext _dbContext;
@@ -31,6 +32,7 @@ namespace AdminPanel.Controllers
             return View();
         }
 
+        // Display all administrator accounts
         [Authorize(Roles = "Huvudadministratör, Moderator")]
         public async Task<IActionResult> AllAccounts()
         {
@@ -54,6 +56,7 @@ namespace AdminPanel.Controllers
             return View(query.ToList());
         }
 
+        // Delete an administrator account. Only accessible for head administrators
         [Authorize(Roles = "Huvudadministratör")]
         public IActionResult DeleteAccount(string id)
         {
@@ -61,6 +64,7 @@ namespace AdminPanel.Controllers
             return RedirectToAction("AllAccounts");
         }
 
+        // Display a form for creating a new administrator account. Only accessible for head administrators
         [Authorize(Roles = "Huvudadministratör")]
         public IActionResult Register()
         {
@@ -71,7 +75,7 @@ namespace AdminPanel.Controllers
             return View("RegisterAccount");
         }
 
-
+        // Create a new administrator account. Only accessible for head administrators
         [Authorize(Roles = "Huvudadministratör")]
         public async Task<IActionResult> RegisterAccount(RegisterViewModel registerViewModel)
         {
@@ -86,7 +90,7 @@ namespace AdminPanel.Controllers
                 user.EmailConfirmed = true;
                 var roleName = registerViewModel.Role;
 
-                var result = await _userManager.CreateAsync(user, registerViewModel.Password);
+                var result = await _userManager.CreateAsync(user);
                 var role = _userRepository.GetIdentityRoleByName(roleName);
 
                 if (result.Succeeded)
@@ -100,7 +104,9 @@ namespace AdminPanel.Controllers
             return View(registerViewModel);
         }
 
+        // Search for an administrator account, based on the first name or/and last name of the user
         [HttpGet]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public async Task<IActionResult> SearchAdmin(string searchString)
         {
             var query = _dbContext.Admins.AsQueryable();
@@ -115,7 +121,7 @@ namespace AdminPanel.Controllers
 
             var admins = await query.ToListAsync();
 
-            List<IdentityRole> identityRoles = _dbContext.IdentityRoles.ToList();
+            List<IdentityRole> identityRoles = _dbContext.Roles.ToList();
             List<IdentityUserRole<string>> userRoles = _dbContext.UserRoles.ToList();
 
             var query2 = from u in admins
@@ -131,7 +137,7 @@ namespace AdminPanel.Controllers
                          };
             var currentUser = await _userManager.GetUserAsync(User);
             var identityRole = _dbContext.UserRoles.Where(u => u.UserId == currentUser.Id).FirstOrDefault();
-            var userRole = _dbContext.IdentityRoles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
+            var userRole = _dbContext.Roles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
 
 
             ViewBag.SearchString = searchString;
@@ -139,12 +145,12 @@ namespace AdminPanel.Controllers
             return View(query2.ToList());
         }
 
+        // Display a form for modifying an administrator account. Only accessible for head administrators
         [Authorize(Roles = "Huvudadministratör")]
-        public IActionResult UpdateAccountForm(string id)
+        public async Task<IActionResult> UpdateAccountForm(string id)
         {
-            var user = _dbContext.Admins.Where(a => a.Id == id).FirstOrDefault();
-            var identityRole = _dbContext.UserRoles.Where(u => u.UserId == id).FirstOrDefault();
-            var userRole = _dbContext.IdentityRoles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
+            var user = await _userManager.FindByIdAsync(id);
+            var role = _userRepository.GetIdentityRoleNameForUser(user.Id);
 
             var admin = new AdminViewModel
             {
@@ -152,64 +158,37 @@ namespace AdminPanel.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                Role = userRole.Name
+                Role = role
             };
 
-            var selectRole = _dbContext.IdentityRoles.ToList();
+            var selectRole = _userRepository.GetAllIdentityRoles();
             var selectList = new SelectList(selectRole, "Name").OrderByDescending(r => r.Text);
             ViewBag.RolesList = selectList;
-            //var currentUser = await _userManager.GetUserAsync(User);
-            //var identityRole = _dbContext.UserRoles.Where(u => u.UserId == currentUser.Id).FirstOrDefault();
-            //var userRole = _dbContext.IdentityRoles.Where(i => i.Id == identityRole.RoleId).FirstOrDefault();
-            //var model = new AdminViewModel
-            //{
-            //    Id = id,
-            //    FirstName = user.FirstName,
-            //    LastName = user.LastName,
-            //    Email = user.Email,
-            //    Role = user
-            //};  
+
             TempData["id"] = id;
             return View("UpdateAccount", admin);
         }
 
+        // Modify an administrator account. Only accessible for head administrators
         [Authorize(Roles = "Huvudadministratör")]
-        public async Task<IActionResult> UpdateAccount(AdminViewModel model)
+        public async Task<IActionResult> UpdateAccount(AdminViewModel model, string id)
         {
-            var admin = new AdminViewModel
+            var currentUser = await _userManager.FindByIdAsync(TempData["id"].ToString());
+
+            currentUser.Email = model.Email;
+            currentUser.FirstName = model.FirstName;
+            currentUser.LastName = model.LastName;
+            currentUser.UserName = model.Email;
+
+            var userRole = _userRepository.GetIdentityRoleNameForUser(currentUser.Id);
+            await _userManager.UpdateAsync(currentUser);
+            if (userRole != model.Role)
             {
-                Id = TempData["id"].ToString(),
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                Role = model.Role
-            };
-
-            if (ModelState.IsValid)
-            {
-                var user = new Admin();
-
-            user.Email = model.Email;
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-            user.UserName = model.Email;
-            var userRole = model.Role;
-
-            var role = _dbContext.IdentityRoles.Where(r => r.Name == userRole).FirstOrDefault();
-
-                
-
-
-                    var assignedRole = new IdentityUserRole<string>
-                    {
-                        RoleId = role.Id,
-                        UserId = user.Id
-                    };
-
-                    _dbContext.UserRoles.Update(assignedRole);
-                    _dbContext.SaveChanges();
-                }
-                return RedirectToAction("AllAccounts");
+                await _userManager.RemoveFromRoleAsync(currentUser, userRole);
+                await _userManager.AddToRoleAsync(currentUser, model.Role);
+            }
+            
+            return RedirectToAction("AllAccounts");
         }
     }
 }

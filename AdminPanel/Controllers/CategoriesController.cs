@@ -11,13 +11,12 @@ namespace AdminPanel.Controllers
 {
     public class CategoriesController : Controller
     {
+        CategoryRepository _categoryRepository { get { return new CategoryRepository(); } }
         private readonly ApplicationDbContext _dbContext;
-        private readonly CategoryRepository _categoryRepository;
 
-        public CategoriesController(ApplicationDbContext dbContext, CategoryRepository categoryRepository)
+        public CategoriesController(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
-            _categoryRepository = categoryRepository;
         }
 
         [Authorize(Roles = "Huvudadministratör, Moderator")]
@@ -26,45 +25,54 @@ namespace AdminPanel.Controllers
             return View();
         }
 
+        // Display all categories
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult AllCategories()
         {
-            List<Category> categories = _dbContext.Categories.ToList();
+            var categories = _categoryRepository.GetAllCategories();
             return View(categories);
         }
 
+        // Display all subcategories
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult AllSubcategories(int id)
         {
-            var cat = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+            var category = _categoryRepository.GetCategory(id);
 
             var model = new SubcategoryViewModel
             {
-                Category = cat,
-                Subcategories = _dbContext.Subcategories.Where(c => c.CategoryId == id).ToList()
+                Category = category,
+                Subcategories = _categoryRepository.GetAllLinkedSubcategories(id)
             };
 
             return View(model);
         }
 
+        // Display a form for creating a new category
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateCategory()
         {
             return View();
         }
 
+        // Create a new category
         [HttpPost]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateCategory(Category category)
         {
             if(ModelState.IsValid)
             {
-                _dbContext.Categories.Add(category);
-                _dbContext.SaveChanges();
+                _categoryRepository.AddCategory(category);
             }
             return View();
 
         }
 
+        // Display form for creating a new subcategory for a category
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateSubcategory()
         {
-            var selectCategory = _dbContext.Categories.ToList();
+            var selectCategory = _categoryRepository.GetAllCategories();
             var categories = new List<string>();
             foreach (var category in selectCategory)
             {
@@ -75,16 +83,20 @@ namespace AdminPanel.Controllers
             return View("CreateSubcategory");
         }
 
+        // Display form for creating a new subcategory directly from the "AllSubcategories" view
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateSubcategoryFromCategoryForm(int id)
         {
-            var selectedCategory = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+            var selectedCategory = _categoryRepository.GetCategory(id);
             TempData["id"] = id;
             ViewBag.SelectedCategory = selectedCategory.Name;
 
             return View("CreateSubcategoryFromCategory");
         }
 
+        // Create a new subcategory directly from the "AllSubcategories" view
         [HttpPost]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateSubcategoryFromCategory(CreateSubcategory2ViewModel model)
         {
             int id = (int)TempData["id"];
@@ -96,17 +108,18 @@ namespace AdminPanel.Controllers
 
             if (ModelState.IsValid)
             {
-                _dbContext.Subcategories.Add(subcategory);
-                _dbContext.SaveChanges();
+                _categoryRepository.AddSubcategory(subcategory);
             }
 
             return RedirectToAction("AllCategories");
         }
 
+        // Create a new subcategory
         [HttpPost]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateSubcategory(CreateSubcategoryViewModel model) 
         {
-            var category = _dbContext.Categories.Where(c => c.Name == model.CategoryName).FirstOrDefault();
+            var category = _categoryRepository.GetCategoryByName(model.CategoryName);
             var subcategory = new Subcategory
             {
                 CategoryId = category.CategoryId,
@@ -115,64 +128,32 @@ namespace AdminPanel.Controllers
 
             if(ModelState.IsValid)
             {
-                _dbContext.Subcategories.Add(subcategory);
-                _dbContext.SaveChanges();
+                _categoryRepository.AddSubcategory(subcategory);
             }
             return View();
         }
 
+        // Delete a category. Only accessible for head administrators
+        [Authorize(Roles = "Huvudadministratör")]
         public IActionResult DeleteCategory(int id)
         {
-            var category = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
-            var undefined = _dbContext.Categories.Where(c => c.Name.Equals("Odefinierad")).FirstOrDefault();
-            var subcategories = _dbContext.Subcategories.Where(c => c.Categories.CategoryId == id).ToList();
-            var items = _dbContext.Items.ToList();
-
-            List<Item> itemsList = new List<Item>();
-
-            foreach (var item in items )
-            {
-                if (item.CategoryId == id)
-                {
-                    itemsList.Add(item);
-                }
-            }
-            foreach (var item in itemsList)
-            {
-                item.CategoryId = undefined.CategoryId;
-                item.Subcategory = null;
-            }
-
-            _dbContext.Remove(category);
-            _dbContext.SaveChanges();
+            _categoryRepository.DeleteCategory(id);
 
             return RedirectToAction("AllCategories");
         }
 
+        // Delete a subcategory. Only accessible for head administrators
+        [Authorize(Roles = "Huvudadministratör")]
         public IActionResult DeleteSubcategory(int id)
         {
-            var undefined = _dbContext.Categories.Where(c => c.Name.Equals("Odefinierad")).FirstOrDefault();
-            var subcategory = _dbContext.Subcategories.Where(c => c.SubcategoryId == id).FirstOrDefault();
-            var items = _dbContext.Items.ToList();
-
-            List<Item> itemsList = new List<Item>();
-            foreach (var item in items)
-            {
-                itemsList.Add(item);
-            }
-            foreach (var item in itemsList)
-            {
-                item.SubcategoryId = subcategory.SubcategoryId;
-                item.SubcategoryId = null;
-            }
-            
-            _dbContext.Subcategories.Remove(subcategory);
-            _dbContext.SaveChanges();
+            _categoryRepository.DeleteSubcategory(id);
 
             return RedirectToAction("AllCategories");
         }
 
+        // Search for a category, based on it's name
         [HttpGet]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public async Task<IActionResult> SearchCategory(string searchString)
         {
             var query = _dbContext.Categories.AsQueryable();
@@ -192,7 +173,9 @@ namespace AdminPanel.Controllers
             return View(categories);
         }
 
+        // Search for a subcategory, based on it's name
         [HttpGet]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public async Task<IActionResult> SearchSubcategory(int id, string searchString)
         {
             var query = _dbContext.Subcategories.AsQueryable();
@@ -220,38 +203,43 @@ namespace AdminPanel.Controllers
             return View(model);
         }
 
-        public IActionResult CategoryPublisherManager(int id)
-        {
-            var category = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
-            category.IsPublished = !category.IsPublished;
-            _dbContext.SaveChanges();
+        //public IActionResult CategoryPublisherManager(int id)
+        //{
+        //    var category = _categoryRepository.GetCategory(id);
+        //    category.IsPublished = !category.IsPublished;
+        //    _dbContext.SaveChanges();
 
-            return RedirectToAction("AllCategories");
-        }
+        //    return RedirectToAction("AllCategories");
+        //}
 
-        public IActionResult SubcategoryPublisherManager(int id)
-        {
-            var subcategory = _dbContext.Subcategories.Where(c => c.SubcategoryId == id).FirstOrDefault();
-            subcategory.IsPublished = !subcategory.IsPublished;
-            _dbContext.SaveChanges();
+        //public IActionResult SubcategoryPublisherManager(int id)
+        //{
+        //    var subcategory = _categoryRepository.GetSubcategoryFromCategory(id);
+        //    subcategory.IsPublished = !subcategory.IsPublished;
+        //    _dbContext.SaveChanges();
 
-            return RedirectToAction("AllCategories");
-        }
+        //    return RedirectToAction("AllCategories");
+        //}
 
+
+        // Display a form for updating a category
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult UpdateCategoryForm(int id)
         {
-          var category = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+            var category = _categoryRepository.GetCategory(id);
 
       
             TempData["id"] = id;
             return View("UpdateCategory", category);
         }
 
+        // Updates a category
         [HttpPost]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult UpdateCategory(Category category)
         {
             int id = (int)TempData["id"];
-            var cat = _dbContext.Categories.Where(c => c.CategoryId == id).FirstOrDefault();
+            var cat = _categoryRepository.GetCategory(id);
            
             if (ModelState.IsValid)
             {
@@ -262,6 +250,8 @@ namespace AdminPanel.Controllers
             return RedirectToAction("AllCategories");
         }
 
+        // Display a form for updating a subcategory
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult UpdateSubcategoryForm(int id)
         {
             var categories = _dbContext.Categories.ToList();
@@ -280,7 +270,9 @@ namespace AdminPanel.Controllers
             return View("UpdateSubcategory", subcategory);
         }
 
+        // Update a subcategory
         [HttpPost]
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult UpdateSubcategory(Subcategory subcategory)
         {
             int id = (int)TempData["id"];

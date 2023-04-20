@@ -12,6 +12,13 @@ namespace DataAccess.Data.Repositories
 {
     public class UserRepository
     {
+        private readonly UserManager<Admin> _userManager;
+
+        public UserRepository(UserManager<Admin> userManager)
+        {
+            _userManager = userManager;
+        }
+        // Returns a list of all the users from the database
         public List<Admin> GetAllUsers()
         {
             using (var context = new ApplicationDbContext())
@@ -20,14 +27,7 @@ namespace DataAccess.Data.Repositories
             }
         }
 
-        public Admin GetUserById(string id) 
-        {
-            using (var context = new ApplicationDbContext())
-            {
-                return context.Admins.Where(u => u.Id == id).FirstOrDefault();
-            }
-        }
-
+        // Returns a specific instance of the IdentityRole class
         public IdentityRole GetIdentityRoleByName(string roleName)
         {
             using (var context = new ApplicationDbContext())
@@ -36,6 +36,7 @@ namespace DataAccess.Data.Repositories
             } 
         }
 
+        // Returns an IdentityRole for a specific user
         public IdentityRole GetIdentityRoleForUser(string id)
         {
             using (var context = new ApplicationDbContext())
@@ -44,16 +45,19 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Returns the name of an IdentityRole for a specific user
         public string GetIdentityRoleNameForUser(string id)
         {
             using (var context = new ApplicationDbContext())
             {
-                var identityRole = GetIdentityRoleForUser(id);
+                var role = context.UserRoles.Where(r => r.UserId == id).FirstOrDefault();
+                var identityRole = context.IdentityRoles.Where(r => r.Id == role.RoleId).FirstOrDefault();
 
                 return identityRole.Name;
             }
         }
 
+        // Returns the IdentityUserRole for a specific user
        public IdentityUserRole<string> GetIdentityUserRole(string id)
         {
             using (var context = new ApplicationDbContext())
@@ -62,6 +66,7 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Returns a list of all IdentityRoles from the database
         public List<IdentityRole> GetAllIdentityRoles()
         {
             using (var context = new ApplicationDbContext())
@@ -70,6 +75,7 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Returns a list of all IdentityUserRoles from the database
         public List<IdentityUserRole<string>> GetAllIdentityUserRoles()
         {
             using (var context = new ApplicationDbContext())
@@ -78,6 +84,8 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Assigns a role to a specific user
+        [HttpPost]
         public void AssignRole(string userId, string roleId)
         {
             using (var context = new ApplicationDbContext())
@@ -94,6 +102,7 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Deletes a specific user from the database
         [HttpDelete]
         public void DeleteAccount(string id)
         {
@@ -103,7 +112,7 @@ namespace DataAccess.Data.Repositories
                 context.Remove(userRole);
                 context.SaveChanges();
 
-                var user = GetUserById(id);
+                var user = _userManager.FindByIdAsync(id);
                 context.Remove(user);
                 context.SaveChanges();
             }
