@@ -24,8 +24,14 @@ namespace Webshop.Controllers
         {
             var shoppingCartCookie = _ca.HttpContext.Request.Cookies["ShoppingCart"];
             var itemIds = shoppingCartCookie?.Split(',').Select(int.Parse) ?? new List<int>();
-            var existingItems = itemRepository.GetAllItems().Where(item => itemIds.Contains(item.ItemId)).ToList();
-            return existingItems;
+            List<Item> returnList = new List<Item>();
+            foreach(var item in itemIds)
+            {
+                var specificItem = itemRepository.GetItem(item);
+                returnList.Add(specificItem);
+            }
+           
+            return returnList;
         }
 
         public async Task AddToCart(int id)
@@ -35,7 +41,6 @@ namespace Webshop.Controllers
 
             var shoppingCart = httpContext.Session.GetObjectFromJson<List<int>>("ShoppingCart") ?? new List<int>();
 
-            //
             if (!shoppingCart.Contains(id))
             {
                 shoppingCart.Add(id);
