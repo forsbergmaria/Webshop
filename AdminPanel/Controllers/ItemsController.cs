@@ -72,8 +72,8 @@ namespace AdminPanel.Controllers
                     images.Add(productImage);
                 }
 
-                var chosenCategory = _categoryRepository.GetCategoryByName(model.Category);
-                var chosenSubcategory = _categoryRepository.GetSubcategoryByName(model.Subcategory);
+                var chosenCategory = _categoryRepository.GetCategory(int.Parse(model.Category));
+                var chosenSubcategory = _categoryRepository.GetSubcategoryById(int.Parse(model.Subcategory));
 
                 var item = new Item
                 {
@@ -150,6 +150,7 @@ namespace AdminPanel.Controllers
                 PriceWithoutVAT = item.PriceWithoutVAT,
                 Description = item.Description,
                 Category = item.Category.Name,
+                Subcategory = item.Subcategory?.Name,
                 Color = item.Color,
                 HasSize = item.HasSize,
                 ProductImages = _itemRepository.GetImagesByItemId(id),

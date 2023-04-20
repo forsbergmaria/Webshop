@@ -190,7 +190,7 @@ namespace AdminPanel.Controllers
 
         public IActionResult SubcategoryPublisherManager(int id)
         {
-            var subcategory = _categoryRepository.GetSubcategory(id);
+            var subcategory = _categoryRepository.GetSubcategoryFromCategory(id);
             subcategory.IsPublished = !subcategory.IsPublished;
             _dbContext.SaveChanges();
 

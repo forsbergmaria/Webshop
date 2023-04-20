@@ -107,13 +107,21 @@ namespace Data
             }
         }
 
-        //Returns a specific subcategory from the database
-        public Subcategory GetSubcategory(int id)
+        //Returns a specific subcategory from the database, based on it's category
+        public Subcategory GetSubcategoryFromCategory(int id)
         {
             using (var context = new ApplicationDbContext())
             {
-                return context.Subcategories.Include(i => i.Name)
+                return context.Subcategories
                     .FirstOrDefault(i => i.CategoryId == id);
+            }
+        }
+
+        public Subcategory GetSubcategoryById(int subcategoryId)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                return context.Subcategories.Where(c => c.SubcategoryId == subcategoryId).First();
             }
         }
 
