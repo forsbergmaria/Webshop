@@ -46,7 +46,7 @@
         <div class="form-group">
             @Html.LabelFor(m => m.Category)
             <select id="Category" name="Category" class="form-control">
-                <option value="">@Model.Category</option>
+                <option value="">Välj en kategori</option>
                 @foreach (var category in ViewBag.Categories)
                 {
                     <option value="@category.Value">@category.Text</option>
@@ -56,15 +56,7 @@
         <div class="form-group">
             @Html.LabelFor(m => m.Subcategory)
             <select id="Subcategory" name="Subcategory" class="form-control" disabled>
-                @if (Model.Subcategory != null)
-                {
-                    <option value="">@Model.Subcategory</option>
-                }
-                else
-                {
                     <option value="">Välj en underkategori</option>
-                }
-
             </select>
         </div>
 

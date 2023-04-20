@@ -164,6 +164,9 @@ namespace AdminPanel.Controllers
 
         public IActionResult ModifyItem(ItemViewModel model)
         {
+            var chosenCategory = _categoryRepository.GetCategory(int.Parse(model.Category));
+            
+
             int id = (int)TempData["id"];
             var item = _itemRepository.GetItem(id);
             item.Name = model.Name;
@@ -171,10 +174,17 @@ namespace AdminPanel.Controllers
             item.ArticleNr = model.ArticleNr;
             item.PriceWithoutVAT = model.PriceWithoutVAT;
             item.Description = model.Description;
-            item.CategoryId = _categoryRepository.GetCategoryByName(model.Name).CategoryId;
+            item.CategoryId = chosenCategory.CategoryId;
+            if (model.Subcategory != null)
+            {
+                var chosenSubcategory = _categoryRepository.GetSubcategoryById(int.Parse(model.Subcategory));
+                item.SubcategoryId = chosenSubcategory.SubcategoryId;
+            }
             item.Color = model.Color;
             item.HasSize = model.HasSize;
             item.ProductImages = model.ProductImages;
+
+            _itemRepository.ModifyItem(item);
 
             return RedirectToAction("AllItems");
         }
