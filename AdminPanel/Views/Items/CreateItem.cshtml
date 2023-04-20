@@ -50,8 +50,6 @@
                 }
             </select>
         </div>
-
-        <!-- Skapa en dropdown-lista för underkategorier -->
         <div class="form-group">
             @Html.LabelFor(m => m.Subcategory)
             <select id="Subcategory" name="Subcategory" class="form-control" disabled>
@@ -73,22 +71,22 @@
         <script>
 
             $(document).ready(function () {
-                // Spara det ursprungliga alternativet för "Välj en underkategori"
+                // Sparar det ursprungliga alternativet för "Välj en underkategori"
                 var originalSubcategoryOption = $("#Subcategory option:first-child").clone();
 
-                // Hantera ändringar i huvuddropdown-listan för kategorier
+                // Hanterar ändringar i huvuddropdown-listan för kategorier
                 $("#Category").on("change", function () {
                     var categoryId = $(this).val();
-                    // Inaktivera och återställ dropdown-listan för underkategorier
+                    // Inaktiverar och återställer dropdown-listan för underkategorier
                     $("#Subcategory").prop("disabled", true).empty().append(originalSubcategoryOption);
-                    // Kontrollera om en kategori är vald
+                    // Kontrollerar om en kategori är vald
                     if (categoryId !== "") {
-                        // Anropa GetJSON-metoden för att hämta underkategorier för den valda kategorin
+                        // Anropar GetJSON-metoden för att hämta underkategorier för den valda kategorin
                         $.getJSON("/Items/GetSubcategories", { categoryId: categoryId }, function (data) {
-                            // Aktivera dropdown-listan för underkategorier om det finns data
+                            // Aktiverar dropdown-listan för underkategorier om det finns data
                             if (data.length > 0) {
                                 $("#Subcategory").prop("disabled", false);
-                                // Lägg till underkategorier som option-element i dropdown-listan
+                                // Lägger till underkategorier som option-element i dropdown-listan
                                 $.each(data, function (index, subcategory) {
                                     $("#Subcategory").append("<option value='" + subcategory.value + "'>" + subcategory.text + "</option>");
                                 });
@@ -97,27 +95,7 @@
                     }
                 });
             });
-
-        //    $(document).ready(function () {
-        //        // Hantera ändringar i kategoridropdown-listan
-        //        $("#Category").on("change", function () {
-        //            var categoryId = $(this).val();
-        //            // Göm underkategoridropdown-listan
-        //            $("#Subcategory").prop("disabled", true);
-        //            // Gör ett AJAX-anrop för att hämta underkategorier baserat på den valda kategorin
-        //            $.getJSON("/Items/GetSubcategories", { categoryId: categoryId }, function (data) {
-        //                // Rensa och aktivera underkategoridropdown-listan
-        //                $("#Subcategory").empty().prop("disabled", false);
-        //                // Lägg till option-element för varje underkategori
-        //            $.each(data, function (index, subcategory) {
-        //                 // Loopa igenom varje enskild subcategory i data-objektet
-        //            $("#Subcategory").append("<option value='" + subcategory.value + "'>" + subcategory.text + "</option>");
-        //            console.log(subcategory);
-        //                });
-        //            });
-        //        });
-        //    });
-        //</script>
+        </script>
          }
 </body>
 
