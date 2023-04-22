@@ -80,25 +80,24 @@ namespace AdminPanel.Controllers
                 }
 
                 var chosenCategory = _categoryRepository.GetCategory(int.Parse(model.Category));
-                var chosenSubcategory = _categoryRepository.GetSubcategoryById(int.Parse(model.Subcategory));
 
-                var item = new Item
+                var item = new Item();
+                item.Name = model.Name;
+                item.Brand = model.Brand;
+                item.ArticleNr = model.ArticleNr;
+                item.PriceWithoutVAT = model.PriceWithoutVAT;
+                item.Description = model.Description;
+                item.CategoryId = chosenCategory.CategoryId;
+                item.Color = model.Color;
+                item.HasSize = model.HasSize;
+                item.ProductImages = images;
+                item.VAT = factorValue;
+                item.IsPublished = false;
+                if (model.Subcategory != null)
                 {
-                    Name = model.Name,
-                    Brand = model.Brand,
-                    ArticleNr = model.ArticleNr,
-                    PriceWithoutVAT = model.PriceWithoutVAT,
-                    Description = model.Description,
-                    CategoryId = chosenCategory.CategoryId,
-                    Color = model.Color,
-                    HasSize = model.HasSize,
-                    ProductImages = images,
-                    VAT = factorValue,
-                    IsPublished = false,
-                    SubcategoryId = chosenSubcategory.SubcategoryId
-                };
-
-                _itemRepository.AddItem(item);
+                    var chosenSubcategory = _categoryRepository.GetSubcategoryById(int.Parse(model.Subcategory));
+                }
+                    _itemRepository.AddItem(item);
 
             }
 
