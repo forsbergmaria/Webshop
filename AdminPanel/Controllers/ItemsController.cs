@@ -128,6 +128,7 @@ namespace AdminPanel.Controllers
         }
 
         // Delete an image from an item
+        [HttpPost]
         [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult DeleteImage(int id)
         {
@@ -137,7 +138,8 @@ namespace AdminPanel.Controllers
             _itemRepository.DeleteImageFromDirectory(filePath);
             _itemRepository.DeleteImageFromDB(id);
 
-            return RedirectToAction("AllItems");
+            // Returnera ett JSON-svar
+            return Json(new { success = true, message = "Bilden har tagits bort." });
         }
 
         // Display a form for modifying an item
