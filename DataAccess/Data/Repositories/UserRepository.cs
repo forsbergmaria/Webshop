@@ -27,6 +27,7 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Adds a new user to the database
         public void AddUser(Admin user)
         {
             using (var context = new ApplicationDbContext())
