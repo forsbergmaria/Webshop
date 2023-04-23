@@ -82,5 +82,7 @@ td {
 
 #home-main {
     text-align: center;
-    margin-top: 5em;
+    margin: 2em 15em;
+    background-color: #ECECEC;
+    padding: 5em;
 }
