@@ -10,6 +10,7 @@ namespace DataAccess.Data.Repositories
     public class StatisticsRepository
     {
         // Gets the top n most sold items, based on a specific start and end date
+        // "quantity" determines how many items to be returned
         public List<Item> GetTopMostSoldItems(int quantity, DateTime startDate, DateTime endDate)
         {
             using (var context = new ApplicationDbContext())
