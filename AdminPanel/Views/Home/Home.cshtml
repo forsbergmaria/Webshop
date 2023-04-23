@@ -6,8 +6,16 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 
+<body>
+    <div>
+        <h3 id="welcome-name">Välkommen, @Model.UserFirstName!</h3>
+    </div>
+    <main id="home-main">
+        <h4>Sammanfattning av dagens försäljning</h4>
+        <h6>Antalet köp hittills idag: @Model.UnitsSold stycken</h6>
+    </main>
 
-<h3 id="welcome-name">Välkommen, @Model.UserFirstName!</h3>
+</body>
 
-<h4>Sammanfattning av dagens försäljning</h4>
-<h6>Antalet köp hittills idag: @Model.UnitsSold stycken</h6>
+
+

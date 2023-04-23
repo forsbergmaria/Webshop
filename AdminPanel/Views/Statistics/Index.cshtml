@@ -4,25 +4,5 @@
 <body>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <div class="row">
-    <div class="col-md-3">
-        <!-- Inkludera sidomenyn här -->
-        @Html.Partial("_Sidebar")
-    </div>
 </div>
-<h1>Top 5 Most Sold Items</h1>
-<table>
-    <tr>
-        <th>Item Name</th>
-        <th>Item Price</th>
-        <th>Sold Count</th>
-    </tr>
-    @foreach (var item in Model.TopSoldItems)
-    {
-        <tr>
-            <td>@item.Name</td>
-            <td>@item.PriceWithoutVAT</td>
-            <td>@Model.SoldItemCountForEachItem[item.ItemId]</td>
-        </tr>
-    }
-</table>
 </body>

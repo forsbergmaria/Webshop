@@ -7,35 +7,102 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 
+<body>
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Home" asp-action="Home">Startsida</a>
-        </li>
-    <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Kontoinställningar</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-controller="Accounts" asp-action="Index">Administratörer</a>
-    </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Categories" asp-action="Index">Kategorier</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Items" asp-action="Index">Produkter</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Orders" asp-action="Index">Beställningar</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Statistics" asp-action="Index">Statistik</a>
-        </li>
-    <li class="nav-item">
-        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button type="submit" class="nav-link btn btn-link text-dark">Logga ut</button>
-        </form>
-    </li>
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Home">Startsida</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Kontoinställningar</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                        asp-controller="Accounts" asp-action="AllAccounts">
+                                <span>Administratörer</span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            @if (User.IsInRole("Huvudadministratör"))
+                            {
+                                <li><a class="dropdown-item" asp-controller="Accounts" asp-action="AllAccounts">Alla konton</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="Accounts" asp-action="Register">Registrera nytt konto</a></li>
+                            }
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                       asp-controller="Categories" asp-action="AllCategories">
+                                <span>Kategorier</span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" asp-controller="Categories" asp-action="AllCategories">Alla kategorier</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" asp-controller="Categories" asp-action="Create">Lägg till kategori</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" asp-controller="Categories" asp-action="CreateSubcategory">Lägg till underkategori</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                       asp-controller="Items" asp-action="AllItems">
+                                <span>Produkter</span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" asp-controller="Items" asp-action="AllItems">Alla produkter</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" asp-controller="Items" asp-action="CreateItemForm">Lägg till produkt</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                       asp-controller="Orders" asp-action="Index">
+                       <span>
+                        Beställningar
+                       </span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" asp-controller="Orders" asp-action="">Alla beställningar</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" asp-controller="Orders" asp-action="">Action</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" asp-controller="Orders" asp-action="">Action</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                       asp-controller="" asp-action="">
+                       <span>Statistik</span>    
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" asp-controller="Statistics" asp-action="">Mest sålda produkter</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" asp-controller="Statistics" asp-action="">Minst sålda produkter</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" asp-controller="Statistics" asp-action="">Intäkter</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                            <button type="submit" class="nav-link btn btn-link text-dark">Logga ut</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    
+
+
+
+
 }
 else
 {
@@ -44,3 +111,5 @@ else
     </li>
 }
 </ul>
+
+</body>
