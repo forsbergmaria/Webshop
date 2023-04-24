@@ -8,7 +8,6 @@ namespace Models.ViewModels
 {
     public class ShoppingCart
     {
-        public int ShoppingCartId { get; set;}
         public List<Item>? Items { get; set; }
         public int Quantity;
 

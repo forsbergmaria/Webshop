@@ -20,18 +20,25 @@ namespace Webshop.Controllers
             _ca = ca;
         }
 
-        public List<Item> GetCartItems()
+        public ShoppingCart GetCartItems()
         {
             var shoppingCartCookie = _ca.HttpContext.Request.Cookies["ShoppingCart"];
             var itemIds = shoppingCartCookie?.Split(',').Select(int.Parse) ?? new List<int>();
-            List<Item> returnList = new List<Item>();
+            List<Item> cartItems = new List<Item>();
             foreach(var item in itemIds)
             {
                 var specificItem = itemRepository.GetItem(item);
-                returnList.Add(specificItem);
+                cartItems.Add(specificItem);
             }
+
+            ShoppingCart cart = new ShoppingCart
+            {
+                Items = cartItems,
+                Quantity = cartItems.Count()
+            };
+
            
-            return returnList;
+            return cart;
         }
 
         public async Task AddToCart(int id)
