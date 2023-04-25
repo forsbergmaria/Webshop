@@ -6,12 +6,13 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <div>
+    <h3 class="page-heading">Alla administratörer</h3>
     <form method="get" asp-controller="Accounts" asp-action="SearchAdmin">
         <div class="form-group">
             <label for="searchString">Sök efter administratör:</label>
             <input type="text" name="searchString" class="form-control" />
         </div>
-        <button type="submit" class="btn btn-primary">Sök</button>
+        <button type="submit" class="btn btn-outline-primary search-btn">Sök</button>
     </form>
     <div class="table-hover">
         <table class="table table-hover">

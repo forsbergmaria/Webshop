@@ -86,3 +86,17 @@ td {
     background-color: #ECECEC;
     padding: 5em;
 }
+
+.page-heading {
+    margin-bottom: 1em;
+    text-align: center;
+}
+
+.search-btn {
+    margin-top: 0.5em;
+    margin-bottom: 3em;
+}
+
+.delete-btn {
+    margin-top: 0.5em;
+}
