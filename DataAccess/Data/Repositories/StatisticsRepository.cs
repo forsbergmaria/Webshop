@@ -240,7 +240,7 @@ namespace DataAccess.Data.Repositories
         }
 
         // Retrieves total sales amount for a specific item by summing up the sales from all transactions
-        public decimal GetTotalSalesForProduct(int productId)
+        public decimal GetTotalSalesForItem(int productId)
         {
             using (var context = new ApplicationDbContext())
             {

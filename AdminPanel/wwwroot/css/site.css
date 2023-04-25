@@ -100,3 +100,12 @@ td {
 .delete-btn {
     margin-top: 0.5em;
 }
+
+.btn-sm {
+    display: inline-block;
+}
+
+.item-info-img {
+    width: 15em;
+    height: 15em;
+}

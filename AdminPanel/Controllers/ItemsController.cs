@@ -282,5 +282,19 @@ namespace AdminPanel.Controllers
             List<Item> items = _itemRepository.GetAllItems();
             return View(items);
         }
+
+        public IActionResult ViewMoreInfo(int id)
+        {
+            var item = _itemRepository.GetItem(id);
+            return View(item);
+        }
+
+        public IActionResult ItemPublisherManager(int id)
+        {
+            var item = _itemRepository.GetItem(id);
+            item.IsPublished = !item.IsPublished;
+            _itemRepository.ModifyItem(item);
+            return View("ViewMoreInfo", item);
+        }
     }
 }

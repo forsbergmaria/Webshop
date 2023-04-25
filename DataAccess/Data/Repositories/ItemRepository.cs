@@ -46,6 +46,7 @@ namespace Data
             {
                 return context.Items
                     .Include(i => i.Category)
+                    .Include(i => i.ProductImages)
                     .Include(i => i.Subcategory)
                     .FirstOrDefault(i => i.ItemId == id);
             }

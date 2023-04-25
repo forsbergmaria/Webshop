@@ -203,23 +203,23 @@ namespace AdminPanel.Controllers
             return View(model);
         }
 
-        //public IActionResult CategoryPublisherManager(int id)
-        //{
-        //    var category = _categoryRepository.GetCategory(id);
-        //    category.IsPublished = !category.IsPublished;
-        //    _dbContext.SaveChanges();
+        public IActionResult CategoryPublisherManager(int id)
+        {
+            var category = _categoryRepository.GetCategory(id);
+            category.IsPublished = !category.IsPublished;
+            _categoryRepository.ModifyCategory(category);
 
-        //    return RedirectToAction("AllCategories");
-        //}
+            return RedirectToAction("AllCategories");
+        }
 
-        //public IActionResult SubcategoryPublisherManager(int id)
-        //{
-        //    var subcategory = _categoryRepository.GetSubcategoryFromCategory(id);
-        //    subcategory.IsPublished = !subcategory.IsPublished;
-        //    _dbContext.SaveChanges();
+        public IActionResult SubcategoryPublisherManager(int id)
+        {
+            var subcategory = _categoryRepository.GetSubcategoryFromCategory(id);
+            subcategory.IsPublished = !subcategory.IsPublished;
+            _categoryRepository.ModifySubcategory(subcategory);
 
-        //    return RedirectToAction("AllCategories");
-        //}
+            return RedirectToAction("AllCategories");
+        }
 
 
         // Display a form for updating a category

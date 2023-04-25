@@ -1,0 +1,79 @@
+﻿@using Models
+@model Item
+
+<head>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div>
+        <h2>@Model.Name</h2>
+    </div>
+    <div>
+        @if (Model.ProductImages.Any())
+        {
+            @foreach (var image in Model.ProductImages.DistinctBy(i => i.Path))
+            {
+                <img class="img-fluid item-info-img" src="@Url.Content(image.Path)" alt="Produktbild" />
+            }
+        }
+        else
+        {
+            <img class="item-info-img" src="~/images/productImages/noimage.jpg" alt="Ingen produktbild tillgänglig" />
+        }
+
+    </div>
+    <div>
+        @if (Model.ArticleNr != null)
+        {
+            <div class="item-info-item">
+                <strong>Artikelnummer: </strong><p>@Model.ArticleNr</p>
+            </div>
+        }
+        <div class="item-info-item">
+            <strong>Varumärke: </strong><p>@Model.Brand</p>
+        </div>
+        @if (Model.Color != null)
+        {
+            <div class="item-info-item">
+                <strong>Färg: </strong><p>@Model.Color</p>
+            </div>
+        }
+        <div class="item-info-item">
+            <strong>Produktbeskrivning: </strong><p>@Model.Description</p>
+        </div>
+        <div class="item-info-item">
+            <strong>Kategori</strong><p>@Model.Category.Name</p>
+        </div>
+        @if (Model.SubcategoryId != null)
+        {
+            <div class="item-info-item">
+                <strong>Underkategori: </strong><p>@Model.Subcategory.Name</p>
+            </div>
+        }
+        <div class="item-info-item">
+            <strong>Pris (exkl. moms)</strong><p>@Model.PriceWithoutVAT</p>
+        </div>
+        <div class="item-info-item">
+            <strong>Momssats: </strong><p>@Model.VAT</p>
+        </div>
+    </div>
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group mr-2" role="group" aria-label="First group">
+            @if (Model.IsPublished == false)
+            {
+                <div>
+                    <button class="btn btn-success" onclick="location.href='@Url.Action("ItemPublisherManager", "Items", new { id = @Model.ItemId })'">Publicera på webbshoppen</button>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <button class="btn btn-success" onclick="location.href='@Url.Action("ItemPublisherManager", "Items", new { id = @Model.ItemId })'">Avpublicera från webbshoppen</button>
+                </div>
+            }
+            <button class="btn btn-primary" onclick="location.href='@Url.Action("ModifyItemForm", "Items", new { id = @Model.ItemId })'">Redigera produkt</button>
+            <button class="btn btn-danger" onclick="if(confirm('Är du säker på att du vill ta bort den här produkten? Det går inte att ångra.')){ location.href='@Url.Action("DeleteItem", "Items", new { id = Model.ItemId })' }">Radera produkt</button>
+        </div>
+    </div>
+
+</body>
