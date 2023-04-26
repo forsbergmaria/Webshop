@@ -10,6 +10,6 @@ namespace Models.ViewModels
     {
         public List<Item>? Items { get; set; }
         public int Quantity;
-
+        public Dictionary<int, int>? ItemQuantity;
     }
 }

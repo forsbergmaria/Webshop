@@ -25,16 +25,23 @@ namespace Webshop.Controllers
             var shoppingCartCookie = _ca.HttpContext.Request.Cookies["ShoppingCart"];
             var itemIds = shoppingCartCookie?.Split(',').Select(int.Parse) ?? new List<int>();
             List<Item> cartItems = new List<Item>();
+
+            //Gets list of Items from itemIds
             foreach(var item in itemIds)
             {
                 var specificItem = itemRepository.GetItem(item);
                 cartItems.Add(specificItem);
             }
 
+            //Dictionary to contain a key-value pair of the quantity of a specific type of item (itemId, quantity)
+            Dictionary<int,int> itemQuantity = cartItems.GroupBy(x => x.ItemId).ToDictionary(x => x.Key, x => x.Count());
+
+            //Instantiate the ShoppingCart to be returned
             ShoppingCart cart = new ShoppingCart
             {
                 Items = cartItems,
-                Quantity = cartItems.Count()
+                Quantity = cartItems.Count(),
+                ItemQuantity = itemQuantity
             };
 
            
