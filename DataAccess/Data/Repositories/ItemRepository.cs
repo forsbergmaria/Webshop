@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using Models.ViewModels;
 using System.Web.Mvc;
 using System.Web.WebPages;
 
@@ -160,6 +161,30 @@ namespace Data
             {
                 var images = context.Images.Where(i => i.ItemId == id).ToList();
                 return images;
+            }
+        }
+
+        public void AttachRange(IEnumerable<CartLine> items)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                foreach (var cartLine in items)
+                {
+                    context.Items.AttachRange(cartLine.Item);
+                }
+                context.SaveChanges();
+            }
+        }
+
+        public void AttachRange(IEnumerable<Item> items)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                foreach (var item in items)
+                {
+                    context.Items.AttachRange(item);
+                }
+                context.SaveChanges();
             }
         }
     }

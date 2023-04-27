@@ -4,13 +4,18 @@ using Models;
 using SwedbankPay.Sdk.PaymentInstruments;
 using SwedbankPay.Sdk;
 using System.Web.Helpers;
+using Models.ViewModels;
+using Models.Extensions;
+using Data;
 
 namespace Webshop.Controllers
 {
     public class PaymentController : Controller
     {
+        OrderRepository orderRepository { get { return new OrderRepository(); } }
+        ItemRepository itemRepository { get { return new ItemRepository(); } }
+
         private readonly Cart cartService;
-        private readonly StoreDbContext context;
         private readonly PayeeInfoConfig payeeInfoOptions;
         private readonly ISwedbankPayClient swedbankPayClient;
         private readonly UrlsOptions urls;
@@ -19,13 +24,11 @@ namespace Webshop.Controllers
         public PaymentController(
             IOptionsSnapshot<PayeeInfoConfig> payeeInfoOptionsAccessor,
             Cart cart,
-            StoreDbContext dbContext,
             ISwedbankPayClient payClient,
             IOptionsSnapshot<UrlsOptions> urlsAccessor)
         {
             this.payeeInfoOptions = payeeInfoOptionsAccessor.Value;
             this.cartService = cart;
-            this.context = dbContext;
             this.swedbankPayClient = payClient;
             this.urls = urlsAccessor.Value;
         }
@@ -43,7 +46,7 @@ namespace Webshop.Controllers
 
                 TempData["AbortMessage"] = $"Payment Order: {response.PaymentOrder.Id} has been {response.PaymentOrder.State}";
                 this.cartService.PaymentOrderLink = null;
-                this.cartService.Update();
+                //this.cartService.Update();
 
                 return RedirectToAction(nameof(Index), "Products");
             }
@@ -180,10 +183,11 @@ namespace Webshop.Controllers
                     case PaymentInstrument.CreditCard:
                         var cardPayment = await this.swedbankPayClient.Payments.CardPayments.Get(new Uri(paymentId, UriKind.RelativeOrAbsolute));
 
-                        var order = await this.context.Orders.Include(l => l.Lines).ThenInclude(p => p.Product).FirstOrDefaultAsync();
+                        var order = orderRepository.GetAllOrders().FirstOrDefault();
+                        //var order = await this.context.Orders.Include(l => l.Lines).ThenInclude(p => p.Product).FirstOrDefaultAsync();
                         var orderItems = order.Lines.ToOrderItems();
 
-                        var captureRequest = new SwedbankPay.Sdk.PaymentInstruments.Card.CardPaymentCaptureRequest(new Amount(order.Lines.Sum(e => e.Quantity * e.Product.Price)),
+                        var captureRequest = new SwedbankPay.Sdk.PaymentInstruments.Card.CardPaymentCaptureRequest(new Amount(order.Lines.Sum(e => e.Quantity * e.Item.PriceWithoutVAT)),
                                                                                                                    new Amount(0),
                                                                                                                    description,
                                                                                                                    DateTime.Now.Ticks.ToString());
@@ -213,20 +217,20 @@ namespace Webshop.Controllers
         {
             if (this.cartService.CartLines != null && this.cartService.CartLines.Any())
             {
-                var products = this.cartService.CartLines.Select(p => p.Product);
-                this.context.Products.AttachRange(products);
+                var items = this.cartService.CartLines;
+                itemRepository.AttachRange(items);
 
-                this.context.Orders.Add(new Order
+                orderRepository.CreateOrder(new Order
                 {
                     PaymentOrderLink = this.cartService.PaymentOrderLink != null ? new Uri(this.cartService.PaymentOrderLink, UriKind.RelativeOrAbsolute) : null,
                     PaymentLink = !string.IsNullOrWhiteSpace(paymentLinkId) ? new Uri(paymentLinkId, UriKind.RelativeOrAbsolute) : null,
                     Instrument = this.cartService.Instrument,
                     Lines = this.cartService.CartLines.ToList()
                 });
-                this.context.SaveChanges(true);
                 this.cartService.Clear();
             }
         }
+
 
         [HttpGet]
         public async Task<IActionResult> PaymentOrderReversal(string paymentOrderId)
@@ -260,7 +264,8 @@ namespace Webshop.Controllers
                 var description = "Reversing the captured amount";
                 IReversalResponse response = null;
 
-                var order = await this.context.Orders.Include(l => l.Lines).ThenInclude(p => p.Product).FirstOrDefaultAsync();
+                var order = orderRepository.GetAllOrders().FirstOrDefault();
+                //var order = await this.context.Orders.Include(l => l.Lines).ThenInclude(p => p.Product).FirstOrDefaultAsync();
                 switch (instrument)
                 {
                     case PaymentInstrument.Swish:
@@ -289,9 +294,10 @@ namespace Webshop.Controllers
 
         private async Task<SwedbankPay.Sdk.PaymentInstruments.Card.CardPaymentRecurRequest> GetRecurringRequest(string description, string reccurenceToken)
         {
-            var order = await this.context.Orders.Include(l => l.Lines).ThenInclude(p => p.Product).FirstOrDefaultAsync();
+            var order = orderRepository.GetAllOrders().FirstOrDefault();
+            //var order = await this.context.Orders.Include(l => l.Lines).ThenInclude(p => p.Product).FirstOrDefaultAsync();
 
-            var request = new SwedbankPay.Sdk.PaymentInstruments.Card.CardPaymentRecurRequest(PaymentIntent.AutoCapture, reccurenceToken, new Currency("SEK"), new Amount(order.Lines.Sum(e => e.Quantity * e.Product.Price)),
+            var request = new SwedbankPay.Sdk.PaymentInstruments.Card.CardPaymentRecurRequest(PaymentIntent.AutoCapture, reccurenceToken, new Currency("SEK"), new Amount(order.Lines.Sum(e => e.Quantity * e.Item.PriceWithoutVAT)),
                                                                                        new Amount(0), description, "useragent", new Language("sv-SE"),
                                                                                        new Urls(this.urls.HostUrls.ToList(), this.urls.CompleteUrl,
                                                                                            this.urls.TermsOfServiceUrl)
@@ -306,10 +312,11 @@ namespace Webshop.Controllers
 
         private async Task<SwedbankPay.Sdk.PaymentOrders.PaymentOrderCaptureRequest> GetCaptureRequest(string description)
         {
-            var order = await this.context.Orders.Include(l => l.Lines).ThenInclude(p => p.Product).FirstOrDefaultAsync();
+            var order = orderRepository.GetAllOrders().FirstOrDefault();
+            //var order = await this.context.Orders.Include(l => l.Lines).ThenInclude(p => p.Product).FirstOrDefaultAsync();
             var orderItems = order.Lines.ToOrderItems();
 
-            var request = new SwedbankPay.Sdk.PaymentOrders.PaymentOrderCaptureRequest(new Amount(order.Lines.Sum(e => e.Quantity * e.Product.Price)),
+            var request = new SwedbankPay.Sdk.PaymentOrders.PaymentOrderCaptureRequest(new Amount(order.Lines.Sum(e => e.Quantity * e.Item.PriceWithoutVAT)),
                                                                   new Amount(0), description, DateTime.Now.Ticks.ToString());
             foreach (var item in orderItems)
             {
@@ -321,10 +328,11 @@ namespace Webshop.Controllers
 
         private async Task<SwedbankPay.Sdk.PaymentOrders.PaymentOrderReversalRequest> GetReversalRequest(string description)
         {
-            var order = await this.context.Orders.Include(l => l.Lines).ThenInclude(p => p.Product).FirstOrDefaultAsync();
+            var order = orderRepository.GetAllOrders().FirstOrDefault();
+            //var order = await this.context.Orders.Include(l => l.Lines).ThenInclude(p => p.Product).FirstOrDefaultAsync();
             var orderItems = order.Lines.ToOrderItems();
 
-            var request = new SwedbankPay.Sdk.PaymentOrders.PaymentOrderReversalRequest(new Amount(order.Lines.Sum(e => e.Quantity * e.Product.Price)),
+            var request = new SwedbankPay.Sdk.PaymentOrders.PaymentOrderReversalRequest(new Amount(order.Lines.Sum(e => e.Quantity * e.Item.PriceWithoutVAT)),
                                                                                  new Amount(0),
                                                                                  description,
                                                                                  DateTime.Now.Ticks.ToString());

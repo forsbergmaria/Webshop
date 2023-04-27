@@ -14,6 +14,7 @@ namespace Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ItemId { get; set; }
+        public string Class { get; set; }
         public string Name { get; set; }
         public string Brand { get; set; }
         public string? ArticleNr { get; set; }

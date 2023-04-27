@@ -20,7 +20,7 @@ namespace Webshop.Controllers
             _ca = ca;
         }
 
-        public ShoppingCart GetCartItems()
+        public ShoppingCart GetCartItems(IServiceProvider provider)
         {
             var shoppingCartCookie = _ca.HttpContext.Request.Cookies["ShoppingCart"];
             var itemIds = shoppingCartCookie?.Split(',').Select(int.Parse) ?? new List<int>();
