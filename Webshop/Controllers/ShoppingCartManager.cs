@@ -20,12 +20,32 @@ namespace Webshop.Controllers
             _ca = ca;
         }
 
-        public List<Item> GetCartItems()
+        public ShoppingCart GetCartItems()
         {
             var shoppingCartCookie = _ca.HttpContext.Request.Cookies["ShoppingCart"];
             var itemIds = shoppingCartCookie?.Split(',').Select(int.Parse) ?? new List<int>();
-            var existingItems = itemRepository.GetAllItems().Where(item => itemIds.Contains(item.ItemId)).ToList();
-            return existingItems;
+            List<Item> cartItems = new List<Item>();
+
+            //Gets list of Items from itemIds
+            foreach(var item in itemIds)
+            {
+                var specificItem = itemRepository.GetItem(item);
+                cartItems.Add(specificItem);
+            }
+
+            //Dictionary to contain a key-value pair of the quantity of a specific type of item (itemId, quantity)
+            Dictionary<int,int> itemQuantity = cartItems.GroupBy(x => x.ItemId).ToDictionary(x => x.Key, x => x.Count());
+
+            //Instantiate the ShoppingCart to be returned
+            ShoppingCart cart = new ShoppingCart
+            {
+                Items = cartItems,
+                Quantity = cartItems.Count(),
+                ItemQuantity = itemQuantity
+            };
+
+           
+            return cart;
         }
 
         public async Task AddToCart(int id)
@@ -35,7 +55,6 @@ namespace Webshop.Controllers
 
             var shoppingCart = httpContext.Session.GetObjectFromJson<List<int>>("ShoppingCart") ?? new List<int>();
 
-            //
             if (!shoppingCart.Contains(id))
             {
                 shoppingCart.Add(id);
