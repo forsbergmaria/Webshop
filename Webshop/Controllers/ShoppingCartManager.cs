@@ -93,11 +93,11 @@ namespace Webshop.Controllers
             _cm = cm;
         }
 
-        public IActionResult Index()
-        {
-            var cartItems = _cm.GetCartItems();
-            return View(cartItems);
-        }
+        //public IActionResult Index()
+        //{
+        //    var cartItems = _cm.GetCartItems();
+        //    return View(cartItems);
+        //}
 
         public IActionResult Add(int id)
         {
