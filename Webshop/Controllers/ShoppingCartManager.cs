@@ -20,7 +20,7 @@ namespace Webshop.Controllers
             _ca = ca;
         }
 
-        public List<Item> GetCartItems()
+        public List<Item> GetCartItems(IServiceProvider services)
         {
             var shoppingCartCookie = _ca.HttpContext.Request.Cookies["ShoppingCart"];
             var itemIds = shoppingCartCookie?.Split(',').Select(int.Parse) ?? new List<int>();
@@ -35,7 +35,7 @@ namespace Webshop.Controllers
 
             var shoppingCart = httpContext.Session.GetObjectFromJson<List<int>>("ShoppingCart") ?? new List<int>();
 
-            //
+            
             if (!shoppingCart.Contains(id))
             {
                 shoppingCart.Add(id);

@@ -17,8 +17,12 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.11" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.13" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
+    <PackageReference Include="SwedbankPay.Sdk" Version="3.3.0" />
+    <PackageReference Include="SwedbankPay.Sdk.Extensions" Version="3.3.0" />
+    <PackageReference Include="System.Text.Json" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>

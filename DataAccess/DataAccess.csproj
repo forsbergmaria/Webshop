@@ -21,7 +21,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SwedbankPay.Sdk" Version="3.3.0" />
+    <PackageReference Include="SwedbankPay.Sdk.Extensions" Version="3.3.0" />
+    <PackageReference Include="System.Text.Json" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
