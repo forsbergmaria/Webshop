@@ -36,12 +36,16 @@ namespace Webshop.Controllers
             //Dictionary to contain a key-value pair of the quantity of a specific type of item (itemId, quantity)
             Dictionary<int,int> itemQuantity = cartItems.GroupBy(x => x.ItemId).ToDictionary(x => x.Key, x => x.Count());
 
+            // calculate the total sum of all order amounts
+            decimal totalPrice = cartItems.Sum(o => o.PriceWithoutVAT);
+
             //Instantiate the ShoppingCart to be returned
             ShoppingCart cart = new ShoppingCart
             {
                 Items = cartItems,
                 Quantity = cartItems.Count(),
-                ItemQuantity = itemQuantity
+                ItemQuantity = itemQuantity,
+                Total = totalPrice
             };
 
            
@@ -126,7 +130,6 @@ namespace Webshop.Controllers
 
             return RedirectToAction("Index");
         }
-
 
     }
 
