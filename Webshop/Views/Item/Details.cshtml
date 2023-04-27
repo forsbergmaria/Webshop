@@ -30,7 +30,12 @@
                       </div>
                     }
                         <div class="d-flex">
-                           <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
+                            <div>
+                                <form>
+                                <input type="number" name="quantity" value="1" min="1" max="10" class="form-control" id="quantity-input" />
+                                @*<button type="button" class="btn btn-outline-dark flex-shrink-0" id="increment-btn">+</button>*@
+                                </form>
+                            </div>
                             <form method="post" action="@Url.Action("Add", "ShoppingCart")">
                                 <input type="hidden" name="id" value="@Model.Item.ItemId"/>
                                   <button class="btn btn-outline-dark flex-shrink-0" type="submit">Lägg till i varukorg</button>
@@ -40,3 +45,15 @@
                 </div>
             </div>
 </section>
+
+<script>
+    $(document).ready(function() {
+        $('#increment-btn').click(function() {
+            var currentQuantity = parseInt($('#quantity-input').val());
+            var maxQuantity = parseInt($('#quantity-input').attr('max'));
+            if (currentQuantity < maxQuantity) {
+                $('#quantity-input').val(currentQuantity + 1);
+            }
+        });
+    });
+</script>
