@@ -54,9 +54,10 @@ builder.Services.Configure<PayeeInfoConfig>(options =>
 
 var ca = new HttpContextAccessor();
 var shoppingCartManager = new ShoppingCartManager(ca);
+var cart = new Cart();
 
 builder.Services.Configure<UrlsOptions>(builder.Configuration.GetSection("Urls"));
-builder.Services.AddScoped(provider => shoppingCartManager.GetCartItems(provider));
+builder.Services.AddScoped(provider => cart.ge(provider));
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
 void configureClient(HttpClient a)
