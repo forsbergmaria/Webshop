@@ -8,9 +8,11 @@
     </head>
 <body>
     <div class="">
-        <div class="text-center">
-            <h2 class="display-10 pt-4 pb-4">"@ViewBag.Searchstring" gav följande sökresultat:</h2>
-        </div>
+       <div class="text-center display-10 pt-4 pb-4">
+        @if (ViewBag.Searchstring != null) {
+            <h2 class="">"@ViewBag.Searchstring" gav följande sökresultat:</h2>
+        }
+       </div>
             <div class="row row-cols-1 row-cols-md-4 g-4">
                   @foreach(var item in Model)
                     {
