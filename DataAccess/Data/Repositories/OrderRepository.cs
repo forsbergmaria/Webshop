@@ -29,9 +29,7 @@ namespace Data
         {
             using (var context = new ApplicationDbContext())
             {
-                return context.Orders
-                    .Include(o => o.Lines).
-                        ThenInclude(i => i.Item).ToList();
+                return context.Orders.ToList();
             }
         }
 

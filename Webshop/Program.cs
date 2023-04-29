@@ -40,31 +40,6 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
-var swedbankPayConSettings = builder.Configuration.GetSection("SwedbankPay");
-builder.Services.Configure<SwedbankPayConnectionSettings>(swedbankPayConSettings);
-
-var swedbankPayOptions = swedbankPayConSettings.Get<SwedbankPayConnectionSettings>();
-builder.Services.AddSingleton(s => swedbankPayOptions);
-
-builder.Services.Configure<PayeeInfoConfig>(options =>
-{
-    options.PayeeId = swedbankPayOptions.PayeeId;
-    options.PayeeReference = DateTime.Now.Ticks.ToString();
-});
-
-builder.Services.Configure<UrlsOptions>(builder.Configuration.GetSection("Urls"));
-builder.Services.AddScoped(provider => SessionCart.GetCart(provider));
-builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-
-void configureClient(HttpClient a)
-{
-    a.BaseAddress = swedbankPayOptions.ApiBaseUrl;
-    a.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", swedbankPayOptions.Token);
-    a.DefaultRequestHeaders.Add("User-Agent", $"swedbankpay-webshop/{Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version}");
-}
-
-builder.Services.AddSwedbankPayClient(configureClient);
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

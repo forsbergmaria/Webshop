@@ -163,29 +163,5 @@ namespace Data
                 return images;
             }
         }
-
-        public void AttachRange(IEnumerable<CartLine> items)
-        {
-            using (var context = new ApplicationDbContext())
-            {
-                foreach (var cartLine in items)
-                {
-                    context.Items.AttachRange(cartLine.Item);
-                }
-                context.SaveChanges();
-            }
-        }
-
-        public void AttachRange(IEnumerable<Item> items)
-        {
-            using (var context = new ApplicationDbContext())
-            {
-                foreach (var item in items)
-                {
-                    context.Items.AttachRange(item);
-                }
-                context.SaveChanges();
-            }
-        }
     }
 }

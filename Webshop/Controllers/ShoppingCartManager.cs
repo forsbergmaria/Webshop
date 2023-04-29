@@ -20,7 +20,7 @@ namespace Webshop.Controllers
             _ca = ca;
         }
 
-        public ShoppingCart GetCartItems(IServiceProvider provider)
+        public ShoppingCart GetCartItems()
         {
             var shoppingCartCookie = _ca.HttpContext.Request.Cookies["ShoppingCart"];
             var itemIds = shoppingCartCookie?.Split(',').Select(int.Parse) ?? new List<int>();
@@ -93,11 +93,11 @@ namespace Webshop.Controllers
             _cm = cm;
         }
 
-        //public IActionResult Index()
-        //{
-        //    var cartItems = _cm.GetCartItems();
-        //    return View(cartItems);
-        //}
+        public IActionResult Index()
+        {
+            var cartItems = _cm.GetCartItems();
+            return View(cartItems);
+        }
 
         public IActionResult Add(int id)
         {

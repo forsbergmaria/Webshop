@@ -16,9 +16,6 @@ namespace Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OrderId { get; set; }
-        public Uri PaymentLink { get; set; }
-        public Uri PaymentOrderLink { get; set; }
-        public PaymentInstrument Instrument { get; set; }
         public DateTime OrderDate { get; set; }
         public string CustomerFirstName { get; set; }
         public string CustomerLastName { get; set; }
@@ -29,6 +26,5 @@ namespace Models
         public int? ShippingStatusId { get; set; }
         [ForeignKey(nameof(ShippingStatusId))]
         public virtual ShippingStatus? ShippingStatus { get; set; }
-        [BindNever] public ICollection<CartLine> Lines { get; set; }
     }
 }
