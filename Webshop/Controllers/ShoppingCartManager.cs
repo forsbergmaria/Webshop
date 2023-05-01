@@ -36,12 +36,16 @@ namespace Webshop.Controllers
             //Dictionary to contain a key-value pair of the quantity of a specific type of item (itemId, quantity)
             Dictionary<int,int> itemQuantity = cartItems.GroupBy(x => x.ItemId).ToDictionary(x => x.Key, x => x.Count());
 
+            // calculate the total sum of all order amounts
+            decimal totalPrice = cartItems.Sum(o => o.PriceWithoutVAT);
+
             //Instantiate the ShoppingCart to be returned
             ShoppingCart cart = new ShoppingCart
             {
                 Items = cartItems,
                 Quantity = cartItems.Count(),
-                ItemQuantity = itemQuantity
+                ItemQuantity = itemQuantity,
+                Total = totalPrice
             };
 
            
@@ -127,6 +131,51 @@ namespace Webshop.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult Remove(int id, int quantity)
+        {
+            var existingCookie = Request.Cookies["ShoppingCart"];
+            string newCookieValue = null;
+
+            if (existingCookie != null)
+            {
+                // Split the existing cookie value into individual items
+                var items = existingCookie.Split(',');
+
+                // Create a new list to hold the updated items
+                var updatedItems = new List<string>();
+
+                // Iterate over the items and add all but the one with the specified ID
+                // Add back the items of specified id according to Quantity
+                foreach (var item in items)
+                {
+                    if (item != id.ToString())
+                    {
+                        updatedItems.Add(item);
+                    }
+                    if(item == id.ToString() && quantity > 0)
+                    {
+                        updatedItems.Add(item);
+                        quantity--;
+                    }
+                }
+
+                // Combine the updated items into a new cookie value
+                newCookieValue = string.Join(",", updatedItems);
+            }
+
+            var cookieOptions = new CookieOptions
+            {
+                Expires = DateTime.UtcNow.AddDays(7),
+                IsEssential = true,
+                HttpOnly = true,
+                SameSite = SameSiteMode.Strict,
+                Secure = true
+            };
+
+            Response.Cookies.Append("ShoppingCart", newCookieValue, cookieOptions);
+
+            return RedirectToAction("Index");
+        }
 
     }
 
