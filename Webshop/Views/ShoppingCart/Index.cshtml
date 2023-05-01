@@ -10,7 +10,8 @@
         <div class="card mb-4">
           <div class="card-body p-4">
             <div class="row align-items-center">
-                               @if(Model != null && Model.Items.Count > 0) {
+                 @if(Model != null && Model.Items.Count > 0) {
+
                     @foreach(var valuePair in Model.ItemQuantity)
                     {
                         var item = Model.Items.Where(i => i.ItemId == valuePair.Key).Distinct().FirstOrDefault(); 
@@ -33,21 +34,40 @@
               </div>
               <div class="col-md-2 d-flex justify-content-center">
                 <div>
-                  <p class="small text-muted mb-4 pb-2">Quantity</p>
-                  <p class="lead fw-normal mb-0">@valuePair.Value</p>
+                    <form method="post" action="@Url.Action("Remove", "ShoppingCart")">
+                        <input type="hidden" name="id" value="@item.ItemId"/>
+                        <div class="form-group">
+                            <label for="quantity-@item.ItemId">Quantity:</label>
+                            <select class="form-control" name="quantity" id="quantity-@item.ItemId">
+                                @for(int i = @valuePair.Value; i > 0; i--)
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
                 </div>
               </div>
               <div class="col-md-2 d-flex justify-content-center">
                 <div>
                   <p class="small text-muted mb-4 pb-2">Price</p>
-                  <p class="lead fw-normal mb-0">$799</p>
+                  <p class="lead fw-normal mb-0">@item.PriceWithoutVAT</p>
                 </div>
               </div>
               <div class="col-md-2 d-flex justify-content-center">
                 <div>
                   <p class="small text-muted mb-4 pb-2">Total</p>
-                  <p class="lead fw-normal mb-0">$799</p>
-                </div>
+                     @if(@valuePair.Value > 1)
+                         {
+                            var total = @item.PriceWithoutVAT * @valuePair.Value;
+                            <p class="lead fw-normal mb-0">@total</p>
+                         }
+                          else
+                            {
+                              <p class="lead fw-normal mb-0">@item.PriceWithoutVAT</p>    
+                            }
+                 </div>
               </div>
                     }
                 }
@@ -61,7 +81,7 @@
             <div class="float-end">
               <p class="mb-0 me-5 d-flex align-items-center">
                 <span class="small text-muted me-2">Order total:</span> <span
-                  class="lead fw-normal">$799</span>
+                  class="lead fw-normal">@Model.Total</span>
               </p>
             </div>
 

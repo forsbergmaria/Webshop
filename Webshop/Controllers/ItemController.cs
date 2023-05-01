@@ -25,6 +25,13 @@ namespace Webshop.Controllers
             return View(item);
         }
 
+        public ActionResult Category(int id)
+        {
+            var items = itemService.GetItemsPerCategory(id);
+            //typ get categoryselectmodel
+            return View(items);
+        }
+
         public IActionResult Filter(SelectCategoryModel viewmodel)
         {
             viewmodel.Categories = categoryRepository.GetAllCategories();
