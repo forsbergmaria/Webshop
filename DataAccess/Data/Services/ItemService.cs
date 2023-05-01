@@ -90,5 +90,17 @@ namespace DataAccess.Data.Services
             
             return details;
         }
+
+        public SelectCategoryModel GetItemsPerCategory (int id)
+        {
+            List<Item> items = itemRepository.GetAllItems().Where(i => i.CategoryId == id).ToList();
+            List<Subcategory> subcategories = categoryRepository.GetAllSubcategories().Where(s => s.CategoryId == id).ToList();
+            SelectCategoryModel model = new SelectCategoryModel
+            {
+                Items = items,
+                Subcategories = subcategories
+            };
+            return model;
+        }
     }
 }

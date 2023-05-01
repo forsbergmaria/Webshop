@@ -1,4 +1,4 @@
-﻿@model List<Models.Item>
+﻿@model Models.ViewModels.SelectCategoryModel
 
     <head>
         <meta charset="utf-8" />
@@ -13,9 +13,15 @@
             <h2 class="">"@ViewBag.Searchstring" gav följande sökresultat:</h2>
         }
        </div>
+       <div>
+            @foreach(var subcateogry in Model.Subcategories)
+            {
+                <p>@subcateogry.Name</p>
+            }
+        </div>
             <div class="row row-cols-1 row-cols-md-4 g-4">
-
-            @foreach(var item in Model) {
+            @foreach(var item in Model.Items)
+               {
                      <div class="col">
                         <div class="card text-center">
                           <img src="https://sachinchoolur.github.io/lightslider/img/cS-1.jpg" class="card-img-top" alt="...">
@@ -29,6 +35,8 @@
                             </div>
                         </div>
                     </div>
+                }
+               
                     }
             </div>
          </div>
