@@ -25,10 +25,14 @@ namespace Webshop.Controllers
             return View(item);
         }
 
-        public ActionResult Category(int id)
+        public ActionResult Category(int id, int subId)
         {
             var items = itemService.GetItemsPerCategory(id);
             //typ get categoryselectmodel
+            if(subId != 0)
+            {
+                items.Items = itemService.GetItemsPerSubcategory(subId);
+            }
             return View(items);
         }
 
