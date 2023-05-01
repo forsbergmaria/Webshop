@@ -9,14 +9,17 @@
 <body>
     <div class="">
        <div class="text-center display-10 pt-4 pb-4">
-        @if (ViewBag.Searchstring != null) {
+            @if (ViewBag.Searchstring != null) {
             <h2 class="">"@ViewBag.Searchstring" gav följande sökresultat:</h2>
         }
        </div>
             <div class="row row-cols-1 row-cols-md-4 g-4">
-                  @foreach(var item in Model)
-                    {
-                      <div class="col">
+
+            @foreach(var item in Model)
+               {
+                if(item.CategoryId == ViewBag.Id)
+                {
+                     <div class="col">
                         <div class="card text-center">
                           <img src="https://sachinchoolur.github.io/lightslider/img/cS-1.jpg" class="card-img-top" alt="...">
                           <div class="card-body">
@@ -26,9 +29,26 @@
                                             <input type="hidden" name="id" value="@item.ItemId"/>
                                             <button type="submit">Lägg till i varukorg</button>
                                         </form>
-                          </div>
+                            </div>
                         </div>
-                      </div>
+                    </div>
+                }
+                else {
+                     <div class="col">
+                        <div class="card text-center">
+                          <img src="https://sachinchoolur.github.io/lightslider/img/cS-1.jpg" class="card-img-top" alt="...">
+                          <div class="card-body">
+                            <h5 class="card-title">@Html.ActionLink(@item.Name, "Details", "Item", new {id = item.ItemId})</h5>
+                            <p class="card-text">@item.PriceWithoutVAT kr</p>
+                                        <form method="post" action="@Url.Action("Add", "ShoppingCart")">
+                                            <input type="hidden" name="id" value="@item.ItemId"/>
+                                            <button type="submit">Lägg till i varukorg</button>
+                                        </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+               
                     }
             </div>
          </div>
