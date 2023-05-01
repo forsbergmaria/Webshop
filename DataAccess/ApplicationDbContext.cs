@@ -32,6 +32,7 @@ namespace DataAccess
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<IdentityRole> IdentityRoles { get; set; }
+        public DbSet<ShippingStatus> ShippingStatuses { get; set; }
         public override DbSet<IdentityUserRole<string>> UserRoles { get; set; }  
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,6 +43,7 @@ namespace DataAccess
                     new IdentityRole
                     {
                         Id = "jdigru",
+                        NormalizedName = "HUVUDADMINISTRATÖR",
                         Name = "Huvudadministratör"
                     }
                 );
@@ -162,6 +164,27 @@ namespace DataAccess
         }
     );
 
+            modelBuilder.Entity<ShippingStatus>().HasData(
+        new ShippingStatus
+        {
+            StatusId = 1,
+            Name = "Ohanterad"
+        },
+
+        new ShippingStatus
+        {
+            StatusId = 2,
+            Name = "Pågående"
+        },
+
+        new ShippingStatus
+        {
+            StatusId = 3,
+            Name = "Slutförd"
+        }
+    );
+
+            modelBuilder.Entity<Order>().HasOne(s => s.ShippingStatus);
             modelBuilder.Entity<Order>().HasData(
             new Order
             {
@@ -172,7 +195,8 @@ namespace DataAccess
                 CustomerPhone = "0765696217",
                 CustomerAddress = "Malmgatan 2A",
                 CustomerZipCode = "73133",
-                CustomerCity = "Köping"
+                CustomerCity = "Köping",
+                ShippingStatusId = 1,
             },
             new Order
             {
@@ -183,7 +207,8 @@ namespace DataAccess
                 CustomerPhone = "0767128320",
                 CustomerAddress = "Malmgatan 2A",
                 CustomerZipCode = "73133",
-                CustomerCity = "Köping"
+                CustomerCity = "Köping",
+                ShippingStatusId = 2,
             }
                 );
 

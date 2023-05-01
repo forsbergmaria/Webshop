@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using Models.ViewModels;
 using System.Web.Mvc;
 using System.Web.WebPages;
 
