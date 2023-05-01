@@ -34,8 +34,19 @@
               </div>
               <div class="col-md-2 d-flex justify-content-center">
                 <div>
-                  <p class="small text-muted mb-4 pb-2">Quantity</p>
-                  <p class="lead fw-normal mb-0">@valuePair.Value</p>
+                    <form method="post" action="@Url.Action("Remove", "ShoppingCart")">
+                        <input type="hidden" name="id" value="@item.ItemId"/>
+                        <div class="form-group">
+                            <label for="quantity-@item.ItemId">Quantity:</label>
+                            <select class="form-control" name="quantity" id="quantity-@item.ItemId">
+                                @for(int i = @valuePair.Value; i > 0; i--)
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
                 </div>
               </div>
               <div class="col-md-2 d-flex justify-content-center">
