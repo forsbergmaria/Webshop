@@ -80,25 +80,26 @@ namespace AdminPanel.Controllers
                 }
 
                 var chosenCategory = _categoryRepository.GetCategory(int.Parse(model.Category));
-                var chosenSubcategory = _categoryRepository.GetSubcategoryById(int.Parse(model.Subcategory));
 
-                var item = new Item
+                var item = new Item();
+                item.Name = model.Name;
+                item.Brand = model.Brand;
+                item.ArticleNr = model.ArticleNr;
+                item.PriceWithoutVAT = model.PriceWithoutVAT;
+                item.Description = model.Description;
+                item.CategoryId = chosenCategory.CategoryId;
+                item.Color = model.Color;
+                item.HasSize = model.HasSize;
+                item.ProductImages = images;
+                item.VAT = factorValue;
+                item.IsPublished = false;
+                if (model.Subcategory != null)
                 {
-                    Name = model.Name,
-                    Brand = model.Brand,
-                    ArticleNr = model.ArticleNr,
-                    PriceWithoutVAT = model.PriceWithoutVAT,
-                    Description = model.Description,
-                    CategoryId = chosenCategory.CategoryId,
-                    Color = model.Color,
-                    HasSize = model.HasSize,
-                    ProductImages = images,
-                    VAT = factorValue,
-                    IsPublished = false,
-                    SubcategoryId = chosenSubcategory.SubcategoryId
-                };
-
+                    var chosenSubcategory = _categoryRepository.GetSubcategoryById(int.Parse(model.Subcategory));
+                }
                 _itemRepository.AddItem(item);
+                _itemRepository.AddItemToStripe(item);
+
 
             }
 
@@ -128,6 +129,7 @@ namespace AdminPanel.Controllers
         }
 
         // Delete an image from an item
+        [HttpPost]
         [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult DeleteImage(int id)
         {
@@ -137,7 +139,8 @@ namespace AdminPanel.Controllers
             _itemRepository.DeleteImageFromDirectory(filePath);
             _itemRepository.DeleteImageFromDB(id);
 
-            return RedirectToAction("AllItems");
+            // Returnera ett JSON-svar
+            return Json(new { success = true, message = "Bilden har tagits bort." });
         }
 
         // Display a form for modifying an item
@@ -280,6 +283,20 @@ namespace AdminPanel.Controllers
         {
             List<Item> items = _itemRepository.GetAllItems();
             return View(items);
+        }
+
+        public IActionResult ViewMoreInfo(int id)
+        {
+            var item = _itemRepository.GetItem(id);
+            return View(item);
+        }
+
+        public IActionResult ItemPublisherManager(int id)
+        {
+            var item = _itemRepository.GetItem(id);
+            item.IsPublished = !item.IsPublished;
+            _itemRepository.ModifyItem(item);
+            return View("ViewMoreInfo", item);
         }
     }
 }

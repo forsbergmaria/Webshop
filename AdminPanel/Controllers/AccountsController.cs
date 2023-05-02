@@ -77,10 +77,8 @@ namespace AdminPanel.Controllers
 
         // Create a new administrator account. Only accessible for head administrators
         [Authorize(Roles = "Huvudadministratör")]
-        public async Task<IActionResult> RegisterAccount(RegisterViewModel registerViewModel)
+        public IActionResult RegisterAccount(RegisterViewModel registerViewModel)
         {
-            if (ModelState.IsValid)
-            {
                 Admin user = new Admin();
 
                 user.FirstName = registerViewModel.FirstName;
@@ -90,18 +88,13 @@ namespace AdminPanel.Controllers
                 user.EmailConfirmed = true;
                 var roleName = registerViewModel.Role;
 
-                var result = await _userManager.CreateAsync(user);
-                var role = _userRepository.GetIdentityRoleByName(roleName);
+            var role = _userRepository.GetIdentityRoleByName(roleName);
 
-                if (result.Succeeded)
-                {
-                    _userRepository.AssignRole(user.Id, role.Id);
-                    _dbContext.SaveChanges();
+            _userRepository.AddUser(user);
+            _userRepository.AssignRole(user.Id, role.Id);
+            
 
-                    return RedirectToAction("AllAccounts", "Accounts");
-                }
-            }
-            return View(registerViewModel);
+            return RedirectToAction("AllAccounts");
         }
 
         // Search for an administrator account, based on the first name or/and last name of the user

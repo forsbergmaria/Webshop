@@ -49,7 +49,9 @@
                 <option value="">Välj en kategori</option>
                 @foreach (var category in ViewBag.Categories)
                 {
-                    <option value="@category.Value">@category.Text</option>
+                        <option value="@category.Value">@category.Text</option>
+                    
+                    
                 }
             </select>
         </div>
@@ -60,11 +62,18 @@
             </select>
         </div>
 
+        <input type="hidden" id="CurrentCategory" name="CurrentCategory" value="@Model.Category" />
+        <input type="hidden" id="CurrentSubcategory" name="CurrentSubcategory" value="@Model.Subcategory" />
+
+        <div id="imageList">
         @foreach (var image in Model.ProductImages.DistinctBy(p => p.Path))
         {
+            <div class="imageContainer">
                 <img class="images-modify-items" src="@Url.Content(image.Path)" />
-                <a asp-controller="Items" asp-action="DeleteImage" asp-route-id="@image.ImageId" class="remove-image-links">Ta bort bild</a>
+            <button class="btnRemoveImage" data-image-id="@image.ImageId">Ta bort bild</button>
+            </div>
         }
+        </div>
         <div class="form-group">
             @Html.LabelFor(m => m.ProductImages, new { @class = "col-md-2 control-label" })
             <input asp-for="ProductImages" type="file" name="files" multiple class="form-control-file" accept="image/jpeg, image/png, image/jpg" />
@@ -74,52 +83,95 @@
                 <input type="submit" value="Uppdatera produkt" class="btn btn-primary" id="btn-updateItem-submit" />
             </div>
         </div>
+        
     </form>
 
     @section scripts {
         <script>
-$(document).ready(function () {
-    // Spara det ursprungliga alternativet för "Välj en underkategori"
-    var originalSubcategoryOption = $("#Subcategory option:first-child").clone();
+            $(document).ready(function () {
+                var originalSubcategoryOption = $("#Subcategory option:first-child").clone();
+                var currentCategoryName = $("#CurrentCategory").val(); // Hämta aktuellt kategorinamn
+                var currentSubcategoryName = $("#CurrentSubcategory").val(); // Hämta aktuellt underkategorinamn
 
-    // Hantera ändringar i huvuddropdown-listan för kategorier
-    $("#Category").on("change", function () {
-        var categoryId = $(this).val();
-        // Uppdatera värdet för nuvarande kategori
-        $("#CurrentCategory").val(categoryId);
-        // Återställ dropdown-listan för underkategorier
-        $("#Subcategory").empty().append(originalSubcategoryOption);
-        // Kontrollera om en kategori är vald
-        if (categoryId !== "") {
-            // Anropa GetJSON-metoden för att hämta underkategorier för den valda kategorin
-            $.getJSON("/Items/GetSubcategories", { categoryId: categoryId }, function (data) {
-                // Uppdatera värdet för nuvarande underkategori
-                $("#CurrentSubcategory").val("");
-                // Aktivera dropdown-listan för underkategorier om det finns data
-                if (data.length > 0) {
-                    $("#Subcategory").prop("disabled", false);
-                    // Lägg till underkategorier som option-element i dropdown-listan
-                    $.each(data, function (index, subcategory) {
-                        $("#Subcategory").append("<option value='" + subcategory.value + "'>" + subcategory.text + "</option>");
+                function loadSubcategories(categoryId) {
+                    $("#Subcategory").empty().append(originalSubcategoryOption);
+                    if (categoryId !== "") {
+                        $.getJSON("/Items/GetSubcategories", { categoryId: categoryId }, function (data) {
+                            $("#CurrentSubcategory").val("");
+                            if (data.length > 0) {
+                                $("#Subcategory").prop("disabled", false);
+                                $.each(data, function (index, subcategory) {
+                                    $("#Subcategory").append("<option value='" + subcategory.value + "'>" + subcategory.text + "</option>");
+                                });
+
+                                // Hitta och markera det matchande alternativet baserat på aktuellt underkategorinamn
+                                $("#Subcategory option").filter(function () {
+                                    return $(this).text() === currentSubcategoryName;
+                                }).prop('selected', true);
+                            } else {
+                                $("#Subcategory").prop("disabled", true);
+                            }
+                        });
+                    } else {
+                        $("#Subcategory").prop("disabled", true);
+                    }
+                }
+
+                $("#Category").on("change", function () {
+                    var categoryId = $(this).val();
+                    // Uppdatera värdet för nuvarande kategori
+                    $("#CurrentCategory").val(categoryId);
+                    loadSubcategories(categoryId);
+                });
+
+                // Hitta och markera det matchande alternativet baserat på aktuellt kategorinamn
+                $("#Category option").filter(function () {
+                    return $(this).text() === currentCategoryName;
+                }).prop('selected', true);
+
+                $("#Subcategory").on("change", function () {
+                    var subcategoryId = $(this).val();
+                    $("#CurrentSubcategory").val(subcategoryId);
+                });
+
+                // Ladda underkategorier för den aktuella kategorin när sidan laddas
+                var currentCategoryId = $("#Category").val();
+                loadSubcategories(currentCategoryId);
+            });
+
+            $(".btnRemoveImage").on("click", function (event) {
+                event.preventDefault(); // Förhindra standardbeteendet för klickhändelsen
+
+                var imageId = $(this).data("image-id");
+                var containerId = "#imageContainer" + imageId;
+                var confirmation = confirm("Är du säker på att du vill ta bort bilden?");
+
+                if (confirmation) {
+                    var $container = $(this).closest(".imageContainer"); // Hitta närmaste gemensamma förälder
+
+                    $.ajax({
+                        url: "/Items/DeleteImage/" + imageId,
+                        type: "POST",
+                        success: function (result) {
+                            if (result.success) {
+                                // Ta bort bilden från DOM-trädet direkt genom att använda den gemensamma föräldern
+                                $container.slideUp("slow", function () {
+                                    $container.remove();
+                                });
+
+                                // Visa ett meddelande om att bilden har tagits bort
+                                alert(result.message);
+                            } else {
+                                // Visa ett felmeddelande om något gick fel
+                                alert(result.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(error);
+                        }
                     });
-                } else {
-                    // Inaktivera dropdown-listan för underkategorier om det inte finns några underkategorier
-                    $("#Subcategory").prop("disabled", true);
                 }
             });
-        } else {
-            // Inaktivera dropdown-listan för underkategorier om "Välj en kategori" är valt
-            $("#Subcategory").prop("disabled", true);
-        }
-    });
-
-    // Hantera ändringar i dropdown-listan för underkategorier
-    $("#Subcategory").on("change", function () {
-        var subcategoryId = $(this).val();
-        // Uppdatera värdet för nuvarande underkategori
-        $("#CurrentSubcategory").val(subcategoryId);
-    });
-});
         </script>
     }
 </body>

@@ -1,3 +1,5 @@
+
+
 html {
   font-size: 14px;
 }
@@ -18,6 +20,7 @@ body {
 }
 
 #welcome-name {
+    margin-top: 1em;
     text-align: center;
 }
 
@@ -62,7 +65,7 @@ td {
 }
 
 .images-all-items {
-    width: 30%;
+    width: 25%;
 }
 
 .images-modify-items {
@@ -73,15 +76,36 @@ td {
     display: block;
 }
 
-.sidebar {
-    background-color: #f8f9fa; /* Bakgrundsfärg för sidomenyn */
-    padding: 20px; /* Inre marginal för sidomenyn */
+.nav-item span {
+    color: black;
 }
 
-    .sidebar .nav-link {
-        color: #343a40; /* Färg för länkarna i sidomenyn */
-    }
+#home-main {
+    text-align: center;
+    margin: 2em 15em;
+    background-color: #ECECEC;
+    padding: 5em;
+}
 
-.sidebar-divider {
-    border-top: 1px solid #dee2e6; /* Stil för avskiljaren */
+.page-heading {
+    margin-bottom: 1em;
+    text-align: center;
+}
+
+.search-btn {
+    margin-top: 0.5em;
+    margin-bottom: 3em;
+}
+
+.delete-btn {
+    margin-top: 0.5em;
+}
+
+.btn-sm {
+    display: inline-block;
+}
+
+.item-info-img {
+    width: 15em;
+    height: 15em;
 }

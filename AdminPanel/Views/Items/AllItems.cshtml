@@ -10,7 +10,7 @@
             <label for="searchString">Sök efter produkt:</label>
             <input type="text" name="searchString" class="form-control" />
         </div>
-        <button type="submit" class="btn btn-primary">Sök</button>
+        <button type="submit" class="btn btn-outline-primary search-btn">Sök</button>
     </form>
     <div class="table-hover">
         <table class="table table-hover">
@@ -19,7 +19,6 @@
                     <th>Produktbild</th>
                     <th>Produktnamn</th>
                     <th>Varumärke</th>
-                    <th>Artikelnummer</th>
                     <th>Färg</th>
                     <th>Försäljningspris</th>
                     <th>Huvudkategori</th>
@@ -44,7 +43,7 @@
 
                         <td>@item.Name</td>
                         <td>@item.Brand</td>
-                        <td>@item.ArticleNr</td>
+
                         @if (item.Color == null)
                         {
                             <td>Ingen</td>
@@ -57,10 +56,9 @@
                             var salesPrice = item.PriceWithoutVAT * item.VAT;
                             <td>@Math.Round(salesPrice, 2).ToString() SEK</td>
                         }
-
                         <td>@item.Category.Name</td>
-                        <td><button class="btn btn-primary manage-btn"><a asp-controller="Items" asp-action="ModifyItemForm" asp-route-id="@item.ItemId">Redigera</a></button>
-                            <button class="btn btn-danger manage-btn"><a asp-controller="Items" asp-action="DeleteItem" asp-route-id="@item.ItemId" onclick="return confirm('Är du säker på att du vill ta bort den här produkten? Det går inte att ångra.')">Ta bort produkt</a></button></td>
+                        <td><button class="btn btn-primary btn-sm view-more-info-btn" onclick="location.href='@Url.Action("ViewMoreInfo", "Items", new { id = @item.ItemId })'">Mer information</button>
+                        </td>
 
 
                     </tr>

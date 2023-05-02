@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using SwedbankPay.Sdk;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Models.ViewModels;
 
 namespace Models
 {
@@ -20,6 +23,8 @@ namespace Models
         public string CustomerAddress { get; set; }
         public string CustomerZipCode { get; set; }
         public string CustomerCity { get; set; }
-        public virtual ICollection<OrderContainsItem> OrderContainsItems { get; set; }
+        public int? ShippingStatusId { get; set; }
+        [ForeignKey(nameof(ShippingStatusId))]
+        public virtual ShippingStatus? ShippingStatus { get; set; }
     }
 }

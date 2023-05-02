@@ -27,6 +27,16 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Adds a new user to the database
+        public void AddUser(Admin user)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                context.Admins.Add(user);
+                context.SaveChanges();
+            }
+        }
+
         // Returns a specific instance of the IdentityRole class
         public IdentityRole GetIdentityRoleByName(string roleName)
         {
@@ -104,7 +114,7 @@ namespace DataAccess.Data.Repositories
 
         // Deletes a specific user from the database
         [HttpDelete]
-        public void DeleteAccount(string id)
+        public async void DeleteAccount(string id)
         {
             using (var context = new ApplicationDbContext())
             {
@@ -112,9 +122,8 @@ namespace DataAccess.Data.Repositories
                 context.Remove(userRole);
                 context.SaveChanges();
 
-                var user = _userManager.FindByIdAsync(id);
-                context.Remove(user);
-                context.SaveChanges();
+                var user = await context.Admins.FindAsync(id);
+                context.Admins.Remove(user);
             }
         }
 

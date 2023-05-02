@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Models;
 using Models.ViewModels;
 using Newtonsoft.Json;
+using Stripe;
+using Stripe.Checkout;
 
 namespace Webshop.Controllers
 {
