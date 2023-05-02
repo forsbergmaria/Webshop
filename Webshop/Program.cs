@@ -10,6 +10,7 @@ using Models.ViewModels;
 using System.Net.Http.Headers;
 using System.Reflection;
 using SwedbankPay.Sdk.Extensions;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,13 +41,22 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+
+  
+
 var app = builder.Build();
+
+// This is your test secret API key.
+//StripeConfiguration.ApiKey = "sk_test_51MnVSuJ9NmDaISNLt2DpWzyfEpec4JZF1Zf9gwPkecoDj2OYmXX9ThWfvXB2nEbadLp51BI6AuooidYslZ6yykDg00pjXolXbJ";
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseMigrationsEndPoint();
-}
+		app.UseDeveloperExceptionPage();
+		app.UseRouting();
+		app.UseStaticFiles();
+		app.UseEndpoints(endpoints => endpoints.MapControllers());
+	}
 else
 {
     app.UseExceptionHandler("/Home/Error");
@@ -54,12 +64,14 @@ else
     app.UseHsts();
 }
 
-app.UseSession();
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthentication();
 app.UseAuthorization();

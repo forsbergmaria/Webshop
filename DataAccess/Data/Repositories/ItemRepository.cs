@@ -2,8 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.ViewModels;
+using Stripe;
 using System.Web.Mvc;
 using System.Web.WebPages;
+using File = System.IO.File;
 
 namespace Data
 {
@@ -152,6 +154,49 @@ namespace Data
                 }   
                 context.SaveChanges();
             }
+        }
+
+        public void AddItemToStripe(Item item)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+				StripeConfiguration.ApiKey = "sk_test_51MnVSuJ9NmDaISNLt2DpWzyfEpec4JZF1Zf9gwPkecoDj2OYmXX9ThWfvXB2nEbadLp51BI6AuooidYslZ6yykDg00pjXolXbJ";
+
+				var imageLinks = new List<string>();
+				foreach (var image in item.ProductImages)
+				{
+					imageLinks.Add(image.Path);
+				}
+				var productOptions = new ProductCreateOptions
+				{
+					Name = item.Name,
+					Description = item.Description,
+					//Images = new List<string> 
+     //               { 
+     //                   item.ProductImages.FirstOrDefault().Path
+     //               }
+				};
+
+				var productService = new ProductService();
+				Product product = productService.Create(productOptions);
+
+				var priceOptions = new PriceCreateOptions
+				{
+					Product = product.Id,
+					UnitAmount = (long)((item.PriceWithoutVAT * item.VAT * 100)), // priset i öre, t.ex. 1000 öre = 10 kr
+					Currency = "sek",
+				};
+
+				var priceService = new PriceService();
+				Price price = priceService.Create(priceOptions);
+
+				// Spara produkt-ID och pris-ID i din databas
+                item.StripeItemId = product.Id;
+                item.StripePriceId = price.Id;
+
+                context.Entry(item).State = EntityState.Modified;
+                context.SaveChanges();
+			}
         }
 
         // Returns a list of images from a specific item
