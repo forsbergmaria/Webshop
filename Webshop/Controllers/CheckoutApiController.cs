@@ -29,7 +29,7 @@ namespace Webshop.Controllers
 
 			StripeConfiguration.ApiKey = "sk_test_51MnVSuJ9NmDaISNLt2DpWzyfEpec4JZF1Zf9gwPkecoDj2OYmXX9ThWfvXB2nEbadLp51BI6AuooidYslZ6yykDg00pjXolXbJ";
 
-            var lineItem = cart.Items.Select(item => new SessionLineItemOptions
+            var lineItem = cart.Items.DistinctBy(i => i.ItemId).Select(item => new SessionLineItemOptions
             {
                 Price = item.StripePriceId,
                 Quantity = cart.ItemQuantity?.GetValueOrDefault(item.ItemId) ?? 0
