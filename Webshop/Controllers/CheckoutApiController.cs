@@ -9,25 +9,23 @@ using Stripe.Checkout;
 
 namespace Webshop.Controllers
 {
-	//[Route("create-checkout-session")]
-	//[ApiController]
-	public class CheckoutApiController : Controller
-	{
-		private readonly ShoppingCartManager _cm;
-		private readonly IHttpContextAccessor _httpContextAccessor;
+    //[Route("create-checkout-session")]
+    //[ApiController]
+    public class CheckoutApiController : Controller
+    {
+        private readonly ShoppingCartManager _cm;
 
-		public CheckoutApiController(ShoppingCartManager cm, IHttpContextAccessor httpContextAccessor)
-		{
-			_cm = cm;
-			_httpContextAccessor = httpContextAccessor;
-		}
+        public CheckoutApiController(ShoppingCartManager cm)
+        {
+            _cm = cm;
+        }
 
-		//[HttpPost]
-		public ActionResult Create()
-		{
-			var cart = _cm.GetCartItems();
+        //[HttpPost]
+        public ActionResult Create()
+        {
+            var cart = _cm.GetCartItems();
 
-			StripeConfiguration.ApiKey = "sk_test_51MnVSuJ9NmDaISNLt2DpWzyfEpec4JZF1Zf9gwPkecoDj2OYmXX9ThWfvXB2nEbadLp51BI6AuooidYslZ6yykDg00pjXolXbJ";
+            StripeConfiguration.ApiKey = "sk_test_51MnVSuJ9NmDaISNLt2DpWzyfEpec4JZF1Zf9gwPkecoDj2OYmXX9ThWfvXB2nEbadLp51BI6AuooidYslZ6yykDg00pjXolXbJ";
 
             var lineItem = cart.Items.DistinctBy(i => i.ItemId).Select(item => new SessionLineItemOptions
             {
@@ -37,26 +35,52 @@ namespace Webshop.Controllers
 
             // Skapa en ny checkout session med Stripe API
             var options = new SessionCreateOptions
-			{
-				PaymentMethodTypes = new List<string>
-				{
-					"card",
-					"klarna",
-				},
+            {
+                Locale = "sv",
+                ShippingAddressCollection = new SessionShippingAddressCollectionOptions
+                {
+                    AllowedCountries = new List<string> { "SE" },
+                },
+                ShippingOptions = new List<SessionShippingOptionOptions>
+                {
+                    new SessionShippingOptionOptions { ShippingRate = "shr_1MnW4gJ9NmDaISNLsDI6gLUz"},
+                    new SessionShippingOptionOptions { ShippingRate = "shr_1N3cELJ9NmDaISNLaYLSbzBy"},
+                },
+                PaymentMethodTypes = new List<string>
+                {
+                    "card",
+                    "klarna",
+                },
 
-				LineItems = lineItem,
+                LineItems = lineItem,
 
-				Mode = "payment",
-				SuccessUrl = "https://www.example.com/success",
-				CancelUrl = "https://www.example.com/cancel",
-			};
+                Mode = "payment",
+                SuccessUrl = "https://localhost:7013/success",
+                CancelUrl = Url.Action("Cancel", "CheckoutApi", null, Request.Scheme),
+            };
 
 
-			var service = new SessionService();
-			var session = service.Create(options);
+            var service = new SessionService();
+            var session = service.Create(options);
 
-			// Dirigera användaren till checkout sidan
-			return Redirect(session.Url);
-		}
-	}
+            // Dirigera användaren till checkout sidan
+            return Redirect(session.Url);
+        }
+
+        public IActionResult Cancel()
+        {
+            return RedirectToAction("CancelView");
+        }
+
+        public IActionResult CancelView()
+        {
+            return View("cancel");
+        }
+
+        public IActionResult DisplayCustomerForm()
+        {
+            return View("CustomerInfo");
+        }
+
+    }
 }
