@@ -5,45 +5,68 @@
 }
 
  <section class="py-5">
-            <div class="container">
-                <div class="row gx-4 gx-lg-5 align-items-center">
-                    <div class="col-lg-5"><img class="card-img-top mb-5 mb-md-0" src="https://sachinchoolur.github.io/lightslider/img/cS-1.jpg" alt="..." />
-                    <div class="w-100"></div>
-                    <div class="col-lg-2"><p>här är mina bilder</p></div>
+    <div class="container">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-lg-5">
+                <div class="row">
+                    <div class="col-lg-12 mb-5 mb-md-0">
+                        <img class="card-img-top" src="https://sachinchoolur.github.io/lightslider/img/cS-1.jpg" alt="Main Image" id="main-image" />
                     </div>
-                    <div class="col-lg-5">
-                        <h1 class="display-5 fw-bolder">@Model.Item.Name</h1>
-                        <div class="fs-5 mb-1">
-                            <span>@Model.Item.PriceWithoutVAT kr</span>
-                        </div>
-                        <p class="lead">@Model.Item.Description</p>
-                    @if (Model.Item.HasSize)
-                    {
-                        <p>Välj storlek:</p>
-                      <div class="mb-4">
-                        @foreach(var size in Model.Sizes)
-                            {
-                                <button class="btn btn-outline-dark flex-shrink-0" type="button">
-                                    @size.Name
-                                </button>
-                             }
-                      </div>
-                    }
-                        <div class="d-flex">
-                            <div>
-                                <form>
-                                <input type="number" name="quantity" value="1" min="1" max="10" class="form-control" id="quantity-input" />
-                                @*<button type="button" class="btn btn-outline-dark flex-shrink-0" id="increment-btn">+</button>*@
-                                </form>
-                            </div>
-                            <form method="post" action="@Url.Action("Add", "ShoppingCart")">
-                                <input type="hidden" name="id" value="@Model.Item.ItemId"/>
-                                  <button class="btn btn-outline-dark flex-shrink-0" type="submit">Lägg till i varukorg</button>
-                            </form>
+                    <div class="col-lg-12">
+                        <div class="row">
+                              <div class="scrollable-images">
+                                <div class="col-lg-4">
+                                  <img class="card-img-top" src="https://sachinchoolur.github.io/lightslider/img/cS-2.jpg" alt="Image 1" onclick="showLargeImage(this)" />
+                                </div>
+                                <div class="col-lg-4">
+                                  <img class="card-img-top" src="https://sachinchoolur.github.io/lightslider/img/cS-3.jpg" alt="Image 2" onclick="showLargeImage(this)" />
+                                </div>
+                                <div class="col-lg-4">
+                                  <img class="card-img-top" src="https://sachinchoolur.github.io/lightslider/img/cS-4.jpg" alt="Image 3" onclick="showLargeImage(this)" />
+                                </div>
+                                <div class="col-lg-4">
+                                  <img class="card-img-top" src="https://sachinchoolur.github.io/lightslider/img/cS-5.jpg" alt="Image 3" onclick="showLargeImage(this)" />
+                                </div>
+                                <div class="col-lg-4">
+                                  <img class="card-img-top" src="https://sachinchoolur.github.io/lightslider/img/cS-6.jpg" alt="Image 3" onclick="showLargeImage(this)" />
+                                </div>
+                              </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col-lg-7">
+                <h1 class="display-5 fw-bolder">@Model.Item.Name</h1>
+                <div class="fs-5 mb-1">
+                    <span>@Model.Item.PriceWithoutVAT kr</span>
+                </div>
+                <p class="lead">@Model.Item.Description</p>
+                @if (Model.Item.HasSize)
+                {
+                    <p>Välj storlek:</p>
+                    <div class="mb-4">
+                        @foreach(var size in Model.Sizes)
+                        {
+                            <button class="btn btn-outline-dark flex-shrink-0" type="button">
+                                @size.Name
+                            </button>
+                        }
+                    </div>
+                }
+                <div class="d-flex">
+                    <div>
+                        <form>
+                            <input type="number" name="quantity" value="1" min="1" max="10" class="form-control" id="quantity-input" />
+                        </form>
+                    </div>
+                    <form method="post" action="@Url.Action("Add", "ShoppingCart")">
+                        <input type="hidden" name="id" value="@Model.Item.ItemId"/>
+                        <button class="btn btn-outline-dark flex-shrink-0" type="submit">Lägg till i varukorg</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <script>
@@ -56,4 +79,19 @@
             }
         });
     });
+
+    function showLargeImage(img) {
+        var mainImage = document.getElementById('main-image');
+        mainImage.src = img.src;
+        mainImage.alt = img.alt;
+        mainImage.classList.add('large-image');
+        mainImage.onclick = hideLargeImage;
+    }
+
+    function hideLargeImage() {
+        var mainImage = document.getElementById('main-image');
+        mainImage.classList.remove('large-image');
+        mainImage.onclick = null;
+    }
+
 </script>

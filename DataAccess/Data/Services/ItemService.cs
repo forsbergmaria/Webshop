@@ -107,7 +107,7 @@ namespace DataAccess.Data.Services
         public List<Item> GetItemsPerSubcategory(int id)
         {
             List<Item> items = itemRepository.GetAllItems().Where(i => i.CategoryId == id).ToList();
-            var subcategory = categoryRepository.GetSubcategory(id);
+            var subcategory = categoryRepository.GetSubcategoryFromCategory(id);
 
             if(subcategory != null)
             {

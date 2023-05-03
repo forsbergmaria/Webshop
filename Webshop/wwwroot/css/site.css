@@ -67,6 +67,26 @@ input {
     
 }
 
+.card-img-top:hover {
+    cursor: pointer;
+}
+
+.card-img-top.large-image {
+    max-height: 90vh;
+    max-width: 90vw;
+    cursor: pointer;
+}
+
+.scrollable-images {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    margin-top: 10px;
+}
+
+
 @media (min-width: 768px) {
     html {
         font-size: 16px;
