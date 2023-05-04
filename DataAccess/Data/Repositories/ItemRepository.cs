@@ -88,6 +88,21 @@ namespace Data
             }
         }
 
+        // Removes all belonging images from the database
+        public void DeleteAllImagesFromItem(int itemId)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var images = context.Images.Where(i => i.ItemId == itemId).ToList();
+
+                foreach (var image in images)
+                {
+                    context.Images.Remove(image);
+                }
+                context.SaveChanges();
+            }
+        }
+
         // Deletes a specific image from the database
         public void DeleteImageFromDB(int imageId)
         {

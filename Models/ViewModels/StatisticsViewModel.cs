@@ -14,6 +14,7 @@ namespace Models.ViewModels
         public Dictionary<Item, int>? MostSoldItemCountForEachItem { get; set; }
         public Dictionary<Item, int>? LeastSoldItemCountForEachItem { get; set; }
         public Tuple<int, decimal>? NumberOfSales { get; set; }
+        public List<Item>? ItemsNeverSold { get; set; }
         public decimal? TotalVATSales { get; set; }
         public decimal? TotalSales { get; set; }
 

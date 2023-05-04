@@ -1,0 +1,71 @@
+﻿@using Models
+@model List<Item>
+
+<head>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<div>
+    <form method="get" asp-controller="Statistics" asp-action="SearchItems">
+        <div class="form-group">
+            <label for="searchString">Sök efter produkt:</label>
+            <input type="text" name="searchString" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-outline-primary search-btn">Sök</button>
+    </form>
+    <div class="table-hover">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Produktbild</th>
+                    <th>Produktnamn</th>
+                    <th>Varumärke</th>
+                    <th>Färg</th>
+                    <th>Försäljningspris</th>
+                    <th>Huvudkategori</th>
+                    <th>Hantera</th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model.OrderBy(i => i.Name))
+                {
+                    <tr>
+                        @if (item.ProductImages.Any())
+                        {
+                            <td><img class="images-all-items" src="@Url.Content(item.ProductImages.FirstOrDefault().Path)"></td>
+                        }
+                        else
+                        {
+                            <td><img class="images-all-items" src="~/images/productImages/noimage.jpg" /></td>
+                        }
+
+                        <td>@item.Name</td>
+                        <td>@item.Brand</td>
+
+                        @if (item.Color == null)
+                        {
+                            <td>Ingen</td>
+                        }
+                        else
+                        {
+                            <td>@item.Color</td>
+                        }
+                        @{
+                            var salesPrice = item.PriceWithoutVAT * item.VAT;
+                            <td>@Math.Round(salesPrice, 2).ToString() SEK</td>
+                        }
+                        <td>@item.Category.Name</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm view-more-info-btn" onclick="location.href='@Url.Action("ViewMoreInfo", "Items", new { id = @item.ItemId })'">Mer information</button>
+                        </td>
+
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

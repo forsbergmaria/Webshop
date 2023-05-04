@@ -5,32 +5,101 @@
     <div>
         <h2>Statistik</h2>
     </div>
+    @{
+        var countMostSold = 0;
+        var countLeastSold = 0;
+        var sold = "sålda";
+    }
     <div>
         <div>
+            <h6>Topp 5 mest sålda produkter de senaste 7 dagarna</h6>
             <ul class="list-group list-group-flush">
-                @{
-                    var count = 0;
-                    var sold = "sålda";
-
-                }
                 @foreach (var item in Model.MostSoldItemCountForEachItem.OrderByDescending(i => i.Value))
                 {
                     if (item.Value < 2)
                     {
                         sold = "såld";
                     }
+                    else
+                    {
+                        sold = "sålda";
+                    }
                     if(item.Key.Color == null)
                     {
-                        count++;
-                            <li class="list-group-item">@count. @item.Key.Name, @item.Value @sold</li>
+                        countMostSold++;
+                            <li class="list-group-item">@countMostSold. @item.Key.Name, @item.Value @sold</li>
                     }
                     else
                     {
-                        count++;
-                        <li class="list-group-item">@count. @item.Key.Name @item.Key.Color.ToLower(), @item.Value @sold</li>
+                        countMostSold++;
+                        <li class="list-group-item">@countMostSold. @item.Key.Name @item.Key.Color.ToLower(), @item.Value @sold</li>
                     }
                 }
             </ul>
+        </div>
+        <div>
+            <h6>Topp 5 minst sålda produkter de senaste 7 dagarna</h6>
+            <ul class="list-group list-group-flush">
+                @foreach (var item in Model.LeastSoldItemCountForEachItem.OrderBy(i => i.Value))
+                {
+                    if (item.Value < 2)
+                    {
+                        sold = "såld";
+                    }
+                    else
+                    {
+                        sold = "sålda";
+                    }
+                    if (item.Key.Color == null)
+                    {
+                        countLeastSold++;
+                        <li class="list-group-item">@countLeastSold. @item.Key.Name, @item.Value @sold</li>
+                    }
+                    else
+                    {
+                        countLeastSold++;
+                        <li class="list-group-item">@countLeastSold. @item.Key.Name @item.Key.Color.ToLower(), @item.Value @sold</li>
+                    }
+                }
+            </ul>
+        </div>
+        <div>
+            <h6>Antal sålda produkter sedan start:</h6>
+            <p><strong>@Model.NumberOfSales.Item1</strong> stycken</p>
+            <p>för en totalsumma på:</p>
+            <p><strong>@Model.NumberOfSales.Item2</strong> SEK (netto)</p>
+        </div>
+        <div class="table-responsive-sm">
+            <h6>Upp till 10 produkter som aldrig har sålts</h6>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Produktbild</th>
+                        <th>Produktnamn</th>
+                        <th>Varumärke</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ItemsNeverSold)
+                    {
+                        <tr>
+                        @if (item.ProductImages.Any())
+                        {
+                            <td><img class="images-all-items" src="@Url.Content(item.ProductImages.FirstOrDefault().Path)"></td>
+                        }
+                        else
+                        {
+                            <td><img class="images-all-items" src="~/images/productImages/noimage.jpg" /></td>
+                        }
+                        <td>@item.Name</td>
+                        <td>@item.Brand</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div>
+                <button class="btn btn-primary btn-sm view-more-info-btn" onclick="location.href='@Url.Action("ViewAllNeverSoldItems", "Statistics")'">Se alla</button>
+            </div>
         </div>
     </div>
 </body>
