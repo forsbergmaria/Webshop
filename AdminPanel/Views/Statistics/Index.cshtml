@@ -1,8 +1,36 @@
-﻿@using Models
+﻿@using Models.ViewModels
 @model StatisticsViewModel
 
 <body>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<div class="row">
-</div>
+    <div>
+        <h2>Statistik</h2>
+    </div>
+    <div>
+        <div>
+            <ul class="list-group list-group-flush">
+                @{
+                    var count = 0;
+                    var sold = "sålda";
+
+                }
+                @foreach (var item in Model.MostSoldItemCountForEachItem.OrderByDescending(i => i.Value))
+                {
+                    if (item.Value < 2)
+                    {
+                        sold = "såld";
+                    }
+                    if(item.Key.Color == null)
+                    {
+                        count++;
+                            <li class="list-group-item">@count. @item.Key.Name, @item.Value @sold</li>
+                    }
+                    else
+                    {
+                        count++;
+                        <li class="list-group-item">@count. @item.Key.Name @item.Key.Color.ToLower(), @item.Value @sold</li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
 </body>

@@ -55,24 +55,29 @@ namespace DataAccess.Data.Repositories
         }
 
         // Returns a list of Items representing the top five most sold items
-        public Dictionary<int, int> GetMostSoldItemCountForEachItem()
+        public Dictionary<Item, int> GetMostSoldItemCountForEachItem()
         {
             using (var context = new ApplicationDbContext())
             {
                 var soldTransactions = context.ItemTransactions.Where(t => t.TransactionType == "Försäljning")
                     .Where(t => t.Quantity > 0).ToList();
 
-                var soldItemCountDict = new Dictionary<int, int>();
+                var soldItemCountDict = new Dictionary<Item, int>();
 
                 foreach (var transaction in soldTransactions)
                 {
-                    if (soldItemCountDict.ContainsKey(transaction.ItemId))
+                    var item = context.Items.Find(transaction.ItemId);
+
+                    if (item != null)
                     {
-                        soldItemCountDict[transaction.ItemId] += transaction.Quantity;
-                    }
-                    else
-                    {
-                        soldItemCountDict[transaction.ItemId] = transaction.Quantity;
+                        if (soldItemCountDict.ContainsKey(item))
+                        {
+                            soldItemCountDict[item] += transaction.Quantity;
+                        }
+                        else
+                        {
+                            soldItemCountDict[item] = transaction.Quantity;
+                        }
                     }
                 }
 
@@ -80,35 +85,39 @@ namespace DataAccess.Data.Repositories
             }
         }
 
-        public List<int> GetLeastSoldItemCountForEachItem()
+        public Dictionary<Item, int> GetLeastSoldItemCountForEachItem()
         {
             using (var context = new ApplicationDbContext())
             {
                 var soldTransactions = context.ItemTransactions.Where(t => t.TransactionType == "Försäljning")
                     .Where(t => t.Quantity > 0).ToList();
 
-                var soldItemCountDict = new Dictionary<int, int>();
+                var soldItemCountDict = new Dictionary<Item, int>();
 
                 foreach (var transaction in soldTransactions)
                 {
-                    if (soldItemCountDict.ContainsKey(transaction.ItemId))
+                    var item = context.Items.Find(transaction.ItemId);
+
+                    if (item != null)
                     {
-                        soldItemCountDict[transaction.ItemId] += transaction.Quantity;
-                    }
-                    else
-                    {
-                        soldItemCountDict[transaction.ItemId] = transaction.Quantity;
+                        if (soldItemCountDict.ContainsKey(item))
+                        {
+                            soldItemCountDict[item] -= transaction.Quantity;
+                        }
+                        else
+                        {
+                            soldItemCountDict[item] = -transaction.Quantity;
+                        }
                     }
                 }
 
-                var leastSoldItemCount = soldItemCountDict.Min(kvp => kvp.Value);
-                var leastSoldItems = soldItemCountDict.Where(kvp => kvp.Value == leastSoldItemCount)
-                                                     .Select(kvp => kvp.Key)
-                                                     .ToList();
+                // Sorterar dictionary efter minsta till största försäljningsantal
+                var sortedDict = soldItemCountDict.OrderBy(x => x.Value);
 
-                return leastSoldItems;
+                return sortedDict.ToDictionary(x => x.Key, x => -x.Value);
             }
         }
+
 
 
         // Returns an integer representing total sales for a specific timespan
