@@ -55,7 +55,7 @@ namespace Webshop.Controllers
                 LineItems = lineItem,
 
                 Mode = "payment",
-                SuccessUrl = "https://localhost:7013/success",
+                SuccessUrl = Url.Action("Success", "CheckoutApi", null, Request.Scheme),
                 CancelUrl = Url.Action("Cancel", "CheckoutApi", null, Request.Scheme),
             };
 
@@ -67,6 +67,16 @@ namespace Webshop.Controllers
             return Redirect(session.Url);
         }
 
+        public IActionResult Success()
+        {
+            return RedirectToAction("successView");
+        }
+
+        public IActionResult SuccessView()
+        {
+            return View("success");
+        }
+
         public IActionResult Cancel()
         {
             return RedirectToAction("CancelView");
@@ -75,11 +85,6 @@ namespace Webshop.Controllers
         public IActionResult CancelView()
         {
             return View("cancel");
-        }
-
-        public IActionResult DisplayCustomerForm()
-        {
-            return View("CustomerInfo");
         }
 
     }

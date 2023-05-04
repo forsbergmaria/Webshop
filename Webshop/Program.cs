@@ -47,7 +47,7 @@ builder.Services.AddControllersWithViews();
 var app = builder.Build();
 
 // This is your test secret API key.
-//StripeConfiguration.ApiKey = "sk_test_51MnVSuJ9NmDaISNLt2DpWzyfEpec4JZF1Zf9gwPkecoDj2OYmXX9ThWfvXB2nEbadLp51BI6AuooidYslZ6yykDg00pjXolXbJ";
+StripeConfiguration.ApiKey = "sk_test_51MnVSuJ9NmDaISNLt2DpWzyfEpec4JZF1Zf9gwPkecoDj2OYmXX9ThWfvXB2nEbadLp51BI6AuooidYslZ6yykDg00pjXolXbJ";
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
