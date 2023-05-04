@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.WebPages;
 
 namespace DataAccess.Data.Repositories
 {
@@ -62,11 +63,12 @@ namespace DataAccess.Data.Repositories
         // The method retrieves all sold transactions from the database, and then uses a dictionary to keep track of the sold item counts. 
         // It then looks up each item in the Items table to get its corresponding name and adds the item and its count to the dictionary. 
         // Finally, it returns the resulting dictionary with each item and its sold count
-        public Dictionary<Item, int> GetMostSoldItems(int quantity)
+        public Dictionary<Item, int> GetMostSoldItems(int quantity, DateTime startDate, DateTime endDate)
         {
             using (var context = new ApplicationDbContext())
             {
-                var soldTransactions = context.ItemTransactions.Where(t => t.TransactionType == "Försäljning")
+                var soldTransactions = context.ItemTransactions.Where(t => t.TransactionType == "Försäljning"
+                    && t.TransactionDate.Date >= startDate && t.TransactionDate < endDate)
                     .Where(t => t.Quantity > 0).Take(quantity).ToList();
 
                 var soldItemCountDict = new Dictionary<Item, int>();
@@ -96,11 +98,12 @@ namespace DataAccess.Data.Repositories
         // The method retrieves all sold transactions from the database, and then uses a dictionary to keep track of the sold item counts. 
         // It then looks up each item in the Items table to get its corresponding name and adds the item and its count to the dictionary. 
         // Finally, it returns the resulting dictionary with each item and its sold count
-        public Dictionary<Item, int> GetLeastSoldItems(int quantity)
+        public Dictionary<Item, int> GetLeastSoldItems(int quantity, DateTime startDate, DateTime endDate)
         {
             using (var context = new ApplicationDbContext())
             {
-                var soldTransactions = context.ItemTransactions.Where(t => t.TransactionType == "Försäljning")
+                var soldTransactions = context.ItemTransactions.Where(t => t.TransactionType == "Försäljning"
+                    && t.TransactionDate.Date >= startDate && t.TransactionDate < endDate)
                     .Where(t => t.Quantity > 0).Take(quantity).ToList();
 
                 var soldItemCountDict = new Dictionary<Item, int>();

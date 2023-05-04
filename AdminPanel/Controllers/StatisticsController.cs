@@ -22,8 +22,8 @@ namespace AdminPanel.Controllers
         {
             var model = new StatisticsViewModel
             {
-                MostSoldItemCountForEachItem = _statisticsRepository.GetMostSoldItems(5),
-                LeastSoldItemCountForEachItem = _statisticsRepository.GetMostSoldItems(5),
+                MostSoldItemCountForEachItem = _statisticsRepository.GetMostSoldItems(5, DateTime.Now.AddDays(-30), DateTime.Now),
+                LeastSoldItemCountForEachItem = _statisticsRepository.GetMostSoldItems(5, DateTime.Now.AddDays(-30), DateTime.Now),
                 NumberOfSales = _statisticsRepository.GetTotalSalesSinceStart(),
                 ItemsNeverSold = _statisticsRepository.GetTopItemsThatHaveNeverBeenSold(10),
             };
@@ -54,7 +54,6 @@ namespace AdminPanel.Controllers
 
             return View(items);
         }
-
         public IActionResult ViewAllNeverSoldItems() 
         {
             var items = _statisticsRepository.GetAllItemsNeverSold();

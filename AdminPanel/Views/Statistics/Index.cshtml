@@ -3,7 +3,7 @@
 
 <body>
     <div>
-        <h2>Statistik</h2>
+        <h2>Allmän statistik</h2>
     </div>
     @{
         var countMostSold = 0;
@@ -12,7 +12,7 @@
     }
     <div>
         <div>
-            <h6>Topp 5 mest sålda produkter de senaste 7 dagarna</h6>
+            <h6>Topp 5 mest sålda produkter de senaste 30 dagarna</h6>
             <ul class="list-group list-group-flush">
                 @foreach (var item in Model.MostSoldItemCountForEachItem.OrderByDescending(i => i.Value))
                 {
@@ -38,7 +38,7 @@
             </ul>
         </div>
         <div>
-            <h6>Topp 5 minst sålda produkter de senaste 7 dagarna</h6>
+            <h6>Topp 5 minst sålda produkter de senaste 30 dagarna</h6>
             <ul class="list-group list-group-flush">
                 @foreach (var item in Model.LeastSoldItemCountForEachItem.OrderBy(i => i.Value))
                 {
@@ -64,7 +64,7 @@
             </ul>
         </div>
         <div>
-            <h6>Antal sålda produkter sedan start:</h6>
+            <h6>Antal sålda produkter de senaste 30 dagarna:</h6>
             <p><strong>@Model.NumberOfSales.Item1</strong> stycken</p>
             <p>för en totalsumma på:</p>
             <p><strong>@Model.NumberOfSales.Item2</strong> SEK (netto)</p>
