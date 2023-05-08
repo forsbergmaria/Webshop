@@ -128,24 +128,5 @@ namespace Data
                 context.SaveChanges();
             }
         }
-
-        public string GetSizeFromStripe(string productId)
-        {
-            StripeConfiguration.ApiKey = "sk_test_51MnVSuJ9NmDaISNLt2DpWzyfEpec4JZF1Zf9gwPkecoDj2OYmXX9ThWfvXB2nEbadLp51BI6AuooidYslZ6yykDg00pjXolXbJ";
-
-            var productService = new ProductService();
-
-            var productGetOptions = new ProductGetOptions
-            {
-                Expand = new List<string> { "metadata" }
-            };
-
-            var product = productService.Get(productId, productGetOptions);
-
-            var metadataValue = product.Metadata["Size"];
-
-            return metadataValue;
-
-        }
     }
 }

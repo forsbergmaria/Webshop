@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Models;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
