@@ -46,29 +46,24 @@ namespace AdminPanel.Controllers
                 Value = c.CategoryId.ToString(),
                 Text = c.Name
             }).OrderByDescending(c => c.Text);
-            var selectListSizes = sizes.Select(s => new SelectListItem
-            {
-                Value = s.SizeId.ToString(),
-                Text = s.Name
-            }).OrderByDescending(s => s.Text);
 
             ViewBag.Categories = selectListCategories;
-            ViewBag.Sizes = selectListSizes;
+            ViewBag.Sizes = _sizeRepository.GetAllSizes();
             return View("CreateItem");
         }
 
         // Create a new item
         [HttpPost]
         [Authorize(Roles = "Huvudadministratör, Moderator")]
-        public async Task<IActionResult> CreateItem(ItemViewModel model, List<IFormFile> files) 
+        public async Task<IActionResult> CreateItem(ItemViewModel model, List<IFormFile> files, int[] selectedSizes, bool hasSize) 
         {
              decimal.TryParse(model.VAT, out decimal percentDecimal);
                 
              // Lägger till 1 till procenten och dividerar med 100 för att få faktorvärdet
              decimal factorValue = 1 + (percentDecimal / 100);
 
-    if (ModelState.IsValid)
-            {
+                if (ModelState.IsValid)
+                  {
                 ICollection<Image> images = new List<Image>();
 
                 foreach (var file in files)
@@ -99,7 +94,7 @@ namespace AdminPanel.Controllers
                 item.Description = model.Description;
                 item.CategoryId = chosenCategory.CategoryId;
                 item.Color = model.Color;
-                item.HasSize = model.HasSize;
+                item.HasSize = hasSize;
                 item.ProductImages = images;
                 item.VAT = factorValue;
                 item.IsPublished = false;
@@ -107,8 +102,18 @@ namespace AdminPanel.Controllers
                 {
                     var chosenSubcategory = _categoryRepository.GetSubcategoryById(int.Parse(model.Subcategory));
                 }
-                _itemRepository.AddItem(item, model.SizeName);
+                if (hasSize) { 
+                }
+                _itemRepository.AddItem(item);
                 _itemRepository.AddItemToStripe(item);
+                if (selectedSizes != null)
+                {
+                    foreach (var size in selectedSizes)
+                    {
+                        _sizeRepository.AssignSizeToItem(item, size);
+                    }
+                }
+                
             }
 
                 return RedirectToAction("AllItems");

@@ -56,16 +56,32 @@
                 <option value="">Välj en underkategori</option>
             </select>
         </div>
-        <div class="form-group">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="hasSize" name="hasSize" value="true">
+            <label class="form-check-label" for="hasSize">
+                Show sizes
+            </label>
+        </div>
+    <div id="sizes" style="display:none">
+        @foreach (var size in ViewBag.Sizes)
+        {
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input sizeCheckbox" name="selectedSizes" value="@size.SizeId">
+                <label class="form-check-label">@size.Name</label>
+            </div>
+        }
+    </div>
+@*        <div class="form-group">
             @Html.LabelFor(m => m.HasSize)
             @Html.CheckBoxFor(m => m.HasSize, new { id = "HasSize" })
         </div>
         <div class="form-group">
-            @Html.LabelFor(m => m.SizeName)
-            <select id="Size" name="Size" class="form-control" disabled>
-                <option value="">Välj en storlek</option>
-            </select>
-        </div>
+            @foreach (var size in ViewBag.Sizes)
+            {
+                <button type="button" class="btn btn-primary size-button" data-size-id="@size.SizeId">@size.Name</button>
+            }
+            <input type="hidden" name="sizes[]" />
+        </div>*@
         <div class="form-group">
             @Html.LabelFor(m => m.ProductImages, new { @class = "col-md-2 control-label" })
             <input asp-for="ProductImages" type="file" name="files" multiple class="form-control-file" accept="image/jpeg, image/png, image/jpg, image/jfif"/>
@@ -107,20 +123,43 @@
             });
         </script>
         <script>
-            const hasSizeCheckbox = document.querySelector('#HasSize');
-            const sizeSelect = document.querySelector('#Size');
+            // Hitta elementen på sidan
+            const showSizesCheckbox = document.getElementById("hasSize");
+            const sizesDiv = document.getElementById("sizes");
 
-            // Lägg till en lyssnare för kryssrutan för att aktivera eller inaktivera select-elementet
-            hasSizeCheckbox.addEventListener('change', function () {
-                if (hasSizeCheckbox.checked) {
-                    sizeSelect.disabled = false;
+            // Lägg till händelselyssnare på kryssrutan
+            showSizesCheckbox.addEventListener("change", function () {
+                if (showSizesCheckbox.checked) {
+                    sizesDiv.style.display = "block";
                 } else {
-                    sizeSelect.disabled = true;
+                    sizesDiv.style.display = "none";
+                    clearSelectedSizes();
                 }
             });
 
-            // Tillåt flerval av storlekar genom att ändra select-elementets "multiple" attribut till true
-            sizeSelect.multiple = true;
+            // Lägg till händelselyssnare på storlekscheckboxarna
+            const sizeCheckboxes = sizesDiv.getElementsByClassName("sizeCheckbox");
+            Array.from(sizeCheckboxes).forEach(function (checkbox) {
+                checkbox.addEventListener("change", function () {
+                    updateSelectedSizes();
+                });
+            });
+
+            // Uppdatera den dolda inmatningsfältet när en storlekscheckbox ändras
+            function updateSelectedSizes() {
+                const selectedSizes = Array.from(sizeCheckboxes)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.value);
+                document.getElementById("selectedSizes").value = JSON.stringify(selectedSizes);
+            }
+
+            // Rensa de valda storlekarna och uppdatera den dolda inmatningsfältet
+            function clearSelectedSizes() {
+                Array.from(sizeCheckboxes).forEach(function (checkbox) {
+                    checkbox.checked = false;
+                });
+                document.getElementById("selectedSizes").value = "";
+            }
         </script>
          }
 </body>

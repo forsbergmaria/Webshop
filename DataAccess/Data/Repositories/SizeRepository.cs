@@ -79,5 +79,17 @@ namespace DataAccess.Data.Repositories
                 context.SaveChanges();
             }
         }
+
+        public void AssignSizeToItem(Item item, int sizeId)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                ItemHasSize itemHasSize = new ItemHasSize();
+                itemHasSize.ItemId = item.ItemId;
+                itemHasSize.SizeId = sizeId;
+                context.ItemHasSize.Add(itemHasSize);
+                context.SaveChanges();
+            }
+        }
     }
 }

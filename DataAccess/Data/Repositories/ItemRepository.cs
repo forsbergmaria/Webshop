@@ -151,28 +151,13 @@ namespace Data
 
 
         //Creates a new item
-        public void AddItem (Item item, string[]? sizeName)
+        public void AddItem (Item item)
         {
             using (var context = new ApplicationDbContext())
             {
                 var sizesList = new List<Size>();
                 context.Items.Add(item);
                 context.SaveChanges();
-
-                if (item.HasSize == true)
-                {
-                    foreach (var sizes in sizeName)
-                    {
-                        sizesList.Add(_sizeRepository.GetSizeByName(sizes));
-                    }
-                    foreach (var sizes in sizesList)
-                    {
-                        var itemSize = new ItemHasSize();
-                        itemSize.ItemId = item.ItemId;
-                        itemSize.SizeId = sizes.SizeId;
-                        context.ItemHasSize.Add(itemSize);
-                    }
-                }
 
                 var items = item.ProductImages.ToList();
                 foreach (var productImage in items)
