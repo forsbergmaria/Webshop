@@ -317,6 +317,7 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Returns an integer, representing the current balance of an item
         public int GetBalanceForOneItem(int itemId)
         {
             using (var context = new ApplicationDbContext())
@@ -340,6 +341,7 @@ namespace DataAccess.Data.Repositories
                     }
                 }
 
+                // To make sure that the balance never will be less than 0
                 if (productBalance < 0)
                 {
                     productBalance = 0;
