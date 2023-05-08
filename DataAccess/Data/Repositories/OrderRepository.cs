@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Models;
 using Stripe;
 using Stripe.Checkout;
+using System.Diagnostics;
 
 namespace Data
 {
@@ -86,6 +87,8 @@ namespace Data
         {
             using (var context = new ApplicationDbContext())
             {
+                StripeConfiguration.ApiKey = "sk_test_51MnVSuJ9NmDaISNLt2DpWzyfEpec4JZF1Zf9gwPkecoDj2OYmXX9ThWfvXB2nEbadLp51BI6AuooidYslZ6yykDg00pjXolXbJ";
+
                 Order order = new Order();
                 order.OrderDate = session.Created;
                 order.CustomerName = session.ShippingDetails.Name;
@@ -113,8 +116,11 @@ namespace Data
                     }
                     else
                     {
-                        var metaDataValue = GetSizeFromStripe(item.Price.ProductId);
-                        _itemRepository.AddItemTransaction(theItem, "Försäljning", (int)item.Quantity, metaDataValue);
+                        var productService = new ProductService();
+                        var product = productService.Get(item.Price.ProductId);
+                        var metadata = product.Metadata["Size"];
+                        Debug.WriteLine(metadata);
+                        _itemRepository.AddItemTransaction(theItem, "Försäljning", (int)item.Quantity, metadata);
                     }
                     
                 }

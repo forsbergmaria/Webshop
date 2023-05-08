@@ -24,7 +24,7 @@ namespace Models
         [Display(Name = "Denna produkt har storlekar")]
         public bool HasSize { get; set; }
         [Display(Name = "Välj en storlek")]
-        public string? SizeName { get; set; }
+        public string[]? SizeName { get; set; }
         [Display(Name = "Färg")]
         public string? Color { get; set; }
         [Precision(18, 2)]

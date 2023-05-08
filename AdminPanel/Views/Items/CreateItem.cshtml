@@ -57,6 +57,16 @@
             </select>
         </div>
         <div class="form-group">
+            @Html.LabelFor(m => m.HasSize)
+            @Html.CheckBoxFor(m => m.HasSize, new { id = "HasSize" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.SizeName)
+            <select id="Size" name="Size" class="form-control" disabled>
+                <option value="">Välj en storlek</option>
+            </select>
+        </div>
+        <div class="form-group">
             @Html.LabelFor(m => m.ProductImages, new { @class = "col-md-2 control-label" })
             <input asp-for="ProductImages" type="file" name="files" multiple class="form-control-file" accept="image/jpeg, image/png, image/jpg, image/jfif"/>
         </div>
@@ -95,6 +105,22 @@
                     }
                 });
             });
+        </script>
+        <script>
+            const hasSizeCheckbox = document.querySelector('#HasSize');
+            const sizeSelect = document.querySelector('#Size');
+
+            // Lägg till en lyssnare för kryssrutan för att aktivera eller inaktivera select-elementet
+            hasSizeCheckbox.addEventListener('change', function () {
+                if (hasSizeCheckbox.checked) {
+                    sizeSelect.disabled = false;
+                } else {
+                    sizeSelect.disabled = true;
+                }
+            });
+
+            // Tillåt flerval av storlekar genom att ändra select-elementets "multiple" attribut till true
+            sizeSelect.multiple = true;
         </script>
          }
 </body>

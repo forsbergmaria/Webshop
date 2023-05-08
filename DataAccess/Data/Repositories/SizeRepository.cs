@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Data.Repositories
 {
-    internal class SizeRepository
+    public class SizeRepository
     {
         //Returns a list of Sizes from the database
         public List<Size> GetAllSizes()

@@ -10,13 +10,16 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using DataAccess;
+using DataAccess.Data.Repositories;
 
 namespace AdminPanel.Controllers
 {
     public class ItemsController : Controller
     {
         ItemRepository _itemRepository { get { return new ItemRepository(); } }
+        SizeRepository _sizeRepository { get { return new SizeRepository(); } }
         CategoryRepository _categoryRepository { get { return new CategoryRepository(); } }
+
         private readonly IWebHostEnvironment _env;
         private readonly ApplicationDbContext _context;
 
@@ -36,14 +39,21 @@ namespace AdminPanel.Controllers
         [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateItemForm()
         {
+            var sizes = _sizeRepository.GetAllSizes();
             var categories = _categoryRepository.GetAllCategories();
-            var selectList = categories.Select(c => new SelectListItem
+            var selectListCategories = categories.Select(c => new SelectListItem
             {
                 Value = c.CategoryId.ToString(),
                 Text = c.Name
             }).OrderByDescending(c => c.Text);
+            var selectListSizes = sizes.Select(s => new SelectListItem
+            {
+                Value = s.SizeId.ToString(),
+                Text = s.Name
+            }).OrderByDescending(s => s.Text);
 
-            ViewBag.Categories = selectList;
+            ViewBag.Categories = selectListCategories;
+            ViewBag.Sizes = selectListSizes;
             return View("CreateItem");
         }
 
@@ -97,18 +107,8 @@ namespace AdminPanel.Controllers
                 {
                     var chosenSubcategory = _categoryRepository.GetSubcategoryById(int.Parse(model.Subcategory));
                 }
-                if (item.HasSize == true)
-                {
-                    _itemRepository.AddItem(item, model.SizeName);
-                    _itemRepository.AddItemToStripe(item, model.SizeName);
-                }
-                else
-                {
-                    _itemRepository.AddItem(item, null);
-                    _itemRepository.AddItemToStripe(item, null);
-                }
-
-
+                _itemRepository.AddItem(item, model.SizeName);
+                _itemRepository.AddItemToStripe(item);
             }
 
                 return RedirectToAction("AllItems");

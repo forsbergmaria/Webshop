@@ -151,22 +151,27 @@ namespace Data
 
 
         //Creates a new item
-        public void AddItem (Item item, string? sizeName)
+        public void AddItem (Item item, string[]? sizeName)
         {
             using (var context = new ApplicationDbContext())
             {
-
+                var sizesList = new List<Size>();
                 context.Items.Add(item);
                 context.SaveChanges();
 
                 if (item.HasSize == true)
                 {
-                    var size = _sizeRepository.GetSizeByName(sizeName);
-                    var itemSize = new ItemHasSize();
-                    itemSize.ItemId = item.ItemId;
-                    itemSize.SizeId = size.SizeId;
-
-                    context.ItemHasSize.Add(itemSize);
+                    foreach (var sizes in sizeName)
+                    {
+                        sizesList.Add(_sizeRepository.GetSizeByName(sizes));
+                    }
+                    foreach (var sizes in sizesList)
+                    {
+                        var itemSize = new ItemHasSize();
+                        itemSize.ItemId = item.ItemId;
+                        itemSize.SizeId = sizes.SizeId;
+                        context.ItemHasSize.Add(itemSize);
+                    }
                 }
 
                 var items = item.ProductImages.ToList();
@@ -184,7 +189,7 @@ namespace Data
             }
         }
 
-        public void AddItemToStripe(Item item, string? sizeName)
+        public void AddItemToStripe(Item item)
         {
             using (var context = new ApplicationDbContext())
             {
@@ -195,29 +200,13 @@ namespace Data
 				{
 					imageLinks.Add(image.Path);
 				}
-                var productOptions = new ProductCreateOptions();
-                if (item.HasSize == true)
-                {
-                    productOptions = new ProductCreateOptions
-                    {
-                        Name = item.Name,
-                        Description = item.Description,
-                        Metadata = new Dictionary<string, string> { { "Size", sizeName } },
-                        //Images = new List<string> 
-                        //               { 
-                        //                   item.ProductImages.FirstOrDefault().Path
-                        //               }
-                    };
-                }
-                else
-                {
-                    productOptions = new ProductCreateOptions
+               
+                    var productOptions = new ProductCreateOptions
                     {
                         Name = item.Name,
                         Description = item.Description,
                     };
-                }
-
+                
 
 				var productService = new ProductService();
 				Product product = productService.Create(productOptions);
