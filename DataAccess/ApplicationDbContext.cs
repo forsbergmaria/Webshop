@@ -237,19 +237,25 @@ namespace DataAccess
                 {
                     OrderId = 1,
                     ItemId = 2,
+                    StripeItemId = "prod_NYcwS1YSGIhUW1",
                     ItemQuantity = 1,
+                    Total = 199
                 },
                 new OrderContainsItem
                 {
                     OrderId = 1,
                     ItemId = 3,
+                    StripeItemId = "prod_NYcwS1YSGIhUW1",
                     ItemQuantity = 2,
+                    Total = 199
                 },
                 new OrderContainsItem
                 {
                     OrderId = 2,
                     ItemId = 2,
+                    StripeItemId = "prod_NYcwS1YSGIhUW1",
                     ItemQuantity = 1,
+                    Total = 199
                 }
                 );
 

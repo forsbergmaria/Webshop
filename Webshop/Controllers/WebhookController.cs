@@ -38,8 +38,7 @@ namespace Webshop.Controllers
                 }
                 else if (stripeEvent.Type == Events.CheckoutSessionCompleted)
                 {
-
-                    AddOrderToDatabase(session);
+                    _orderRepository.CreateOrder(session, lineItems);
                     return Ok();
                 }
                 else if (stripeEvent.Type == Events.CheckoutSessionExpired)
@@ -57,20 +56,6 @@ namespace Webshop.Controllers
             {
                 return BadRequest();
             }
-        }
-
-        [Route("AddOrder")]
-        public void AddOrderToDatabase(Session session)
-        {
-            var order = new Order();
-            order.OrderDate = DateTime.Now;
-            order.CustomerName = session.ShippingDetails.Name;
-            order.CustomerAddress = session.ShippingDetails.Address.Line1;
-            order.CustomerAddress2 = session.ShippingDetails.Address.Line2;
-            order.CustomerPhone = session.ShippingDetails.Phone;
-            order.CustomerCity = session.ShippingDetails.Address.City;
-            order.CustomerZipCode = session.ShippingDetails.Address.PostalCode;
-            _orderRepository.CreateOrder(order);
         }
     }
 }

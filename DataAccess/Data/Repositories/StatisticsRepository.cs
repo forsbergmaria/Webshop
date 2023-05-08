@@ -278,7 +278,7 @@ namespace DataAccess.Data.Repositories
                     if (item != null)
                     {
                         // Beräkna försäljningssumma för varje transaktion
-                        decimal salesAmount = transaction.Quantity * item.PriceWithoutVAT;
+                        decimal salesAmount = (decimal)(transaction.Quantity * item.PriceWithoutVAT);
                         totalSales += salesAmount;
                     }
                 }

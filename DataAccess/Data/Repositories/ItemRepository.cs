@@ -223,5 +223,40 @@ namespace Data
                 return images;
             }
         }
+        public void AddItemTransaction(Item item, string transactionType, int quantity, string? sizeName)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                if (item.HasSize == false)
+                {
+                    var transaction = new ItemTransaction
+                    {
+                        ItemId = item.ItemId,
+                        Quantity = quantity,
+                        TransactionType = transactionType,
+                        TransactionDate = DateTime.Now
+                    };
+
+                    context.ItemTransactions.Add(transaction);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    
+                    var size = context.Sizes.Where(s => s.Name == sizeName).FirstOrDefault();
+                    var transaction = new TransactionWithSizes
+                    {
+                        ItemId = item.ItemId,
+                        Quantity = quantity,
+                        TransactionType = transactionType,
+                        TransactionDate = DateTime.Now,
+                        SizeId = size.SizeId
+                    };
+
+                    context.ItemTransactions.Add(transaction);
+                    context.SaveChanges();
+                }
+            }
+        }
     }
 }

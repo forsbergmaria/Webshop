@@ -1,11 +1,15 @@
 ﻿using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using Stripe;
+using Stripe.Checkout;
 
 namespace Data
 {
     public class OrderRepository
     {
+        ItemRepository _itemRepository { get { return new ItemRepository(); } }
+
         //Checks if any orders exist in the database
         public bool OrdersExist()
         {
@@ -78,14 +82,36 @@ namespace Data
         }
 
         //Creates a new order
-        public void CreateOrder(Order order)
+        public void CreateOrder(Session session, StripeList<LineItem> lineItems)
         {
             using (var context = new ApplicationDbContext())
             {
+                Order order = new Order();
+                order.OrderDate = session.Created;
+                order.CustomerName = session.ShippingDetails.Name;
+                order.CustomerAddress = session.ShippingDetails.Address.Line1;
+                order.CustomerAddress2 = session.ShippingDetails.Address.Line2;
+                order.CustomerPhone = session.ShippingDetails.Phone;
+                order.CustomerCity = session.ShippingDetails.Address.City;
+                order.CustomerZipCode = session.ShippingDetails.Address.PostalCode;
                 context.Orders.Add(order);
+                context.SaveChanges();
+
+                foreach (var item in lineItems)
+                {
+                    var orderedItem = new OrderContainsItem();
+                    orderedItem.OrderId = order.OrderId;
+                    orderedItem.StripeItemId = item.Price.ProductId;
+                    var theItem = context.Items.Where(i => i.StripeItemId.Equals(item.Price.ProductId)).FirstOrDefault();
+                    orderedItem.ItemId = theItem.ItemId;
+                    orderedItem.ItemQuantity = item.Quantity;
+                    orderedItem.Total = item.AmountTotal;
+                    context.OrderContainsItem.Add(orderedItem);
+                    _itemRepository.AddItemTransaction(theItem, "Försäljning", (int)item.Quantity, null);
+                }
+
                 context.SaveChanges();
             }
         }
-
     }
 }
