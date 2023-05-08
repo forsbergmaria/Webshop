@@ -24,6 +24,12 @@ namespace Webshop.Controllers
             {
                 var stripeEvent = EventUtility.ParseEvent(json);
                 var session = stripeEvent.Data.Object as Session;
+                var options = new SessionListLineItemsOptions
+                {
+                    Limit = 100,
+                };
+                var service = new SessionService();
+                StripeList<LineItem> lineItems = service.ListLineItems(session.Id, options);
 
 
                 // Handle the event
@@ -32,6 +38,7 @@ namespace Webshop.Controllers
                 }
                 else if (stripeEvent.Type == Events.CheckoutSessionCompleted)
                 {
+
                     AddOrderToDatabase(session);
                     return Ok();
                 }
