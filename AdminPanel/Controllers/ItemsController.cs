@@ -58,15 +58,15 @@ namespace AdminPanel.Controllers
         // Create a new item
         [HttpPost]
         [Authorize(Roles = "Huvudadministratör, Moderator")]
-        public async Task<IActionResult> CreateItem(ItemViewModel model, List<IFormFile> files, int[] selectedSizes, bool hasSize) 
+        public async Task<IActionResult> CreateItem(ItemViewModel model, List<IFormFile> files, int[] selectedSizes, bool hasSize)
         {
-             decimal.TryParse(model.VAT, out decimal percentDecimal);
-                
-             // Lägger till 1 till procenten och dividerar med 100 för att få faktorvärdet
-             decimal factorValue = 1 + (percentDecimal / 100);
+            decimal.TryParse(model.VAT, out decimal percentDecimal);
 
-                if (ModelState.IsValid)
-                  {
+            // Lägger till 1 till procenten och dividerar med 100 för att få faktorvärdet
+            decimal factorValue = 1 + (percentDecimal / 100);
+
+            if (ModelState.IsValid)
+            {
                 ICollection<Image> images = new List<Image>();
 
                 foreach (var file in files)
@@ -105,7 +105,8 @@ namespace AdminPanel.Controllers
                 {
                     var chosenSubcategory = _categoryRepository.GetSubcategoryById(int.Parse(model.Subcategory));
                 }
-                if (hasSize) { 
+                if (hasSize)
+                {
                 }
                 _itemRepository.AddItem(item);
                 _itemRepository.AddItemToStripe(item);
@@ -116,10 +117,10 @@ namespace AdminPanel.Controllers
                         _sizeRepository.AssignSizeToItem(item, size);
                     }
                 }
-                
+
             }
 
-                return RedirectToAction("AllItems");
+            return RedirectToAction("AllItems");
         }
 
         // Delete an item and it's images, if there are any
@@ -128,15 +129,15 @@ namespace AdminPanel.Controllers
         {
             var item = _itemRepository.GetItem(id);
             var imagesList = _itemRepository.GetImagesByItemId(item.ItemId);
-         if (imagesList != null)
+            if (imagesList != null)
             {
                 foreach (var image in imagesList)
                 {
-                var fileName = image.Path;
-                var webRootPath = _env.WebRootPath;
-                var filePath = webRootPath + fileName;
-                _itemRepository.DeleteImageFromDirectory(filePath);
-                _itemRepository.DeleteAllImagesFromItem(id);
+                    var fileName = image.Path;
+                    var webRootPath = _env.WebRootPath;
+                    var filePath = webRootPath + fileName;
+                    _itemRepository.DeleteImageFromDirectory(filePath);
+                    _itemRepository.DeleteAllImagesFromItem(id);
                 }
             }
 
@@ -296,7 +297,7 @@ namespace AdminPanel.Controllers
         }
 
         // Display all items
-        public IActionResult AllItems() 
+        public IActionResult AllItems()
         {
             List<Item> items = _itemRepository.GetAllItems();
             var model = new List<ItemViewModel>();
@@ -323,6 +324,18 @@ namespace AdminPanel.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public JsonResult GetItemSizes(int itemId)
+        {
+            var sizes = _sizeRepository.GetAllSizesForOneItem(itemId)
+                .Select(s => new SelectListItem
+            {
+             Value = s.SizeId.ToString(),
+             Text = s.Name
+                }).OrderByDescending(s => s.Text)
+                     .ToList();
+            return Json(sizes);
+        }
         public IActionResult ViewMoreInfo(int id)
         {
             var item = _itemRepository.GetItem(id);
@@ -350,7 +363,7 @@ namespace AdminPanel.Controllers
             var item = _itemRepository.GetItem(id);
             var modelSizes = new AddBalanceSizeViewModel();
             var modelRegular = new AddBalanceViewModel();
-  
+
             if (item.HasSize)
             {
                 modelSizes.Item = item;
