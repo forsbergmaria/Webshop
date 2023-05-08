@@ -155,13 +155,19 @@ namespace Data
         {
             using (var context = new ApplicationDbContext())
             {
+
+                context.Items.Add(item);
+                context.SaveChanges();
+
                 if (item.HasSize == true)
                 {
                     var size = _sizeRepository.GetSizeByName(sizeName);
-                    int sizeId = size.SizeId;
+                    var itemSize = new ItemHasSize();
+                    itemSize.ItemId = item.ItemId;
+                    itemSize.SizeId = size.SizeId;
+
+                    context.ItemHasSize.Add(itemSize);
                 }
-                context.Items.Add(item);
-                context.SaveChanges();
 
                 var items = item.ProductImages.ToList();
                 foreach (var productImage in items)

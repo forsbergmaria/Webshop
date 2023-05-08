@@ -22,6 +22,7 @@ namespace DataAccess
         }
 
         public DbSet<Order> Orders { get; set; }
+        public DbSet<ItemHasSize> ItemHasSize { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<ItemTransaction> ItemTransactions { get; set; }
         public DbSet<TransactionWithSizes> TransactionsWithSizes { get; set; }
