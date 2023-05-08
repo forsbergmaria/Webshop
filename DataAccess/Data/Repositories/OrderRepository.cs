@@ -41,8 +41,7 @@ namespace Data
                 return context.Orders.Include(o => o.CustomerPhone)
                     .Include(o => o.CustomerCity)
                     .Include(o => o.CustomerZipCode)
-                    .Include(o => o.CustomerFirstName)
-                    .Include(o => o.CustomerLastName)
+                    .Include(o => o.CustomerName)
                     .Include(o => o.CustomerAddress)
                     .FirstOrDefault(i => i.OrderId == id);
             }

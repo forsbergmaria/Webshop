@@ -190,8 +190,7 @@ namespace DataAccess
             {
                 OrderId = 1,
                 OrderDate = DateTime.Parse("2023-03-08 10:00"),
-                CustomerFirstName = "Maria",
-                CustomerLastName = "Forsberg",
+                CustomerName = "Maria Forsberg",
                 CustomerPhone = "0765696217",
                 CustomerAddress = "Malmgatan 2A",
                 CustomerZipCode = "73133",
@@ -202,8 +201,7 @@ namespace DataAccess
             {
                 OrderId = 2,
                 OrderDate = DateTime.Parse("2023-03-10 13:44"),
-                CustomerFirstName = "Anton",
-                CustomerLastName = "Kraft",
+                CustomerName = "Anton Kraft",
                 CustomerPhone = "0767128320",
                 CustomerAddress = "Malmgatan 2A",
                 CustomerZipCode = "73133",

@@ -17,10 +17,10 @@ namespace Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OrderId { get; set; }
         public DateTime OrderDate { get; set; }
-        public string CustomerFirstName { get; set; }
-        public string CustomerLastName { get; set; }
-        public string CustomerPhone { get; set; }
+        public string CustomerName { get; set; }
+        public string? CustomerPhone { get; set; }
         public string CustomerAddress { get; set; }
+        public string? CustomerAddress2 { get; set; }
         public string CustomerZipCode { get; set; }
         //public string CustomerEmail { get; set; }
         public string CustomerCity { get; set; }
