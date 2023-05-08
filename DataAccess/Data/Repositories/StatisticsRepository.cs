@@ -351,6 +351,16 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        public void AddTransaction(ItemTransaction transaction)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+
+                context.ItemTransactions.Add(transaction);
+                context.SaveChanges();
+            }
+        }
+
 
 
     }

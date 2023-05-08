@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using DataAccess;
 using DataAccess.Data.Repositories;
+using Models.ViewModels;
 
 namespace AdminPanel.Controllers
 {
@@ -326,6 +327,51 @@ namespace AdminPanel.Controllers
         {
             var item = _itemRepository.GetItem(id);
             return View(item);
+        }
+
+        [HttpPost]
+        public IActionResult AdjustStock(int itemId, int quantity, string transactionType)
+        {
+            var transaction = new ItemTransaction();
+            transaction.ItemId = itemId;
+            transaction.Quantity = quantity;
+            transaction.TransactionType = transactionType;
+            transaction.TransactionDate = DateTime.Now;
+
+            _statisticsRepository.AddTransaction(transaction);
+            var item = _itemRepository.GetItem(itemId);
+
+            return View("ViewMoreInfo", item); // Redirect tillbaka till produktlistan.
+        }
+
+
+        public IActionResult AddToBalance(int id)
+        {
+            var item = _itemRepository.GetItem(id);
+            var modelSizes = new AddBalanceSizeViewModel();
+            var modelRegular = new AddBalanceViewModel();
+  
+            if (item.HasSize)
+            {
+                modelSizes.Item = item;
+                var currentBalance = new Dictionary<Size, int>();
+                var sizes = _sizeRepository.GetAllSizesForOneItem(id);
+                foreach (var size in sizes)
+                {
+                    currentBalance.Add(size, _statisticsRepository.GetBalanceForOneItem(id));
+                }
+                modelSizes.CurrentBalance = currentBalance;
+
+                return View(modelSizes);
+
+            }
+            else
+            {
+                modelRegular.item = item;
+                modelRegular.CurrentBalance = _statisticsRepository.GetBalanceForOneItem(id);
+            }
+
+            return View(modelRegular);
         }
 
         public IActionResult ItemPublisherManager(int id)

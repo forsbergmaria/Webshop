@@ -72,8 +72,66 @@
                 </div>
             }
             <button class="btn btn-primary" onclick="location.href='@Url.Action("ModifyItemForm", "Items", new { id = @Model.ItemId })'">Redigera produkt</button>
+            @if (!Model.HasSize)
+            {
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStockModal" data-itemid="@Model.ItemId">
+                    Fyll på lagersaldo
+                </button>
+            }
+            
+            <button class="btn btn-primary" onclick="location.href='@Url.Action("RemoveFromBalance", "Items", new { id = @Model.ItemId })'">Minska lagersaldo</button>
             <button class="btn btn-danger" onclick="if(confirm('Är du säker på att du vill ta bort den här produkten? Det går inte att ångra.')){ location.href='@Url.Action("DeleteItem", "Items", new { id = Model.ItemId })' }">Radera produkt</button>
         </div>
+        <!-- The modal -->
+        <div class="modal fade" id="addStockModal" tabindex="-1" aria-labelledby="addStockModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addStockModalLabel">Fyll på lagersaldo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addStockForm" asp-controller="Items" asp-action="AdjustStock" data-itemid="@Model.ItemId">
+                            <div class="mb-3">
+                                <label for="quantity" class="form-label">Antal</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="transactionType" class="form-label">Transaktionstyp</label>
+                                <select class="form-select" id="transactionType" name="transactionType" required>
+                                    <option value="In">In</option>
+                                    <option value="Ut">Ut</option>
+                                </select>
+                            </div>
+                            <input type="hidden" id="itemId" name="itemId" value="@Model.ItemId">
+                            <input type="hidden" id="transactionTypeHidden" name="transactionType" value="">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                        <button type="submit" form="addStockForm" class="btn btn-primary">Spara</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    @section Scripts {
+        <script>
+            $('#addStockModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget) // Knappen som öppnade modalen
+                var itemId = button.data('itemid') // Extrahera värdet för data-itemid-attributet från knappen
 
+                // Uppdatera det dolda itemId-fältet i modalen med rätt värde
+                var modal = $(this)
+                modal.find('#itemId').val(itemId)
+            });
+              // Lägg till en eventlyssnare på select-elementet
+              var transactionTypeSelect = document.getElementById("transactionType");
+            transactionTypeSelect.addEventListener("change", function () {
+                // Sätt värdet på den gömda inputen till det valda alternativet
+                var transactionTypeHidden = document.getElementById("transactionTypeHidden");
+                transactionTypeHidden.value = transactionTypeSelect.value;
+            });
+        </script>
+    }
 </body>

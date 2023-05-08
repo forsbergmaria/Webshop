@@ -80,6 +80,25 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        public List<Size> GetAllSizesForOneItem(int itemId)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var sizes = context.Sizes
+                    .Join(
+                        context.ItemHasSize,
+                        size => size.SizeId,
+                        itemSize => itemSize.SizeId,
+                        (size, itemSize) => new { size, itemSize }
+                    )
+                    .Where(s => s.itemSize.ItemId == itemId)
+                    .Select(s => s.size)
+                    .ToList();
+
+                return sizes;
+            }
+        }
+
         public void AssignSizeToItem(Item item, int sizeId)
         {
             using (var context = new ApplicationDbContext())
