@@ -105,7 +105,7 @@ namespace Webshop.Controllers
             return View(cartItems);
         }
 
-        public IActionResult Add(int id)
+        public IActionResult Add(int id, string size, int quantity)
         {
             var existingCookie = Request.Cookies["ShoppingCart"];
             string newCookieValue;
