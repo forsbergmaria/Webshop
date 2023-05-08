@@ -19,6 +19,8 @@ namespace AdminPanel.Controllers
         ItemRepository _itemRepository { get { return new ItemRepository(); } }
         SizeRepository _sizeRepository { get { return new SizeRepository(); } }
         CategoryRepository _categoryRepository { get { return new CategoryRepository(); } }
+        StatisticsRepository _statisticsRepository { get { return new StatisticsRepository(); } }
+
 
         private readonly IWebHostEnvironment _env;
         private readonly ApplicationDbContext _context;
@@ -296,7 +298,28 @@ namespace AdminPanel.Controllers
         public IActionResult AllItems() 
         {
             List<Item> items = _itemRepository.GetAllItems();
-            return View(items);
+            var model = new List<ItemViewModel>();
+            foreach (var item in items)
+            {
+                model.Add(new ItemViewModel
+                {
+                    ArticleNr = item.ArticleNr,
+                    PriceWithoutVAT = item.PriceWithoutVAT,
+                    Category = item.Category.Name,
+                    Brand = item.Brand,
+                    Color = item.Color,
+                    ItemId = item.ItemId,
+                    Description = item.Description,
+                    Name = item.Name,
+                    IsPublished = item.IsPublished,
+                    HasSize = item.HasSize,
+                    ProductImages = item.ProductImages,
+                    VAT = item.VAT.ToString(),
+                    ItemBalance = _statisticsRepository.GetBalanceForOneItem(item.ItemId)
+                });
+            }
+
+            return View(model);
         }
 
         public IActionResult ViewMoreInfo(int id)

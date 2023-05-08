@@ -45,6 +45,10 @@ namespace Models
         public string Category { get; set; }
         [Display(Name = "Underkategori")]
         public string? Subcategory { get; set; }
+        [Display(Name = "Lagersaldo")]
+
+        public bool IsPublished { get; set; }
+        public int? ItemBalance { get; set; }
         [Display(Name = "Produktbilder")]
         public ICollection<Image>? ProductImages { get; set; }
     }

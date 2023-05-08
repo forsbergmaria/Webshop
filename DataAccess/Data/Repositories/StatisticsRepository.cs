@@ -1,5 +1,7 @@
 ﻿using Data;
+using Microsoft.EntityFrameworkCore;
 using Models;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -315,7 +317,37 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        public int GetBalanceForOneItem(int itemId)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var transactions = context.ItemTransactions.Where(t => t.ItemId == itemId).ToList();
+                var productBalance = 0;
 
+                foreach (var transaction in transactions)
+                {
+                    switch (transaction.TransactionType)
+                    {
+                        case "Försäljning":
+                        case "Ut":
+                            productBalance -= transaction.Quantity;
+                            break;
+                        case "In":
+                            productBalance += transaction.Quantity;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                if (productBalance < 0)
+                {
+                    productBalance = 0;
+                }
+
+                return productBalance;
+            }
+        }
 
 
 
