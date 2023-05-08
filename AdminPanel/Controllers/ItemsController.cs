@@ -97,8 +97,16 @@ namespace AdminPanel.Controllers
                 {
                     var chosenSubcategory = _categoryRepository.GetSubcategoryById(int.Parse(model.Subcategory));
                 }
-                _itemRepository.AddItem(item);
-                _itemRepository.AddItemToStripe(item);
+                if (item.HasSize == true)
+                {
+                    _itemRepository.AddItem(item, model.SizeName);
+                    _itemRepository.AddItemToStripe(item, model.SizeName);
+                }
+                else
+                {
+                    _itemRepository.AddItem(item, null);
+                    _itemRepository.AddItemToStripe(item, null);
+                }
 
 
             }

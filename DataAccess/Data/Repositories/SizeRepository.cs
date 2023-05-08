@@ -19,6 +19,15 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        public Size GetSizeByName(string name)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                return context.Sizes.Include(i => i.Name)
+                    .FirstOrDefault(i => i.Name == name);
+            }
+        }
+
         //Returns a specific Size from the database
         public Size GetSize(int id)
         {

@@ -105,13 +105,41 @@ namespace Data
                     var theItem = context.Items.Where(i => i.StripeItemId.Equals(item.Price.ProductId)).FirstOrDefault();
                     orderedItem.ItemId = theItem.ItemId;
                     orderedItem.ItemQuantity = item.Quantity;
-                    orderedItem.Total = item.AmountTotal;
+                    orderedItem.Total = item.AmountTotal / 100;
                     context.OrderContainsItem.Add(orderedItem);
-                    _itemRepository.AddItemTransaction(theItem, "Försäljning", (int)item.Quantity, null);
+                    if (theItem.HasSize == false)
+                    {
+                        _itemRepository.AddItemTransaction(theItem, "Försäljning", (int)item.Quantity, null);
+                    }
+                    else
+                    {
+                        var metaDataValue = GetSizeFromStripe(item.Price.ProductId);
+                        _itemRepository.AddItemTransaction(theItem, "Försäljning", (int)item.Quantity, metaDataValue);
+                    }
+                    
                 }
 
                 context.SaveChanges();
             }
+        }
+
+        public string GetSizeFromStripe(string productId)
+        {
+            StripeConfiguration.ApiKey = "sk_test_51MnVSuJ9NmDaISNLt2DpWzyfEpec4JZF1Zf9gwPkecoDj2OYmXX9ThWfvXB2nEbadLp51BI6AuooidYslZ6yykDg00pjXolXbJ";
+
+            var productService = new ProductService();
+
+            var productGetOptions = new ProductGetOptions
+            {
+                Expand = new List<string> { "metadata" }
+            };
+
+            var product = productService.Get(productId, productGetOptions);
+
+            var metadataValue = product.Metadata["Size"];
+
+            return metadataValue;
+
         }
     }
 }

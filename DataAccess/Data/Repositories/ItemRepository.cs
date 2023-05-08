@@ -1,4 +1,5 @@
 ﻿using DataAccess;
+using DataAccess.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.ViewModels;
@@ -11,6 +12,7 @@ namespace Data
 {
     public class ItemRepository
     {
+        SizeRepository _sizeRepository { get { return new SizeRepository(); } }
 
         //Checks if any Items exist in the database
         public bool ItemsExist()
@@ -149,10 +151,15 @@ namespace Data
 
 
         //Creates a new item
-        public void AddItem (Item item)
+        public void AddItem (Item item, string? sizeName)
         {
             using (var context = new ApplicationDbContext())
             {
+                if (item.HasSize == true)
+                {
+                    var size = _sizeRepository.GetSizeByName(sizeName);
+                    int sizeId = size.SizeId;
+                }
                 context.Items.Add(item);
                 context.SaveChanges();
 
@@ -171,7 +178,7 @@ namespace Data
             }
         }
 
-        public void AddItemToStripe(Item item)
+        public void AddItemToStripe(Item item, string? sizeName)
         {
             using (var context = new ApplicationDbContext())
             {
@@ -182,15 +189,29 @@ namespace Data
 				{
 					imageLinks.Add(image.Path);
 				}
-				var productOptions = new ProductCreateOptions
-				{
-					Name = item.Name,
-					Description = item.Description,
-					//Images = new List<string> 
-     //               { 
-     //                   item.ProductImages.FirstOrDefault().Path
-     //               }
-				};
+                var productOptions = new ProductCreateOptions();
+                if (item.HasSize == true)
+                {
+                    productOptions = new ProductCreateOptions
+                    {
+                        Name = item.Name,
+                        Description = item.Description,
+                        Metadata = new Dictionary<string, string> { { "Size", sizeName } },
+                        //Images = new List<string> 
+                        //               { 
+                        //                   item.ProductImages.FirstOrDefault().Path
+                        //               }
+                    };
+                }
+                else
+                {
+                    productOptions = new ProductCreateOptions
+                    {
+                        Name = item.Name,
+                        Description = item.Description,
+                    };
+                }
+
 
 				var productService = new ProductService();
 				Product product = productService.Create(productOptions);

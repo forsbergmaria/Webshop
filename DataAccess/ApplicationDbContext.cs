@@ -229,6 +229,18 @@ namespace DataAccess
                 }
                 );
 
+            modelBuilder.Entity<ItemHasSize>().HasOne(s => s.Item);
+            modelBuilder.Entity<ItemHasSize>().HasOne(s => s.Size);
+            modelBuilder.Entity<ItemHasSize>().HasKey(vf => new { vf.ItemId, vf.SizeId });
+            modelBuilder.Entity<ItemHasSize>().HasData(
+                new ItemHasSize
+                {
+                    ItemId = 36,
+                    SizeId = 1
+                } 
+                );
+
+
             modelBuilder.Entity<OrderContainsItem>().HasOne(o => o.Orders);
             modelBuilder.Entity<OrderContainsItem>().HasOne(o => o.Items);
             modelBuilder.Entity<OrderContainsItem>().HasKey(vf => new { vf.OrderId, vf.ItemId });
