@@ -20,15 +20,6 @@ namespace DataAccess.Data.Repositories
             }
         }
 
-        public Size GetSizeByName(string name)
-        {
-            using (var context = new ApplicationDbContext())
-            {
-                return context.Sizes.Include(i => i.Name)
-                    .FirstOrDefault(i => i.Name == name);
-            }
-        }
-
         //Returns a specific Size from the database
         public Size GetSize(int id)
         {
@@ -107,6 +98,21 @@ namespace DataAccess.Data.Repositories
                 itemHasSize.ItemId = item.ItemId;
                 itemHasSize.SizeId = sizeId;
                 context.ItemHasSize.Add(itemHasSize);
+                context.SaveChanges();
+            }
+        }
+
+        // Deletes a specific row with SizeId and ItemId from the database, based on the sizeId
+        public void DeleteSizeFromItemHasSize(int sizeId)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var itemHasSizes = context.ItemHasSize
+                    .Where(i => i.SizeId == sizeId).ToList();
+                foreach (var size in itemHasSizes)
+                {
+                    context.ItemHasSize.Remove(size);
+                }
                 context.SaveChanges();
             }
         }

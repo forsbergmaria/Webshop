@@ -77,7 +77,7 @@ namespace Data
 
                  if (item.HasSize)
                     {
-                      DeleteItemFromSizeTable(id);
+                      DeleteItemFromItemHasSize(id);
                     }
                     context.Items.Remove(item);
                     context.SaveChanges();
@@ -130,7 +130,8 @@ namespace Data
             }
         }
 
-        public void DeleteItemFromSizeTable(int itemId) 
+        // Deletes a specific row with SizeId and ItemId from the database, based on the itemId
+        public void DeleteItemFromItemHasSize(int itemId) 
         { 
             using (var context = new ApplicationDbContext())
             {
@@ -140,8 +141,8 @@ namespace Data
                 {
                     context.ItemHasSize.Remove(size);
                 }
-            }
-                
+                context.SaveChanges();
+            }    
         }
 
         //Modify existing item
