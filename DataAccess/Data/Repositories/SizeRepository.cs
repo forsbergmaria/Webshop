@@ -89,22 +89,13 @@ namespace DataAccess.Data.Repositories
         }
 
         //Removes a Size from the database
-        public bool DeleteSize(int id)
+        public void DeleteSize(int id)
         {
             using (var context = new ApplicationDbContext())
             {
                 var size = context.Sizes.FirstOrDefault(c => c.SizeId == id);
-                var itemsInSize = context.Items.Where(i => i.ItemId == id).ToList();
-                if (size != null && itemsInSize != null)
-                {
-                    return false;
-                }
-                else
-                {
-                    context.Sizes.Remove(size);
-                    context.SaveChanges();
-                    return true;
-                }
+                context.Sizes.Remove(size);
+                context.SaveChanges();
             }
         }
 

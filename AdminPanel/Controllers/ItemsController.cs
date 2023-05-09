@@ -402,6 +402,13 @@ namespace AdminPanel.Controllers
             return RedirectToAction("CreateSizeForm");
         }
 
+        public IActionResult DeleteSize(int id)
+        {
+            _sizeRepository.DeleteSizeFromItemHasSize(id);
+            _sizeRepository.DeleteSize(id);
+            return RedirectToAction("CreateSizeForm");
+        }
+
         [HttpPost]
         public async Task <IActionResult> UpdateSize(int sizeId, string sizeName)
         {
