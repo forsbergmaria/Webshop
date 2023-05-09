@@ -74,6 +74,11 @@ namespace Data
                     {
                         context.Images.Remove(image);
                     }
+
+                 if (item.HasSize)
+                    {
+                      DeleteItemFromSizeTable(id);
+                    }
                     context.Items.Remove(item);
                     context.SaveChanges();
                     return true;
@@ -123,6 +128,20 @@ namespace Data
             {
                 return context.Images.Where(i => i.ImageId == imageId).First();
             }
+        }
+
+        public void DeleteItemFromSizeTable(int itemId) 
+        { 
+            using (var context = new ApplicationDbContext())
+            {
+                var itemHasSizes = context.ItemHasSize
+                    .Where(i => i.ItemId == itemId).ToList();
+                foreach (var size in itemHasSizes)
+                {
+                    context.ItemHasSize.Remove(size);
+                }
+            }
+                
         }
 
         //Modify existing item

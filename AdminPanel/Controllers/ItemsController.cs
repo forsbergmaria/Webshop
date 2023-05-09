@@ -354,7 +354,7 @@ namespace AdminPanel.Controllers
             _statisticsRepository.AddTransaction(transaction);
             var item = _itemRepository.GetItem(itemId);
 
-            return View("ViewMoreInfo", item); // Redirect tillbaka till produktlistan.
+            return View("ViewMoreInfo", item);
         }
 
 
