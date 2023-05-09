@@ -220,14 +220,13 @@ namespace Data
 				var priceOptions = new PriceCreateOptions
 				{
 					Product = product.Id,
-					UnitAmount = (long)((item.PriceWithoutVAT * item.VAT * 100)), // priset i öre, t.ex. 1000 öre = 10 kr
+					UnitAmount = (long)((item.PriceWithoutVAT * item.VAT * 100)),
 					Currency = "sek",
 				};
 
 				var priceService = new PriceService();
 				Price price = priceService.Create(priceOptions);
 
-				// Spara produkt-ID och pris-ID i din databas
                 item.StripeItemId = product.Id;
                 item.StripePriceId = price.Id;
 
