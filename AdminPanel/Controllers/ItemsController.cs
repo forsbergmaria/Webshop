@@ -358,33 +358,21 @@ namespace AdminPanel.Controllers
         }
 
 
-        public IActionResult AddToBalance(int id)
+        [HttpPost]
+        public IActionResult AdjustStockSizes(int itemId, int quantity, string transactionType, int size)
         {
-            var item = _itemRepository.GetItem(id);
-            var modelSizes = new AddBalanceSizeViewModel();
-            var modelRegular = new AddBalanceViewModel();
+            var transaction = new TransactionWithSizes();
+            transaction.ItemId = itemId;
+            transaction.Quantity = quantity;
+            transaction.TransactionType = transactionType;
+            transaction.TransactionDate = DateTime.Now;
+            transaction.SizeId = size;
 
-            if (item.HasSize)
-            {
-                modelSizes.Item = item;
-                var currentBalance = new Dictionary<Size, int>();
-                var sizes = _sizeRepository.GetAllSizesForOneItem(id);
-                foreach (var size in sizes)
-                {
-                    currentBalance.Add(size, _statisticsRepository.GetBalanceForOneItem(id));
-                }
-                modelSizes.CurrentBalance = currentBalance;
+            _statisticsRepository.AddTransaction(transaction);
 
-                return View(modelSizes);
+            var item = _itemRepository.GetItem(itemId);
+            return View("ViewMoreInfo", item);
 
-            }
-            else
-            {
-                modelRegular.item = item;
-                modelRegular.CurrentBalance = _statisticsRepository.GetBalanceForOneItem(id);
-            }
-
-            return View(modelRegular);
         }
 
         public IActionResult ItemPublisherManager(int id)

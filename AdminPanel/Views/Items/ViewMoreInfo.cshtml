@@ -77,13 +77,13 @@
             @if (!Model.HasSize)
             {
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStockModal" data-itemid="@Model.ItemId">
-                    Fyll på lagersaldo
+                    Justera lagersaldo
                 </button>
             }
             else
             {
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adjustStockModal" data-itemid="@Model.ItemId">
-                    Fyll på lagersaldo per storlek
+                    Justera lagersaldo per storlek
                 </button>
             }
             <button class="btn btn-danger" onclick="if(confirm('Är du säker på att du vill ta bort den här produkten? Det går inte att ångra.')){ location.href='@Url.Action("DeleteItem", "Items", new { id = Model.ItemId })' }">Radera produkt</button>
@@ -130,7 +130,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="adjustStockForm" asp-controller="Items" asp-action="AdjustStock" data-itemid="@Model.ItemId">
+        <form id="adjustStockForm" asp-controller="Items" asp-action="AdjustStockSizes" data-itemid="@Model.ItemId">
+                            <label for="sizeSelect" class="form-label">Storlek</label>
                             <select class="form-select" id="sizeSelect" name="size" required>
                                 <option value="">Välj storlek</option>
                             </select>
@@ -148,6 +149,7 @@
           </div>
           <input type="hidden" id="itemId" name="itemId" value="@Model.ItemId">
           <input type="hidden" id="transactionTypeHidden" name="transactionType" value="">
+          <input type="hidden" id="sizeHidden" name="size" value="">
         </form>
       </div>
       <div class="modal-footer">
