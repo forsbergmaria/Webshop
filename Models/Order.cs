@@ -22,6 +22,7 @@ namespace Models
         public string CustomerPhone { get; set; }
         public string CustomerAddress { get; set; }
         public string CustomerZipCode { get; set; }
+        //public string CustomerEmail { get; set; }
         public string CustomerCity { get; set; }
         public int? ShippingStatusId { get; set; }
         [ForeignKey(nameof(ShippingStatusId))]
