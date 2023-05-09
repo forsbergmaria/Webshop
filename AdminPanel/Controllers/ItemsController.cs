@@ -379,11 +379,11 @@ namespace AdminPanel.Controllers
 
         // Display a form for creating a new size
         [Authorize(Roles = "Huvudadministratör, Moderator")]
-        public IActionResult CreateSizeForm()
+        public IActionResult ManageSizes()
         {
             List<Size> sizes = _sizeRepository.GetAllSizes();
             ViewBag.Sizes = sizes.OrderBy(i => i.Name);
-            return View("CreateSize");
+            return View();
         }
 
 
@@ -399,14 +399,14 @@ namespace AdminPanel.Controllers
             _sizeRepository.AddSizeAsync(size);
 
 
-            return RedirectToAction("CreateSizeForm");
+            return RedirectToAction("ManageSizes");
         }
 
         public IActionResult DeleteSize(int id)
         {
             _sizeRepository.DeleteSizeFromItemHasSize(id);
             _sizeRepository.DeleteSize(id);
-            return RedirectToAction("CreateSizeForm");
+            return RedirectToAction("ManageSizes");
         }
 
         [HttpPost]
@@ -424,7 +424,7 @@ namespace AdminPanel.Controllers
             await _sizeRepository.ModifySizeAsync(size);
             
            
-            return RedirectToAction("CreateSizeForm");
+            return RedirectToAction("ManageSizes");
         }
 
 
