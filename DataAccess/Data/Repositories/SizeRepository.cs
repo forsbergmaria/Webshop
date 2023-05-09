@@ -1,16 +1,49 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using Stripe;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Size = Models.Size;
 
 namespace DataAccess.Data.Repositories
 {
     public class SizeRepository
     {
+        public bool SizeExistsByName(string name)
+        {
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    bool exists = false;
+                    var existingSize = context.Sizes.FirstOrDefault(s => s.Name.ToLower() == name.ToLower());
+                    if (existingSize != null)
+                    {
+                        exists = true;
+                    }
+
+                    return exists;
+                }
+            }
+            catch (NullReferenceException)
+            {
+                throw;
+            }
+            catch (SqlException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         //Returns a list of Sizes from the database
         public List<Size> GetAllSizes()
         {
@@ -25,8 +58,33 @@ namespace DataAccess.Data.Repositories
         {
             using (var context = new ApplicationDbContext())
             {
-                return context.Sizes.Include(i => i.Name)
-                    .FirstOrDefault(i => i.SizeId == id);
+                return context.Sizes
+                    .Where(s => s.SizeId == id).FirstOrDefault();
+            }
+        }
+
+        public Size GetSizeByName(string name)
+        {
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    return context.Sizes
+                        .Where(s => s.Name == name).FirstOrDefault();
+                        
+                }
+            }
+            catch (NullReferenceException)
+            {
+                throw;
+            }
+            catch (SqlException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
 
@@ -60,6 +118,34 @@ namespace DataAccess.Data.Repositories
                 return size;
             }
         }
+        
+        //Modify existing size and save it async
+        public async Task<Size> ModifySizeAsync(Size size)
+        {
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    context.Entry(size).State = EntityState.Modified;
+                    await context.SaveChangesAsync();
+                    return size;
+                }
+            }
+            catch(NullReferenceException)
+            {
+                throw;
+            }
+            catch (SqlException ex) 
+            {
+                throw;
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
+
+
 
         //Creates a new Size
         public void AddSize(Size size)
@@ -68,6 +154,16 @@ namespace DataAccess.Data.Repositories
             {
                 context.Sizes.Add(size);
                 context.SaveChanges();
+            }
+        }
+
+        //Creates a new size and saves it async
+        public async void AddSizeAsync(Size size)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                context.Sizes.Add(size);
+                await context.SaveChangesAsync();
             }
         }
 

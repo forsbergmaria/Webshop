@@ -324,6 +324,7 @@ namespace AdminPanel.Controllers
             return View(model);
         }
 
+        // Returns all sizes that are connected to a specific item
         [HttpGet]
         public JsonResult GetItemSizes(int itemId)
         {
@@ -342,6 +343,7 @@ namespace AdminPanel.Controllers
             return View(item);
         }
 
+        // Adjust stock for a specific item without sizes, by adding a transaction to the DB
         [HttpPost]
         public IActionResult AdjustStock(int itemId, int quantity, string transactionType)
         {
@@ -357,7 +359,7 @@ namespace AdminPanel.Controllers
             return View("ViewMoreInfo", item);
         }
 
-
+        // Adjust stock for a specific item with sizes, by adding a transaction to the DB
         [HttpPost]
         public IActionResult AdjustStockSizes(int itemId, int quantity, string transactionType, int size)
         {
@@ -375,6 +377,65 @@ namespace AdminPanel.Controllers
 
         }
 
+        // Display a form for creating a new size
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
+        public IActionResult CreateSizeForm()
+        {
+            List<Size> sizes = _sizeRepository.GetAllSizes();
+            ViewBag.Sizes = sizes.OrderBy(i => i.Name);
+            return View("CreateSize");
+        }
+
+
+        [HttpPost]
+        public IActionResult AddSize([FromForm] string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return BadRequest("Storleksnamnet får inte vara tomt");
+            }
+
+            var size = new Size { Name = name };
+            _sizeRepository.AddSizeAsync(size);
+
+
+            return RedirectToAction("CreateSizeForm");
+        }
+
+        [HttpPost]
+        public async Task <IActionResult> UpdateSize(int sizeId, string sizeName)
+        {
+            if (string.IsNullOrWhiteSpace(sizeName))
+            {
+                return BadRequest("Storleksnamnet får inte vara tomt");
+            }
+            
+            
+
+            Size size = _sizeRepository.GetSize(sizeId);
+            size.Name = sizeName;
+            await _sizeRepository.ModifySizeAsync(size);
+            
+           
+            return RedirectToAction("CreateSizeForm");
+        }
+
+
+
+
+        // Method for adding a new size to the DB, if the modelstate ís valid
+        [HttpPost]
+        public IActionResult CreateSize(Size size)
+        {
+            if (ModelState.IsValid)
+            {
+               _sizeRepository.AddSize(size);
+            }
+         
+            return View();
+        }
+
+        // Method for setting the "IsPublished" property to true or false for a specific item
         public IActionResult ItemPublisherManager(int id)
         {
             var item = _itemRepository.GetItem(id);
