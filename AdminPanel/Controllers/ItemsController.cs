@@ -120,6 +120,7 @@ namespace AdminPanel.Controllers
                 var webRootPath = _env.WebRootPath;
                 var filePath = webRootPath + fileName;
                 _itemRepository.DeleteImageFromDirectory(filePath);
+                _itemRepository.DeleteAllImagesFromItem(id);
                 }
             }
 
@@ -257,11 +258,11 @@ namespace AdminPanel.Controllers
                 }
             }
 
-            var categories = await query.ToListAsync();
+            var items = await query.ToListAsync();
 
             ViewBag.SearchString = searchString;
 
-            return View(categories);
+            return View(items);
         }
 
         // Retrieve subcategories belonging to a specific category and convert it to JSON
