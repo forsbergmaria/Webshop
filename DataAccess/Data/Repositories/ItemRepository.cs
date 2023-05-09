@@ -194,6 +194,7 @@ namespace Data
             }
         }
 
+        // Adds an item to the Stripe Dashboard through Stripe API
         public void AddItemToStripe(Item item)
         {
             using (var context = new ApplicationDbContext())
@@ -244,6 +245,8 @@ namespace Data
                 return images;
             }
         }
+
+        // Adds an item transaction to the database
         public void AddItemTransaction(Item item, string transactionType, int quantity, string? sizeName)
         {
             using (var context = new ApplicationDbContext())
