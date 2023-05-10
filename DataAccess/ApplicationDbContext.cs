@@ -182,6 +182,12 @@ namespace DataAccess
         {
             StatusId = 3,
             Name = "Slutförd"
+        },
+
+        new ShippingStatus
+        {
+            StatusId = 4,
+            Name = "Makulerad"
         }
     );
 
