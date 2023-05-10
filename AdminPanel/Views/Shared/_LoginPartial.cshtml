@@ -68,15 +68,15 @@
                         <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
                        asp-controller="Orders" asp-action="Index">
                        <span>
-                                    Ordrar 
+                                    Beställningar 
                                     @if (ViewBag.UnhandledOrders > 0)
                                     {
-                                      <span class="badge bg-danger">@ViewBag.UnhandledOrders</span>  
+                                        <span class="badge bg-danger" id="unhandled-orders-badge">@ViewBag.UnhandledOrders</span>
                                     }
                        </span>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" asp-controller="Orders" asp-action="Index">Alla ordrar</a></li>
+                            <li><a class="dropdown-item" asp-controller="Orders" asp-action="Index">Alla beställningar</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" asp-controller="Orders" asp-action="">Action</a></li>
                             <li><hr class="dropdown-divider"></li>

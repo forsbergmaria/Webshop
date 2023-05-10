@@ -49,6 +49,7 @@ namespace AdminPanel.Controllers
         [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateCategory()
         {
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
             return View();
         }
 
@@ -61,7 +62,7 @@ namespace AdminPanel.Controllers
             {
                 _categoryRepository.AddCategory(category);
             }
-            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
+ 
             return View();
 
         }
