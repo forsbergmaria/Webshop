@@ -15,28 +15,13 @@ namespace AdminPanel.Controllers
         [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult Index()
         {
-            List<Order> orders = _orderRepository.GetAllOrders();
-            List<OrderViewModel> model = new List<OrderViewModel>();
-
-            foreach (Order order in orders)
-            {
-                string shippingMethod = _orderRepository.GetShippingMethodName(order.ShippingMethodId);
-                string status = _orderRepository.GetShippingStatusName(order.ShippingStatusId);
-
-                model.Add(new OrderViewModel
-                {
-                    OrderId = order.OrderId,
-                    OrderDate = order.OrderDate,
-                    CustomerName = order.CustomerName,
-                    ShippingMethod = shippingMethod,
-                    ShippingStatus = status
-                });
-            }
+            List<Order> allOrders = _orderRepository.GetAllOrders();
+            var orders = _orderService.ConvertOrdersToOrderViewModel(allOrders);
 
             ViewBag.Statuses = _orderService.PopulateStatusList();
             ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
-            return View(model);
+            return View(orders);
         }
 
         [HttpGet]
