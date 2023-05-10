@@ -21,6 +21,7 @@ namespace AdminPanel.Controllers
         SizeRepository _sizeRepository { get { return new SizeRepository(); } }
         CategoryRepository _categoryRepository { get { return new CategoryRepository(); } }
         StatisticsRepository _statisticsRepository { get { return new StatisticsRepository(); } }
+        OrderRepository _orderRepository { get { return new OrderRepository(); } }
 
 
         private readonly IWebHostEnvironment _env;
@@ -30,12 +31,6 @@ namespace AdminPanel.Controllers
         {
             _env = env;
             _context = context;
-        }
-
-        [Authorize(Roles = "Huvudadministratör, Moderator")]
-        public IActionResult Index()
-        {
-            return View();
         }
 
         // Display a form for creating a new item
@@ -52,6 +47,8 @@ namespace AdminPanel.Controllers
 
             ViewBag.Categories = selectListCategories;
             ViewBag.Sizes = _sizeRepository.GetAllSizes();
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
+
             return View("CreateItem");
         }
 
@@ -181,6 +178,7 @@ namespace AdminPanel.Controllers
 
             ViewBag.Categories = selectList;
             ViewBag.Subcategories = selectSubList;
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
             var item = _itemRepository.GetItem(id);
             decimal vatRate = item.VAT;
@@ -278,6 +276,7 @@ namespace AdminPanel.Controllers
             var items = await query.ToListAsync();
 
             ViewBag.SearchString = searchString;
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
             return View(items);
         }
@@ -320,6 +319,8 @@ namespace AdminPanel.Controllers
                     ItemBalance = _statisticsRepository.GetBalanceForOneItem(item.ItemId)
                 });
             }
+
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
             return View(model);
         }
@@ -383,6 +384,8 @@ namespace AdminPanel.Controllers
         {
             List<Size> sizes = _sizeRepository.GetAllSizes();
             ViewBag.Sizes = sizes.OrderBy(i => i.Name);
+
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
             return View();
         }
 
@@ -431,16 +434,16 @@ namespace AdminPanel.Controllers
 
 
         // Method for adding a new size to the DB, if the modelstate ís valid
-        [HttpPost]
-        public IActionResult CreateSize(Size size)
-        {
-            if (ModelState.IsValid)
-            {
-               _sizeRepository.AddSize(size);
-            }
+        //[HttpPost]
+        //public IActionResult CreateSize(Size size)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //       _sizeRepository.AddSize(size);
+        //    }
          
-            return View();
-        }
+        //    return View();
+        //}
 
         // Method for setting the "IsPublished" property to true or false for a specific item
         public IActionResult ItemPublisherManager(int id)

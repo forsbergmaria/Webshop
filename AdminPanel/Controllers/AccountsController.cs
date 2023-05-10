@@ -16,6 +16,7 @@ namespace AdminPanel.Controllers
     public class AccountsController : Controller
     {
         UserRepository _userRepository { get { return new UserRepository(_userManager); } }
+        OrderRepository _orderRepository { get { return new OrderRepository(); } }
 
 
         private readonly ApplicationDbContext _dbContext;
@@ -24,12 +25,6 @@ namespace AdminPanel.Controllers
         {
             _dbContext = dbContext;
             _userManager = userManager;
-        }
-
-        [Authorize(Roles = "Huvudadministratör, Moderator")]
-        public IActionResult Index()
-        {
-            return View();
         }
 
         // Display all administrator accounts
@@ -52,7 +47,7 @@ namespace AdminPanel.Controllers
                             Email = u.Email,
                             Role = i.Name
                         };
-
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
             return View(query.ToList());
         }
 
@@ -71,6 +66,8 @@ namespace AdminPanel.Controllers
             var selectRole = _userRepository.GetAllIdentityRoles();
             var selectList = new SelectList(selectRole, "Name").OrderByDescending(r => r.Text);
             ViewBag.RolesList = selectList;
+
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
             return View("RegisterAccount");
         }
@@ -134,6 +131,7 @@ namespace AdminPanel.Controllers
 
 
             ViewBag.SearchString = searchString;
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
             return View(query2.ToList());
         }
@@ -159,6 +157,7 @@ namespace AdminPanel.Controllers
             ViewBag.RolesList = selectList;
 
             TempData["id"] = id;
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
             return View("UpdateAccount", admin);
         }
 

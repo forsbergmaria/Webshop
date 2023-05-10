@@ -222,5 +222,32 @@ namespace Data
                 throw;
             }
         }
+
+        public int GetNumberOfUnhandledOrders()
+        {
+                try
+                {
+                    using (var context = new ApplicationDbContext())
+                    {
+                       
+                      var status = context.ShippingStatuses
+                        .Where(s => s.Name == "Ohanterad").FirstOrDefault();
+                      
+                      var unhandledOrders = context.Orders
+                        .Where(o => o.ShippingStatusId == status.StatusId)
+                        .ToList();
+                       
+                    return unhandledOrders.Count;
+                    }
+                }
+                catch (NullReferenceException ex)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
     }
 }

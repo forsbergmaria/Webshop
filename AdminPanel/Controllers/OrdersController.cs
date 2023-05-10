@@ -30,6 +30,9 @@ namespace AdminPanel.Controllers
                     ShippingStatus = status
                 });
             }
+            
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
+
             return View(model);
         }
     }

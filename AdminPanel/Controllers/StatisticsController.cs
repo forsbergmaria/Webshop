@@ -12,6 +12,7 @@ namespace AdminPanel.Controllers
     public class StatisticsController : Controller
     {
         StatisticsRepository _statisticsRepository { get { return new StatisticsRepository(); } }
+        OrderRepository _orderRepository { get { return new OrderRepository(); } }
         private readonly ApplicationDbContext _context;
 
         public StatisticsController(ApplicationDbContext context)
@@ -27,6 +28,8 @@ namespace AdminPanel.Controllers
                 NumberOfSales = _statisticsRepository.GetTotalSalesSinceStart(),
                 ItemsNeverSold = _statisticsRepository.GetTopItemsThatHaveNeverBeenSold(10),
             };
+
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
             return View(model);
         }
@@ -51,12 +54,14 @@ namespace AdminPanel.Controllers
             var items = await query.ToListAsync();
 
             ViewBag.SearchString = searchString;
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
             return View(items);
         }
         public IActionResult ViewAllNeverSoldItems() 
         {
             var items = _statisticsRepository.GetAllItemsNeverSold();
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
             return View("NeverSoldItems", items);
         }
     }

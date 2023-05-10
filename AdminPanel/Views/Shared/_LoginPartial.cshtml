@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Models;
+@using DataAccess;
 @inject SignInManager<Admin> SignInManager
 @inject UserManager<Admin> UserManager
 
@@ -67,7 +68,11 @@
                         <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
                        asp-controller="Orders" asp-action="Index">
                        <span>
-                        Ordrar
+                                    Ordrar 
+                                    @if (ViewBag.UnhandledOrders > 0)
+                                    {
+                                      <span class="badge bg-danger">@ViewBag.UnhandledOrders</span>  
+                                    }
                        </span>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
