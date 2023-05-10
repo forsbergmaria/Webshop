@@ -42,16 +42,28 @@ namespace AdminPanel.Controllers
         [HttpGet]
         public IActionResult FilterStatus(int status)
         {
-            var orders = new List<Order>();
-            List<OrderViewModel> model = new List<OrderViewModel>();
+            if (status == 0)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                var orders = new List<Order>();
+                List<OrderViewModel> model = new List<OrderViewModel>();
 
-            orders = _orderService.FilterOrdersByStatus(status);
+                orders = _orderService.FilterOrdersByStatus(status);
 
-            var filteredOrders = _orderService.ConvertOrdersToOrderViewModel(orders);
+                if (orders.Count < 1)
+                {
+                    ViewBag.NoResults = "Det finns inga beställningar som motsvarar filtreringsvillkoret";
+                }
 
-            ViewBag.Statuses = _orderService.PopulateStatusList();
+                var filteredOrders = _orderService.ConvertOrdersToOrderViewModel(orders);
 
-            return View("Index", filteredOrders);
+                ViewBag.Statuses = _orderService.PopulateStatusList();
+
+                return View("Index", filteredOrders);
+            }
         }
     }
 }

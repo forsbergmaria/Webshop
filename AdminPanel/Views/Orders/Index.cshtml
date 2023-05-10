@@ -19,6 +19,7 @@
     <div class="form-group">
         <label>Filtrera efter fraktstatus</label>
         <select id="Status" name="Status" class="form-control">
+            <option value="0">Visa alla</option>
             @foreach (var status in ViewBag.Statuses)
             {
                 <option value="@status.Value">@status.Text</option>
@@ -27,45 +28,52 @@
         <button type="submit" class="btn btn-primary">Filtrera</button>
     </div>
     </form>
-    <div class="table-hover">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Ordernummer</th>
-                    <th>Kundnamn</th>
-                    <th>Orderdatum</th>
-                    <th>Fraktsätt</th>
-                    <th>Fraktstatus</th>
-                    <th>Hantera</th>
-                </tr>
-            </thead>
-            <tbody>
-
-                @foreach (var order in Model)
-                {
+    @if (Model.Count > 0)
+    {
+        <div class="table-hover">
+            <table class="table table-hover">
+                <thead>
                     <tr>
-                        <td>@order.OrderId</td>
-                        <td>@order.CustomerName</td>
-                        <td>@order.OrderDate</td>
-                        <td>@order.ShippingMethod</td>
-                        @if (order.ShippingStatus == "Ohanterad")
-                        {
-                            <td><span class="badge bg-danger">@order.ShippingStatus</span></td>
-                        }
-                        else if (order.ShippingStatus == "Pågående")
-                        {
-                            <td><span class="badge bg-warning">@order.ShippingStatus</span></td>
-                        }
-                        else if (order.ShippingStatus == "Slutförd")
-                        {
-                            <td><span class="badge bg-success">@order.ShippingStatus</span></td>
-                        }
-                        <td>
-                            <button class="btn btn-outline-dark btn-sm view-more-info-btn" onclick="location.href='@Url.Action("ViewMoreInfo", "Orders", new { id = @order.OrderId })'">Se mer</button>
-                        </td>
+                        <th>Ordernummer</th>
+                        <th>Kundnamn</th>
+                        <th>Orderdatum</th>
+                        <th>Fraktsätt</th>
+                        <th>Fraktstatus</th>
+                        <th>Hantera</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td>@order.OrderId</td>
+                            <td>@order.CustomerName</td>
+                            <td>@order.OrderDate</td>
+                            <td>@order.ShippingMethod</td>
+                            @if (order.ShippingStatus == "Ohanterad")
+                            {
+                                <td><span class="badge bg-danger">@order.ShippingStatus</span></td>
+                            }
+                            else if (order.ShippingStatus == "Pågående")
+                            {
+                                <td><span class="badge bg-warning">@order.ShippingStatus</span></td>
+                            }
+                            else if (order.ShippingStatus == "Slutförd")
+                            {
+                                <td><span class="badge bg-success">@order.ShippingStatus</span></td>
+                            }
+                            <td>
+                                <button class="btn btn-outline-dark btn-sm view-more-info-btn" onclick="location.href='@Url.Action("ViewMoreInfo", "Orders", new { id = @order.OrderId })'">Se mer</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <h4>@ViewBag.NoResults</h4>
+    }
 </div>
