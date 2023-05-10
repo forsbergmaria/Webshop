@@ -1,4 +1,5 @@
 ﻿using Data;
+using DataAccess.Data.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
@@ -9,6 +10,7 @@ namespace AdminPanel.Controllers
     public class OrdersController : Controller
     {
         OrderRepository _orderRepository { get { return new OrderRepository(); } }
+        OrderService _orderService { get { return new OrderService(); } }
 
         [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult Index()
@@ -30,10 +32,26 @@ namespace AdminPanel.Controllers
                     ShippingStatus = status
                 });
             }
-            
+
+            ViewBag.Statuses = _orderService.PopulateStatusList();
             ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
             return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult FilterStatus(int status)
+        {
+            var orders = new List<Order>();
+            List<OrderViewModel> model = new List<OrderViewModel>();
+
+            orders = _orderService.FilterOrdersByStatus(status);
+
+            var filteredOrders = _orderService.ConvertOrdersToOrderViewModel(orders);
+
+            ViewBag.Statuses = _orderService.PopulateStatusList();
+
+            return View("Index", filteredOrders);
         }
     }
 }

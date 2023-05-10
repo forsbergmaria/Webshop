@@ -198,6 +198,54 @@ namespace Data
             }
         }
 
+        public ShippingStatus GetShippingStatus(int statusId)
+        {
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    return context.ShippingStatuses
+                        .Where(s => s.StatusId == statusId).FirstOrDefault();
+                }
+            }
+            catch (NullReferenceException ex)
+            {
+                throw;
+            }
+            catch (SqlException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public ShippingStatus GetShippingStatusByName(string name)
+        {
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    return context.ShippingStatuses
+                        .Where(s => s.Name == name).FirstOrDefault();
+                }
+            }
+            catch (NullReferenceException ex)
+            {
+                throw;
+            }
+            catch (SqlException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         public string GetShippingStatusName(int statusId)
         {
             try
@@ -214,6 +262,30 @@ namespace Data
                 throw;
             }
             catch (StripeException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        // Returns a list with all shipping statuses from the database
+        public List<ShippingStatus> GetAllShippingStatuses()
+        {
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    return context.ShippingStatuses.ToList();
+                }
+            }
+            catch (NullReferenceException ex)
+            {
+                throw;
+            }
+            catch (SqlException ex)
             {
                 throw;
             }
@@ -241,6 +313,10 @@ namespace Data
                     }
                 }
                 catch (NullReferenceException ex)
+                {
+                    throw;
+                }
+                catch (SqlException ex)
                 {
                     throw;
                 }
