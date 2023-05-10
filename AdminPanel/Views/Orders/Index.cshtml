@@ -53,15 +53,19 @@
                             <td>@order.ShippingMethod</td>
                             @if (order.ShippingStatus == "Ohanterad")
                             {
-                                <td><span class="badge bg-danger">@order.ShippingStatus</span></td>
+                                <td><span class="badge rounded-pill bg-danger">@order.ShippingStatus</span></td>
                             }
                             else if (order.ShippingStatus == "Pågående")
                             {
-                                <td><span class="badge bg-warning">@order.ShippingStatus</span></td>
+                                <td><span class="badge rounded-pill bg-warning">@order.ShippingStatus</span></td>
                             }
                             else if (order.ShippingStatus == "Slutförd")
                             {
-                                <td><span class="badge bg-success">@order.ShippingStatus</span></td>
+                                <td><span class="badge rounded-pill bg-success">@order.ShippingStatus</span></td>
+                            }
+                            else if (order.ShippingStatus == "Makulerad")
+                            {
+                                <td><span class="badge rounded-pill bg-secondary">@order.ShippingStatus</span></td>
                             }
                             <td>
                                 <button class="btn btn-outline-dark btn-sm view-more-info-btn" onclick="location.href='@Url.Action("ViewMoreInfo", "Orders", new { id = @order.OrderId })'">Se mer</button>
