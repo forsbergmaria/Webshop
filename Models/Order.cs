@@ -24,7 +24,8 @@ namespace Models
         public string CustomerZipCode { get; set; }
         //public string CustomerEmail { get; set; }
         public string CustomerCity { get; set; }
-        public int? ShippingStatusId { get; set; }
+        public string ShippingMethodId { get; set; }
+        public int ShippingStatusId { get; set; }
         [ForeignKey(nameof(ShippingStatusId))]
         public virtual ShippingStatus? ShippingStatus { get; set; }
     }

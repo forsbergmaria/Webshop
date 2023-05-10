@@ -196,6 +196,7 @@ namespace DataAccess
                 CustomerAddress = "Malmgatan 2A",
                 CustomerZipCode = "73133",
                 CustomerCity = "Köping",
+                ShippingMethodId = "shr_1MnW4gJ9NmDaISNLsDI6gLUz",
                 ShippingStatusId = 1,
             },
             new Order
@@ -207,9 +208,10 @@ namespace DataAccess
                 CustomerAddress = "Malmgatan 2A",
                 CustomerZipCode = "73133",
                 CustomerCity = "Köping",
+                ShippingMethodId = "shr_1N3cELJ9NmDaISNLaYLSbzBy",
                 ShippingStatusId = 2,
             }
-                );
+                ); ;
 
             modelBuilder.Entity<Size>().HasData(
                 new Size

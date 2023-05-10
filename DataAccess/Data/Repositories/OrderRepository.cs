@@ -1,5 +1,7 @@
 ﻿using DataAccess;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using Models;
 using Stripe;
 using Stripe.Checkout;
@@ -29,6 +31,45 @@ namespace Data
             }
         }
 
+        // Returns a list of Items from an order
+        public List<Item> GetAllOrderItems(int orderId)
+        {
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    List<Item> items = context.Items.ToList();
+                    List<Item> orderedItems = new List<Item>();
+                    var order = context.OrderContainsItem.ToList();
+
+                    foreach (var o in order)
+                    {
+                        foreach (var i in items)
+                        {
+                            if (i.ItemId == o.ItemId)
+                            {
+                                orderedItems.Add(i);
+                            }
+                        }
+                    }
+
+                    return orderedItems;
+                }
+            }
+            catch (NullReferenceException ex)
+            {
+                throw;
+            }
+            catch (SqlException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         //Returns a list of orders from the database
         public List<Order> GetAllOrders()
         {
@@ -43,12 +84,8 @@ namespace Data
         {
             using (var context = new ApplicationDbContext())
             {
-                return context.Orders.Include(o => o.CustomerPhone)
-                    .Include(o => o.CustomerCity)
-                    .Include(o => o.CustomerZipCode)
-                    .Include(o => o.CustomerName)
-                    .Include(o => o.CustomerAddress)
-                    .FirstOrDefault(i => i.OrderId == id);
+                return context.Orders
+                    .Where(o => o.OrderId == id).FirstOrDefault();
             }
         }
 
@@ -97,6 +134,12 @@ namespace Data
                 order.CustomerPhone = session.ShippingDetails.Phone;
                 order.CustomerCity = session.ShippingDetails.Address.City;
                 order.CustomerZipCode = session.ShippingDetails.Address.PostalCode;
+
+                var shippingStatus = context.ShippingStatuses.Where(s => s.Name == "Ohanterad").FirstOrDefault();
+
+                order.ShippingMethodId = session.ShippingCost.ShippingRateId;
+                order.ShippingStatusId = shippingStatus.StatusId;
+                
                 context.Orders.Add(order);
                 context.SaveChanges();
 
@@ -126,6 +169,57 @@ namespace Data
                 }
 
                 context.SaveChanges();
+            }
+        }
+
+        public string GetShippingMethodName(string shippingRateId)
+        {
+            try
+            {
+                StripeConfiguration.ApiKey = "sk_test_51MnVSuJ9NmDaISNLt2DpWzyfEpec4JZF1Zf9gwPkecoDj2OYmXX9ThWfvXB2nEbadLp51BI6AuooidYslZ6yykDg00pjXolXbJ";
+
+                var service = new ShippingRateService();
+                var shippingMethod = service.Get(shippingRateId);
+                var shippingMethodName = shippingMethod.DisplayName;
+
+                return shippingMethodName;
+            }
+            catch (NullReferenceException ex)
+            {
+                throw;
+            }
+            catch (StripeException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public string GetShippingStatusName(int statusId)
+        {
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    var status = context.ShippingStatuses
+                        .Where(s => s.StatusId == statusId).FirstOrDefault();
+                    return status.Name;
+                }
+            }
+            catch (NullReferenceException ex)
+            {
+                throw;
+            }
+            catch (StripeException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
     }

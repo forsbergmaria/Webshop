@@ -1,5 +1,45 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@using Models.ViewModels
+@model List<OrderViewModel>
+
+<head>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<div>
+    <form method="get" asp-controller="Orders" asp-action="SearchOrders">
+        <div class="form-group">
+            <label for="searchString">Sök efter order:</label>
+            <input type="text" name="searchString" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-outline-primary search-btn">Sök</button>
+    </form>
+    <div class="table-hover">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Ordernummer</th>
+                    <th>Kundnamn</th>
+                    <th>Orderdatum</th>
+                    <th>Fraktsätt</th>
+                    <th>Fraktstatus</th>
+                    <th>Hantera</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.OrderId</td>
+                        <td>@order.CustomerName</td>
+                        <td>@order.OrderDate</td>
+                        <td>@order.ShippingMethod</td>
+                        <td>@order.ShippingStatus</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm view-more-info-btn" onclick="location.href='@Url.Action("ViewMoreInfo", "Orders", new { id = @order.OrderId })'">Se mer</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
