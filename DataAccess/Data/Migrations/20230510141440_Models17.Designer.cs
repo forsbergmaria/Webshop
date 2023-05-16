@@ -4,6 +4,7 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdminPanel.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230510141440_Models17")]
+    partial class Models17
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +55,7 @@ namespace AdminPanel.Data.Migrations
                         new
                         {
                             Id = "jdigru",
-                            ConcurrencyStamp = "1dc74195-f4ea-476b-a204-aee6356a0b20",
+                            ConcurrencyStamp = "aa22b0ef-11e1-43ec-9d59-82bf05e09c60",
                             Name = "Huvudadministratör",
                             NormalizedName = "HUVUDADMINISTRATÖR"
                         });
@@ -482,7 +485,7 @@ namespace AdminPanel.Data.Migrations
                             TransactionId = 1,
                             ItemId = 3,
                             Quantity = 16,
-                            TransactionDate = new DateTime(2023, 5, 10, 19, 47, 35, 84, DateTimeKind.Local).AddTicks(334),
+                            TransactionDate = new DateTime(2023, 5, 10, 16, 14, 39, 997, DateTimeKind.Local).AddTicks(4362),
                             TransactionType = "In"
                         });
                 });
@@ -524,7 +527,7 @@ namespace AdminPanel.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ShippingStatusId")
+                    b.Property<int?>("ShippingStatusId")
                         .HasColumnType("int");
 
                     b.HasKey("OrderId");
@@ -739,13 +742,13 @@ namespace AdminPanel.Data.Migrations
                         {
                             Id = "jfkdgjk8jd5509",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b78dd81d-d11d-45f2-b327-8cd59dd785e5",
+                            ConcurrencyStamp = "341f627c-0749-4f1d-be65-661c7e566d61",
                             Email = "antonkraft25@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             PasswordHash = "sdfghjklqwertyui12345678",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8d547d7a-6a65-472a-a72a-83ba5889878b",
+                            SecurityStamp = "7b40f05b-c511-4d46-bdc9-a414e8bd032f",
                             TwoFactorEnabled = false,
                             UserName = "username",
                             FirstName = "Anton",
@@ -934,9 +937,7 @@ namespace AdminPanel.Data.Migrations
                 {
                     b.HasOne("Models.ShippingStatus", "ShippingStatus")
                         .WithMany()
-                        .HasForeignKey("ShippingStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ShippingStatusId");
 
                     b.Navigation("ShippingStatus");
                 });

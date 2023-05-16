@@ -10,13 +10,20 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using DataAccess;
+using DataAccess.Data.Repositories;
+using Models.ViewModels;
 
 namespace AdminPanel.Controllers
 {
     public class ItemsController : Controller
     {
         ItemRepository _itemRepository { get { return new ItemRepository(); } }
+        SizeRepository _sizeRepository { get { return new SizeRepository(); } }
         CategoryRepository _categoryRepository { get { return new CategoryRepository(); } }
+        StatisticsRepository _statisticsRepository { get { return new StatisticsRepository(); } }
+        OrderRepository _orderRepository { get { return new OrderRepository(); } }
+
+
         private readonly IWebHostEnvironment _env;
         private readonly ApplicationDbContext _context;
 
@@ -26,38 +33,36 @@ namespace AdminPanel.Controllers
             _context = context;
         }
 
-        [Authorize(Roles = "Huvudadministratör, Moderator")]
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         // Display a form for creating a new item
         [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateItemForm()
         {
+            var sizes = _sizeRepository.GetAllSizes();
             var categories = _categoryRepository.GetAllCategories();
-            var selectList = categories.Select(c => new SelectListItem
+            var selectListCategories = categories.Select(c => new SelectListItem
             {
                 Value = c.CategoryId.ToString(),
                 Text = c.Name
             }).OrderByDescending(c => c.Text);
 
-            ViewBag.Categories = selectList;
+            ViewBag.Categories = selectListCategories;
+            ViewBag.Sizes = _sizeRepository.GetAllSizes();
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
+
             return View("CreateItem");
         }
 
         // Create a new item
         [HttpPost]
         [Authorize(Roles = "Huvudadministratör, Moderator")]
-        public async Task<IActionResult> CreateItem(ItemViewModel model, List<IFormFile> files) 
+        public async Task<IActionResult> CreateItem(ItemViewModel model, List<IFormFile> files, int[] selectedSizes, bool hasSize)
         {
-             decimal.TryParse(model.VAT, out decimal percentDecimal);
-                
-             // Lägger till 1 till procenten och dividerar med 100 för att få faktorvärdet
-             decimal factorValue = 1 + (percentDecimal / 100);
+            decimal.TryParse(model.VAT, out decimal percentDecimal);
 
-    if (ModelState.IsValid)
+            // Lägger till 1 till procenten och dividerar med 100 för att få faktorvärdet
+            decimal factorValue = 1 + (percentDecimal / 100);
+
+            if (ModelState.IsValid)
             {
                 ICollection<Image> images = new List<Image>();
 
@@ -89,7 +94,7 @@ namespace AdminPanel.Controllers
                 item.Description = model.Description;
                 item.CategoryId = chosenCategory.CategoryId;
                 item.Color = model.Color;
-                item.HasSize = model.HasSize;
+                item.HasSize = hasSize;
                 item.ProductImages = images;
                 item.VAT = factorValue;
                 item.IsPublished = false;
@@ -97,13 +102,22 @@ namespace AdminPanel.Controllers
                 {
                     var chosenSubcategory = _categoryRepository.GetSubcategoryById(int.Parse(model.Subcategory));
                 }
+                if (hasSize)
+                {
+                }
                 _itemRepository.AddItem(item);
                 _itemRepository.AddItemToStripe(item);
-
+                if (selectedSizes != null)
+                {
+                    foreach (var size in selectedSizes)
+                    {
+                        _sizeRepository.AssignSizeToItem(item, size);
+                    }
+                }
 
             }
 
-                return RedirectToAction("AllItems");
+            return RedirectToAction("AllItems");
         }
 
         // Delete an item and it's images, if there are any
@@ -112,15 +126,15 @@ namespace AdminPanel.Controllers
         {
             var item = _itemRepository.GetItem(id);
             var imagesList = _itemRepository.GetImagesByItemId(item.ItemId);
-         if (imagesList != null)
+            if (imagesList != null)
             {
                 foreach (var image in imagesList)
                 {
-                var fileName = image.Path;
-                var webRootPath = _env.WebRootPath;
-                var filePath = webRootPath + fileName;
-                _itemRepository.DeleteImageFromDirectory(filePath);
-                _itemRepository.DeleteAllImagesFromItem(id);
+                    var fileName = image.Path;
+                    var webRootPath = _env.WebRootPath;
+                    var filePath = webRootPath + fileName;
+                    _itemRepository.DeleteImageFromDirectory(filePath);
+                    _itemRepository.DeleteAllImagesFromItem(id);
                 }
             }
 
@@ -164,6 +178,7 @@ namespace AdminPanel.Controllers
 
             ViewBag.Categories = selectList;
             ViewBag.Subcategories = selectSubList;
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
             var item = _itemRepository.GetItem(id);
             decimal vatRate = item.VAT;
@@ -261,6 +276,7 @@ namespace AdminPanel.Controllers
             var items = await query.ToListAsync();
 
             ViewBag.SearchString = searchString;
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
             return View(items);
         }
@@ -280,18 +296,156 @@ namespace AdminPanel.Controllers
         }
 
         // Display all items
-        public IActionResult AllItems() 
+        public IActionResult AllItems()
         {
             List<Item> items = _itemRepository.GetAllItems();
-            return View(items);
+            var model = new List<ItemViewModel>();
+            foreach (var item in items)
+            {
+                model.Add(new ItemViewModel
+                {
+                    ArticleNr = item.ArticleNr,
+                    PriceWithoutVAT = item.PriceWithoutVAT,
+                    Category = item.Category.Name,
+                    Brand = item.Brand,
+                    Color = item.Color,
+                    ItemId = item.ItemId,
+                    Description = item.Description,
+                    Name = item.Name,
+                    IsPublished = item.IsPublished,
+                    HasSize = item.HasSize,
+                    ProductImages = item.ProductImages,
+                    VAT = item.VAT.ToString(),
+                    ItemBalance = _statisticsRepository.GetBalanceForOneItem(item.ItemId)
+                });
+            }
+
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
+
+            return View(model);
         }
 
+        // Returns all sizes that are connected to a specific item
+        [HttpGet]
+        public JsonResult GetItemSizes(int itemId)
+        {
+            var sizes = _sizeRepository.GetAllSizesForOneItem(itemId)
+                .Select(s => new SelectListItem
+            {
+             Value = s.SizeId.ToString(),
+             Text = s.Name
+                }).OrderByDescending(s => s.Text)
+                     .ToList();
+            return Json(sizes);
+        }
         public IActionResult ViewMoreInfo(int id)
         {
             var item = _itemRepository.GetItem(id);
             return View(item);
         }
 
+        // Adjust stock for a specific item without sizes, by adding a transaction to the DB
+        [HttpPost]
+        public IActionResult AdjustStock(int itemId, int quantity, string transactionType)
+        {
+            var transaction = new ItemTransaction();
+            transaction.ItemId = itemId;
+            transaction.Quantity = quantity;
+            transaction.TransactionType = transactionType;
+            transaction.TransactionDate = DateTime.Now;
+
+            _statisticsRepository.AddTransaction(transaction);
+            var item = _itemRepository.GetItem(itemId);
+
+            return View("ViewMoreInfo", item);
+        }
+
+        // Adjust stock for a specific item with sizes, by adding a transaction to the DB
+        [HttpPost]
+        public IActionResult AdjustStockSizes(int itemId, int quantity, string transactionType, int size)
+        {
+            var transaction = new TransactionWithSizes();
+            transaction.ItemId = itemId;
+            transaction.Quantity = quantity;
+            transaction.TransactionType = transactionType;
+            transaction.TransactionDate = DateTime.Now;
+            transaction.SizeId = size;
+
+            _statisticsRepository.AddTransaction(transaction);
+
+            var item = _itemRepository.GetItem(itemId);
+            return View("ViewMoreInfo", item);
+
+        }
+
+        // Display a form for creating a new size
+        [Authorize(Roles = "Huvudadministratör, Moderator")]
+        public IActionResult ManageSizes()
+        {
+            List<Size> sizes = _sizeRepository.GetAllSizes();
+            ViewBag.Sizes = sizes.OrderBy(i => i.Name);
+
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
+            return View();
+        }
+
+
+        [HttpPost]
+        public IActionResult AddSize([FromForm] string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return BadRequest("Storleksnamnet får inte vara tomt");
+            }
+
+            var size = new Size { Name = name };
+            _sizeRepository.AddSizeAsync(size);
+
+
+            return RedirectToAction("ManageSizes");
+        }
+
+        public IActionResult DeleteSize(int id)
+        {
+            _sizeRepository.DeleteSizeFromItemHasSize(id);
+            _sizeRepository.DeleteSize(id);
+            return RedirectToAction("ManageSizes");
+        }
+
+        [HttpPost]
+        public async Task <IActionResult> UpdateSize(int sizeId, string sizeName)
+        {
+            if (string.IsNullOrWhiteSpace(sizeName))
+            {
+                return BadRequest("Storleksnamnet får inte vara tomt");
+            }
+            
+            
+
+            Size size = _sizeRepository.GetSize(sizeId);
+            size.Name = sizeName;
+            await _sizeRepository.ModifySizeAsync(size);
+            
+           
+            return RedirectToAction("ManageSizes");
+        }
+
+
+
+
+        // Method for adding a new size to the DB, if the modelstate ís valid
+        //[HttpPost]
+        //public IActionResult CreateSize(Size size)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //       _sizeRepository.AddSize(size);
+        //    }
+         
+        //    return View();
+        //}
+
+        // Method for setting the "IsPublished" property to true or false for a specific item
         public IActionResult ItemPublisherManager(int id)
         {
             var item = _itemRepository.GetItem(id);

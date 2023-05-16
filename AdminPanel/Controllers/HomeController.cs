@@ -10,6 +10,7 @@ namespace AdminPanel.Controllers
 {
     public class HomeController : Controller
     {
+        OrderRepository _orderRepository { get { return new OrderRepository(); } }
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _dbContext;
 
@@ -46,6 +47,7 @@ namespace AdminPanel.Controllers
                 UnitsSold = totalSoldUnits
             };
 
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
             return View(model);     
         }

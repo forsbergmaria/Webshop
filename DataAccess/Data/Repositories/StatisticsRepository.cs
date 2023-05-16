@@ -1,5 +1,7 @@
 ﻿using Data;
+using Microsoft.EntityFrameworkCore;
 using Models;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -278,7 +280,7 @@ namespace DataAccess.Data.Repositories
                     if (item != null)
                     {
                         // Beräkna försäljningssumma för varje transaktion
-                        decimal salesAmount = transaction.Quantity * item.PriceWithoutVAT;
+                        decimal salesAmount = (decimal)(transaction.Quantity * item.PriceWithoutVAT);
                         totalSales += salesAmount;
                     }
                 }
@@ -315,7 +317,49 @@ namespace DataAccess.Data.Repositories
             }
         }
 
+        // Returns an integer, representing the current balance of an item
+        public int GetBalanceForOneItem(int itemId)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var transactions = context.ItemTransactions.Where(t => t.ItemId == itemId).ToList();
+                var productBalance = 0;
 
+                foreach (var transaction in transactions)
+                {
+                    switch (transaction.TransactionType)
+                    {
+                        case "Försäljning":
+                        case "Ut":
+                            productBalance -= transaction.Quantity;
+                            break;
+                        case "In":
+                            productBalance += transaction.Quantity;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                // To make sure that the balance never will be less than 0
+                if (productBalance < 0)
+                {
+                    productBalance = 0;
+                }
+
+                return productBalance;
+            }
+        }
+
+        public void AddTransaction(ItemTransaction transaction)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+
+                context.ItemTransactions.Add(transaction);
+                context.SaveChanges();
+            }
+        }
 
 
 

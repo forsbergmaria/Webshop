@@ -23,6 +23,8 @@ namespace Models
         public string? ArticleNr { get; set; }
         [Display(Name = "Denna produkt har storlekar")]
         public bool HasSize { get; set; }
+        [Display(Name = "Välj en storlek")]
+        public string[]? SizeName { get; set; }
         [Display(Name = "Färg")]
         public string? Color { get; set; }
         [Precision(18, 2)]
@@ -43,6 +45,10 @@ namespace Models
         public string Category { get; set; }
         [Display(Name = "Underkategori")]
         public string? Subcategory { get; set; }
+        [Display(Name = "Lagersaldo")]
+
+        public bool IsPublished { get; set; }
+        public int? ItemBalance { get; set; }
         [Display(Name = "Produktbilder")]
         public ICollection<Image>? ProductImages { get; set; }
     }

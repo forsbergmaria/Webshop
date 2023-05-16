@@ -4,6 +4,7 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdminPanel.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230508140906_Models15")]
+    partial class Models15
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +55,7 @@ namespace AdminPanel.Data.Migrations
                         new
                         {
                             Id = "jdigru",
-                            ConcurrencyStamp = "1dc74195-f4ea-476b-a204-aee6356a0b20",
+                            ConcurrencyStamp = "06a2d2e6-29df-4be9-9ef8-218d728a8d06",
                             Name = "Huvudadministratör",
                             NormalizedName = "HUVUDADMINISTRATÖR"
                         });
@@ -482,7 +485,7 @@ namespace AdminPanel.Data.Migrations
                             TransactionId = 1,
                             ItemId = 3,
                             Quantity = 16,
-                            TransactionDate = new DateTime(2023, 5, 10, 19, 47, 35, 84, DateTimeKind.Local).AddTicks(334),
+                            TransactionDate = new DateTime(2023, 5, 8, 16, 9, 6, 334, DateTimeKind.Local).AddTicks(3120),
                             TransactionType = "In"
                         });
                 });
@@ -520,11 +523,7 @@ namespace AdminPanel.Data.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ShippingMethodId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ShippingStatusId")
+                    b.Property<int?>("ShippingStatusId")
                         .HasColumnType("int");
 
                     b.HasKey("OrderId");
@@ -543,7 +542,6 @@ namespace AdminPanel.Data.Migrations
                             CustomerPhone = "0765696217",
                             CustomerZipCode = "73133",
                             OrderDate = new DateTime(2023, 3, 8, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            ShippingMethodId = "shr_1MnW4gJ9NmDaISNLsDI6gLUz",
                             ShippingStatusId = 1
                         },
                         new
@@ -555,7 +553,6 @@ namespace AdminPanel.Data.Migrations
                             CustomerPhone = "0767128320",
                             CustomerZipCode = "73133",
                             OrderDate = new DateTime(2023, 3, 10, 13, 44, 0, 0, DateTimeKind.Unspecified),
-                            ShippingMethodId = "shr_1N3cELJ9NmDaISNLaYLSbzBy",
                             ShippingStatusId = 2
                         });
                 });
@@ -739,13 +736,13 @@ namespace AdminPanel.Data.Migrations
                         {
                             Id = "jfkdgjk8jd5509",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b78dd81d-d11d-45f2-b327-8cd59dd785e5",
+                            ConcurrencyStamp = "a0ba29b6-a71d-497f-928f-13dbe94b6e1a",
                             Email = "antonkraft25@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             PasswordHash = "sdfghjklqwertyui12345678",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8d547d7a-6a65-472a-a72a-83ba5889878b",
+                            SecurityStamp = "d35365de-57d9-473e-a14d-e787cc7beb41",
                             TwoFactorEnabled = false,
                             UserName = "username",
                             FirstName = "Anton",
@@ -934,9 +931,7 @@ namespace AdminPanel.Data.Migrations
                 {
                     b.HasOne("Models.ShippingStatus", "ShippingStatus")
                         .WithMany()
-                        .HasForeignKey("ShippingStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ShippingStatusId");
 
                     b.Navigation("ShippingStatus");
                 });

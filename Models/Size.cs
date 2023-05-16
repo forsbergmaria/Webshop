@@ -14,6 +14,8 @@ namespace Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SizeId { get; set; }
+        [Required(ErrorMessage = "Vänligen tilldela storleken ett namn")]
+        [Display(Name = "Storleksnamn")]
         public string Name { get; set; }
     }
 }

@@ -1,0 +1,186 @@
+﻿@using Models
+@model Size
+
+<head>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="general-page-heading">
+            <h3>Hantera storlekar</h3>
+        </div>
+    <div class="table-responsive-sm">
+        <table class="table table-sm" id="all-sizes-table">
+@*            <thead>
+                <tr>
+                    <th>Storlek</th>
+                    <th>Hantera</th>
+                </tr>
+            </thead>*@
+            <tbody>
+                    @foreach (Size size in ViewBag.Sizes)
+                    {
+                       <tr>
+                        <td>@size.Name</td>
+                        <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#edit-size-modal" data-size-id="@size.SizeId">Redigera storlek</button></td>
+                        <input type="text" class="form-control" id="edit-size-id" name="sizeId" value="@size.SizeId" hidden />
+                        <td><button class="btn btn-danger btn-sm" onclick="if(confirm('Är du säker på att du vill ta bort den här storleken? Det går inte att ångra.')){ location.href='@Url.Action("DeleteSize", "Items", new { id = size.SizeId })' }">Ta bort</button></td>
+                      </tr>
+                    }
+            </tbody>
+        </table>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <button class="btn btn-outline-primary btn-sm" id="btn-add-size" data-bs-toggle="modal" data-bs-target="#add-size-modal">Lägg till ny storlek</button>
+        </div>
+    </div>
+
+@*Modal for creating a new size*@
+<div class="modal fade" id="add-size-modal" tabindex="-1" aria-labelledby="add-size-modal-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="add-size-modal-label">Lägg till ny storlek</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="size-name-input" placeholder="Storleksnamn">
+          <label for="size-name-input">Storleksnamn</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+        <button type="button" class="btn btn-primary" id="save-size-btn" disabled>Spara</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@*Modal for updating a size*@
+    <div class="modal fade" id="edit-size-modal" tabindex="-1" aria-labelledby="edit-size-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit-size-modal-label">Redigera storlek</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating mb-3">
+
+                        <input type="text" class="form-control" id="edit-size-name" name="sizeName" placeholder=" ">
+                        <label for="edit-size-name">Storleksnamn</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                    <button type="button" class="btn btn-primary" id="btn-save-size" disabled>Spara</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+@section Scripts {
+    <script>
+            $(document).ready(function () {
+                var sizeNameInput = $("#size-name-input");
+                var saveSizeBtn = $("#save-size-btn");
+
+                // Lyssna på ändringar i storleksnamn-inputen
+                sizeNameInput.on("input", function () {
+                    if (sizeNameInput.val().trim().length > 0) {
+                        // Aktivera Spara-knappen om storleksnamnet är ifyllt
+                        saveSizeBtn.prop("disabled", false);
+                    } else {
+                        // Inaktivera Spara-knappen om storleksnamnet är tomt
+                        saveSizeBtn.prop("disabled", true);
+                    }
+                });
+
+                // Hantera klick på Spara-knappen
+                saveSizeBtn.click(function () {
+                    var sizeName = sizeNameInput.val().trim();
+
+                    // Skicka storleksnamnet till servern via AJAX
+                    $.ajax({
+                        type: "POST",
+                        url: "/Items/AddSize",
+                        data: { name: sizeName },
+                        success: function (result) {
+                            // Uppdatera gränssnittet på något sätt
+                            // (t.ex. lägg till en ny rad i en tabell)
+                            $("#size-table").append("<tr><td>" + sizeName + "</td></tr>");
+
+                            // Dölj modalfönstret
+                            $("#add-size-modal").modal("hide");
+                        },
+                        error: function (xhr, status, error) {
+                            alert("Något gick fel: " + error);
+                        }
+                    });
+                });
+            });
+
+    </script>
+    <script>
+            $(document).ready(function () {
+                // Hämta modalen och input-fälten för storleksnamn och sizeId
+                const editSizeModal = $('#edit-size-modal');
+                const editSizeNameInput = $('#edit-size-name');
+                const editSizeIdInput = $('#edit-size-id');
+
+                // Hämta Spara-knappen och avaktivera den initialt
+                const btnSaveSize = $('#btn-save-size');
+                btnSaveSize.prop('disabled', true);
+
+                // Lägg till klicklyssnare för "Spara"-knappen
+                btnSaveSize.click(function () {
+                    // Hämta det nya storleksnamnet och sizeId från input-fälten
+                    const newSizeName = editSizeNameInput.val().trim();
+                    const sizeId = editSizeIdInput.val().trim();
+
+                    // Skicka en POST-förfrågan till controllern med det nya storleksnamnet och sizeId som parameter
+                    $.post('/Items/UpdateSize', { sizeId: sizeId, sizeName: newSizeName })
+                        .done(function (response) {
+                            // Dölj modalen
+                            editSizeModal.modal('hide');
+
+                            // Uppdatera sidan för att visa de uppdaterade storlekarna
+                            window.location.reload();
+                        })
+                        .fail(function (error) {
+                            // Visa ett felmeddelande om det uppstår ett fel
+                            alert('Ett fel uppstod: ' + error.responseText);
+                        });
+                });
+
+                // Lägg till klicklyssnare för "Redigera"-knapparna på storlekarna
+                $('.btn-edit-size').click(function () {
+                    // Hämta storleksnamnet och sizeId från data-attributen på knappen
+                    const sizeName = $(this).data('size-name');
+                    const sizeId = $(this).data('size-id');
+
+                    // Fyll i input-fälten med de befintliga värdena
+                    editSizeNameInput.val(sizeName);
+                    editSizeIdInput.val(sizeId);
+
+                    // Visa modalen
+                    editSizeModal.modal('show');
+                });
+
+                // Lägg till lyssnare för input-fältet för storleksnamn
+                editSizeNameInput.on('input', function () {
+                    // Aktivera eller avaktivera Spara-knappen beroende på om input-fältet är tomt eller inte
+                    if (editSizeNameInput.val().trim() !== '') {
+                        btnSaveSize.prop('disabled', false);
+                    } else {
+                        btnSaveSize.prop('disabled', true);
+                    }
+                });
+            });
+    </script>
+}
+</body>

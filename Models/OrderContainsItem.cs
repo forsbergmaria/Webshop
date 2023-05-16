@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace Models
 {
@@ -13,8 +13,9 @@ namespace Models
     {
         public int OrderId { get; set; }
         public int ItemId { get; set; }
-
-        public int ItemQuantity { get; set; }
+        public string StripeItemId { get; set; }
+        public long? ItemQuantity { get; set; }
+        public long Total { get; set; }
 
         [ForeignKey(nameof(OrderId))]
         public virtual Order Orders { get; set; }

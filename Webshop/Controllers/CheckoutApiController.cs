@@ -53,7 +53,6 @@ namespace Webshop.Controllers
                 },
 
                 LineItems = lineItem,
-
                 Mode = "payment",
                 SuccessUrl = Url.Action("Success", "CheckoutApi", null, Request.Scheme),
                 CancelUrl = Url.Action("Cancel", "CheckoutApi", null, Request.Scheme),

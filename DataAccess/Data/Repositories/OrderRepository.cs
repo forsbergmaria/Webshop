@@ -1,11 +1,18 @@
 ﻿using DataAccess;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using Models;
+using Stripe;
+using Stripe.Checkout;
+using System.Diagnostics;
 
 namespace Data
 {
     public class OrderRepository
     {
+        ItemRepository _itemRepository { get { return new ItemRepository(); } }
+
         //Checks if any orders exist in the database
         public bool OrdersExist()
         {
@@ -24,6 +31,45 @@ namespace Data
             }
         }
 
+        // Returns a list of Items from an order
+        public List<Item> GetAllOrderItems(int orderId)
+        {
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    List<Item> items = context.Items.ToList();
+                    List<Item> orderedItems = new List<Item>();
+                    var order = context.OrderContainsItem.ToList();
+
+                    foreach (var o in order)
+                    {
+                        foreach (var i in items)
+                        {
+                            if (i.ItemId == o.ItemId)
+                            {
+                                orderedItems.Add(i);
+                            }
+                        }
+                    }
+
+                    return orderedItems;
+                }
+            }
+            catch (NullReferenceException ex)
+            {
+                throw;
+            }
+            catch (SqlException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
         //Returns a list of orders from the database
         public List<Order> GetAllOrders()
         {
@@ -38,13 +84,8 @@ namespace Data
         {
             using (var context = new ApplicationDbContext())
             {
-                return context.Orders.Include(o => o.CustomerPhone)
-                    .Include(o => o.CustomerCity)
-                    .Include(o => o.CustomerZipCode)
-                    .Include(o => o.CustomerFirstName)
-                    .Include(o => o.CustomerLastName)
-                    .Include(o => o.CustomerAddress)
-                    .FirstOrDefault(i => i.OrderId == id);
+                return context.Orders
+                    .Where(o => o.OrderId == id).FirstOrDefault();
             }
         }
 
@@ -79,14 +120,210 @@ namespace Data
         }
 
         //Creates a new order
-        public void CreateOrder(Order order)
+        public void CreateOrder(Session session, StripeList<LineItem> lineItems)
         {
             using (var context = new ApplicationDbContext())
             {
+                StripeConfiguration.ApiKey = "sk_test_51MnVSuJ9NmDaISNLt2DpWzyfEpec4JZF1Zf9gwPkecoDj2OYmXX9ThWfvXB2nEbadLp51BI6AuooidYslZ6yykDg00pjXolXbJ";
+
+                Order order = new Order();
+                order.OrderDate = session.Created;
+                order.CustomerName = session.ShippingDetails.Name;
+                order.CustomerAddress = session.ShippingDetails.Address.Line1;
+                order.CustomerAddress2 = session.ShippingDetails.Address.Line2;
+                order.CustomerPhone = session.ShippingDetails.Phone;
+                order.CustomerCity = session.ShippingDetails.Address.City;
+                order.CustomerZipCode = session.ShippingDetails.Address.PostalCode;
+
+                var shippingStatus = context.ShippingStatuses.Where(s => s.Name == "Ohanterad").FirstOrDefault();
+
+                order.ShippingMethodId = session.ShippingCost.ShippingRateId;
+                order.ShippingStatusId = shippingStatus.StatusId;
+                
                 context.Orders.Add(order);
+                context.SaveChanges();
+
+                foreach (var item in lineItems)
+                {
+                    var orderedItem = new OrderContainsItem();
+                    orderedItem.OrderId = order.OrderId;
+                    orderedItem.StripeItemId = item.Price.ProductId;
+                    var theItem = context.Items.Where(i => i.StripeItemId.Equals(item.Price.ProductId)).FirstOrDefault();
+                    orderedItem.ItemId = theItem.ItemId;
+                    orderedItem.ItemQuantity = item.Quantity;
+                    orderedItem.Total = item.AmountTotal / 100;
+                    context.OrderContainsItem.Add(orderedItem);
+                    if (theItem.HasSize == false)
+                    {
+                        _itemRepository.AddItemTransaction(theItem, "Försäljning", (int)item.Quantity, null);
+                    }
+                    else
+                    {
+                        var productService = new ProductService();
+                        var product = productService.Get(item.Price.ProductId);
+                        var metadata = product.Metadata["Size"];
+                        Debug.WriteLine(metadata);
+                        _itemRepository.AddItemTransaction(theItem, "Försäljning", (int)item.Quantity, metadata);
+                    }
+                    
+                }
+
                 context.SaveChanges();
             }
         }
 
+        public string GetShippingMethodName(string shippingRateId)
+        {
+            try
+            {
+                StripeConfiguration.ApiKey = "sk_test_51MnVSuJ9NmDaISNLt2DpWzyfEpec4JZF1Zf9gwPkecoDj2OYmXX9ThWfvXB2nEbadLp51BI6AuooidYslZ6yykDg00pjXolXbJ";
+
+                var service = new ShippingRateService();
+                var shippingMethod = service.Get(shippingRateId);
+                var shippingMethodName = shippingMethod.DisplayName;
+
+                return shippingMethodName;
+            }
+            catch (NullReferenceException ex)
+            {
+                throw;
+            }
+            catch (StripeException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public ShippingStatus GetShippingStatus(int statusId)
+        {
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    return context.ShippingStatuses
+                        .Where(s => s.StatusId == statusId).FirstOrDefault();
+                }
+            }
+            catch (NullReferenceException ex)
+            {
+                throw;
+            }
+            catch (SqlException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public ShippingStatus GetShippingStatusByName(string name)
+        {
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    return context.ShippingStatuses
+                        .Where(s => s.Name == name).FirstOrDefault();
+                }
+            }
+            catch (NullReferenceException ex)
+            {
+                throw;
+            }
+            catch (SqlException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public string GetShippingStatusName(int statusId)
+        {
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    var status = context.ShippingStatuses
+                        .Where(s => s.StatusId == statusId).FirstOrDefault();
+                    return status.Name;
+                }
+            }
+            catch (NullReferenceException ex)
+            {
+                throw;
+            }
+            catch (StripeException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        // Returns a list with all shipping statuses from the database
+        public List<ShippingStatus> GetAllShippingStatuses()
+        {
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    return context.ShippingStatuses.ToList();
+                }
+            }
+            catch (NullReferenceException ex)
+            {
+                throw;
+            }
+            catch (SqlException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public int GetNumberOfUnhandledOrders()
+        {
+                try
+                {
+                    using (var context = new ApplicationDbContext())
+                    {
+                       
+                      var status = context.ShippingStatuses
+                        .Where(s => s.Name == "Ohanterad").FirstOrDefault();
+                      
+                      var unhandledOrders = context.Orders
+                        .Where(o => o.ShippingStatusId == status.StatusId)
+                        .ToList();
+                       
+                    return unhandledOrders.Count;
+                    }
+                }
+                catch (NullReferenceException ex)
+                {
+                    throw;
+                }
+                catch (SqlException ex)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            }
     }
 }

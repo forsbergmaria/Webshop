@@ -22,6 +22,7 @@ namespace DataAccess
         }
 
         public DbSet<Order> Orders { get; set; }
+        public DbSet<ItemHasSize> ItemHasSize { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<ItemTransaction> ItemTransactions { get; set; }
         public DbSet<TransactionWithSizes> TransactionsWithSizes { get; set; }
@@ -181,6 +182,12 @@ namespace DataAccess
         {
             StatusId = 3,
             Name = "Slutförd"
+        },
+
+        new ShippingStatus
+        {
+            StatusId = 4,
+            Name = "Makulerad"
         }
     );
 
@@ -190,27 +197,27 @@ namespace DataAccess
             {
                 OrderId = 1,
                 OrderDate = DateTime.Parse("2023-03-08 10:00"),
-                CustomerFirstName = "Maria",
-                CustomerLastName = "Forsberg",
+                CustomerName = "Maria Forsberg",
                 CustomerPhone = "0765696217",
                 CustomerAddress = "Malmgatan 2A",
                 CustomerZipCode = "73133",
                 CustomerCity = "Köping",
+                ShippingMethodId = "shr_1MnW4gJ9NmDaISNLsDI6gLUz",
                 ShippingStatusId = 1,
             },
             new Order
             {
                 OrderId = 2,
                 OrderDate = DateTime.Parse("2023-03-10 13:44"),
-                CustomerFirstName = "Anton",
-                CustomerLastName = "Kraft",
+                CustomerName = "Anton Kraft",
                 CustomerPhone = "0767128320",
                 CustomerAddress = "Malmgatan 2A",
                 CustomerZipCode = "73133",
                 CustomerCity = "Köping",
+                ShippingMethodId = "shr_1N3cELJ9NmDaISNLaYLSbzBy",
                 ShippingStatusId = 2,
             }
-                );
+                ); ;
 
             modelBuilder.Entity<Size>().HasData(
                 new Size
@@ -231,6 +238,18 @@ namespace DataAccess
                 }
                 );
 
+            modelBuilder.Entity<ItemHasSize>().HasOne(s => s.Item);
+            modelBuilder.Entity<ItemHasSize>().HasOne(s => s.Size);
+            modelBuilder.Entity<ItemHasSize>().HasKey(vf => new { vf.ItemId, vf.SizeId });
+            modelBuilder.Entity<ItemHasSize>().HasData(
+                new ItemHasSize
+                {
+                    ItemId = 36,
+                    SizeId = 1
+                } 
+                );
+
+
             modelBuilder.Entity<OrderContainsItem>().HasOne(o => o.Orders);
             modelBuilder.Entity<OrderContainsItem>().HasOne(o => o.Items);
             modelBuilder.Entity<OrderContainsItem>().HasKey(vf => new { vf.OrderId, vf.ItemId });
@@ -239,19 +258,25 @@ namespace DataAccess
                 {
                     OrderId = 1,
                     ItemId = 2,
+                    StripeItemId = "prod_NYcwS1YSGIhUW1",
                     ItemQuantity = 1,
+                    Total = 199
                 },
                 new OrderContainsItem
                 {
                     OrderId = 1,
                     ItemId = 3,
+                    StripeItemId = "prod_NYcwS1YSGIhUW1",
                     ItemQuantity = 2,
+                    Total = 199
                 },
                 new OrderContainsItem
                 {
                     OrderId = 2,
                     ItemId = 2,
+                    StripeItemId = "prod_NYcwS1YSGIhUW1",
                     ItemQuantity = 1,
+                    Total = 199
                 }
                 );
 

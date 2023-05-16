@@ -1,4 +1,5 @@
 ﻿using DataAccess;
+using DataAccess.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.ViewModels;
@@ -11,6 +12,7 @@ namespace Data
 {
     public class ItemRepository
     {
+        SizeRepository _sizeRepository { get { return new SizeRepository(); } }
 
         //Checks if any Items exist in the database
         public bool ItemsExist()
@@ -72,6 +74,11 @@ namespace Data
                     {
                         context.Images.Remove(image);
                     }
+
+                 if (item.HasSize)
+                    {
+                      DeleteItemFromItemHasSize(id);
+                    }
                     context.Items.Remove(item);
                     context.SaveChanges();
                     return true;
@@ -123,6 +130,21 @@ namespace Data
             }
         }
 
+        // Deletes a specific row with SizeId and ItemId from the database, based on the itemId
+        public void DeleteItemFromItemHasSize(int itemId) 
+        { 
+            using (var context = new ApplicationDbContext())
+            {
+                var itemHasSizes = context.ItemHasSize
+                    .Where(i => i.ItemId == itemId).ToList();
+                foreach (var size in itemHasSizes)
+                {
+                    context.ItemHasSize.Remove(size);
+                }
+                context.SaveChanges();
+            }    
+        }
+
         //Modify existing item
         public Item ModifyItem (Item item)
         {
@@ -153,6 +175,7 @@ namespace Data
         {
             using (var context = new ApplicationDbContext())
             {
+                var sizesList = new List<Size>();
                 context.Items.Add(item);
                 context.SaveChanges();
 
@@ -171,6 +194,7 @@ namespace Data
             }
         }
 
+        // Adds an item to the Stripe Dashboard through Stripe API
         public void AddItemToStripe(Item item)
         {
             using (var context = new ApplicationDbContext())
@@ -182,15 +206,13 @@ namespace Data
 				{
 					imageLinks.Add(image.Path);
 				}
-				var productOptions = new ProductCreateOptions
-				{
-					Name = item.Name,
-					Description = item.Description,
-					//Images = new List<string> 
-     //               { 
-     //                   item.ProductImages.FirstOrDefault().Path
-     //               }
-				};
+               
+                    var productOptions = new ProductCreateOptions
+                    {
+                        Name = item.Name,
+                        Description = item.Description,
+                    };
+                
 
 				var productService = new ProductService();
 				Product product = productService.Create(productOptions);
@@ -198,14 +220,13 @@ namespace Data
 				var priceOptions = new PriceCreateOptions
 				{
 					Product = product.Id,
-					UnitAmount = (long)((item.PriceWithoutVAT * item.VAT * 100)), // priset i öre, t.ex. 1000 öre = 10 kr
+					UnitAmount = (long)((item.PriceWithoutVAT * item.VAT * 100)),
 					Currency = "sek",
 				};
 
 				var priceService = new PriceService();
 				Price price = priceService.Create(priceOptions);
 
-				// Spara produkt-ID och pris-ID i din databas
                 item.StripeItemId = product.Id;
                 item.StripePriceId = price.Id;
 
@@ -221,6 +242,43 @@ namespace Data
             {
                 var images = context.Images.Where(i => i.ItemId == id).ToList();
                 return images;
+            }
+        }
+
+        // Adds an item transaction to the database
+        public void AddItemTransaction(Item item, string transactionType, int quantity, string? sizeName)
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                if (item.HasSize == false)
+                {
+                    var transaction = new ItemTransaction
+                    {
+                        ItemId = item.ItemId,
+                        Quantity = quantity,
+                        TransactionType = transactionType,
+                        TransactionDate = DateTime.Now
+                    };
+
+                    context.ItemTransactions.Add(transaction);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    
+                    var size = context.Sizes.Where(s => s.Name == sizeName).FirstOrDefault();
+                    var transaction = new TransactionWithSizes
+                    {
+                        ItemId = item.ItemId,
+                        Quantity = quantity,
+                        TransactionType = transactionType,
+                        TransactionDate = DateTime.Now,
+                        SizeId = size.SizeId
+                    };
+
+                    context.ItemTransactions.Add(transaction);
+                    context.SaveChanges();
+                }
             }
         }
     }

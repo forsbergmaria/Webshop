@@ -3,6 +3,8 @@
 
 <head>
     <link rel="stylesheet" href="~/css/site.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 <body>
     <div>
@@ -72,8 +74,158 @@
                 </div>
             }
             <button class="btn btn-primary" onclick="location.href='@Url.Action("ModifyItemForm", "Items", new { id = @Model.ItemId })'">Redigera produkt</button>
+            @if (!Model.HasSize)
+            {
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStockModal" data-itemid="@Model.ItemId">
+                    Justera lagersaldo
+                </button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adjustStockModal" data-itemid="@Model.ItemId">
+                    Justera lagersaldo per storlek
+                </button>
+            }
             <button class="btn btn-danger" onclick="if(confirm('Är du säker på att du vill ta bort den här produkten? Det går inte att ångra.')){ location.href='@Url.Action("DeleteItem", "Items", new { id = Model.ItemId })' }">Radera produkt</button>
         </div>
-    </div>
+        <!-- The modal for items without sizes -->
+        <div class="modal fade" id="addStockModal" tabindex="-1" aria-labelledby="addStockModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addStockModalLabel">Fyll på lagersaldo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addStockForm" asp-controller="Items" asp-action="AdjustStock" data-itemid="@Model.ItemId">
+                            <div class="mb-3">
+                                <label for="quantity" class="form-label">Antal</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="transactionType" class="form-label">Transaktionstyp</label>
+                                <select class="form-select" id="transactionType" name="transactionType" required>
+                                    <option value="In">In</option>
+                                    <option value="Ut">Ut</option>
+                                </select>
+                            </div>
+                            <input type="hidden" id="itemId" name="itemId" value="@Model.ItemId">
+                            <input type="hidden" id="transactionTypeHidden" name="transactionType" value="">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                        <button type="submit" form="addStockForm" class="btn btn-primary">Spara</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- The modal for items with sizes -->
+<div class="modal fade" id="adjustStockModal" tabindex="-1" aria-labelledby="adjustStockModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="adjustStockModalLabel">Justera lagersaldo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="adjustStockForm" asp-controller="Items" asp-action="AdjustStockSizes" data-itemid="@Model.ItemId">
+                            <label for="sizeSelect" class="form-label">Storlek</label>
+                            <select class="form-select" id="sizeSelect" name="size" required>
+                                <option value="">Välj storlek</option>
+                            </select>
+
+          <div class="mb-3">
+            <label for="quantity" class="form-label">Antal</label>
+            <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
+          </div>
+          <div class="mb-3">
+            <label for="transactionType" class="form-label">Transaktionstyp</label>
+            <select class="form-select" id="transactionType" name="transactionType" required>
+              <option value="In">In</option>
+              <option value="Ut">Ut</option>
+            </select>
+          </div>
+          <input type="hidden" id="itemId" name="itemId" value="@Model.ItemId">
+          <input type="hidden" id="transactionTypeHidden" name="transactionType" value="">
+          <input type="hidden" id="sizeHidden" name="size" value="">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+        <button type="submit" id="save-button" form="adjustStockForm" class="btn btn-primary" disabled>Spara</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    </div>
+    @section Scripts {
+        <script>
+            $('#addStockModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget) // Knappen som öppnade modalen
+                var itemId = button.data('itemid') // Extrahera värdet för data-itemid-attributet från knappen
+
+                // Uppdatera det dolda itemId-fältet i modalen med rätt värde
+                var modal = $(this)
+                modal.find('#itemId').val(itemId)
+            });
+              // Lägg till en eventlyssnare på select-elementet
+              var transactionTypeSelect = document.getElementById("transactionType");
+            transactionTypeSelect.addEventListener("change", function () {
+                // Sätt värdet på den gömda inputen till det valda alternativet
+                var transactionTypeHidden = document.getElementById("transactionTypeHidden");
+                transactionTypeHidden.value = transactionTypeSelect.value;
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+                var sizeSelect = $("#sizeSelect");
+                var saveButton = $("#save-button");
+
+                // Funktion för att fylla storleks-dropdown med tillgängliga storlekar
+                function loadSizes(itemId) {
+                    $.getJSON("/Items/GetItemSizes", { itemId: itemId }, function (sizes) {
+                        sizeSelect.empty();
+                        sizeSelect.append('<option value="">Välj storlek</option>');
+                        $.each(sizes, function (index, size) {
+                            sizeSelect.append('<option value="' + size.value + '">' + size.text + '</option>');
+                        });
+
+                        if (sizes.length === 0) {
+                            sizeSelect.attr('disabled', 'disabled');
+                            saveButton.attr('disabled', 'disabled');
+                        } else {
+                            sizeSelect.removeAttr('disabled');
+                            if (sizeSelect.val() !== "") {
+                                saveButton.removeAttr('disabled');
+                            }
+                        }
+                    });
+                }
+
+                // Ladda storlekar vid sidstart
+                var itemId = @Model.ItemId;
+                loadSizes(itemId);
+
+                // Ladda storlekar när en annan produkt väljs
+                $("#productSelect").change(function () {
+                    itemId = $(this).val();
+                    loadSizes(itemId);
+                });
+
+                // Aktivera/avaktivera spara-knappen beroende på om en storlek är vald
+                sizeSelect.change(function () {
+                    if ($(this).val() !== "") {
+                        saveButton.removeAttr('disabled');
+                    } else {
+                        saveButton.attr('disabled', 'disabled');
+                    }
+                });
+            });
+
+        </script>
+    }
 </body>

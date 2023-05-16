@@ -1,5 +1,5 @@
 ﻿@using Models
-@model List<Item>
+@model List<ItemViewModel>
 
 <head>
     <link rel="stylesheet" href="~/css/site.css" />
@@ -22,6 +22,7 @@
                     <th>Färg</th>
                     <th>Försäljningspris</th>
                     <th>Huvudkategori</th>
+                    <th>Lagerstatus</th>
                     <th>Hantera</th>
              
                     
@@ -53,10 +54,11 @@
                             <td>@item.Color</td>
                         }
                         @{
-                            var salesPrice = item.PriceWithoutVAT * item.VAT;
+                            var salesPrice = item.PriceWithoutVAT * decimal.Parse(item.VAT);
                             <td>@Math.Round(salesPrice, 2).ToString() SEK</td>
                         }
-                        <td>@item.Category.Name</td>
+                        <td>@item.Category</td>
+                        <td>@item.ItemBalance</td>
                         <td><button class="btn btn-primary btn-sm view-more-info-btn" onclick="location.href='@Url.Action("ViewMoreInfo", "Items", new { id = @item.ItemId })'">Mer information</button>
                         </td>
 

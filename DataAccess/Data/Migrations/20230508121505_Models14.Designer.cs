@@ -4,6 +4,7 @@ using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdminPanel.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230508121505_Models14")]
+    partial class Models14
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +55,7 @@ namespace AdminPanel.Data.Migrations
                         new
                         {
                             Id = "jdigru",
-                            ConcurrencyStamp = "1dc74195-f4ea-476b-a204-aee6356a0b20",
+                            ConcurrencyStamp = "b355e326-ec32-4c96-b972-18348525c6e9",
                             Name = "Huvudadministratör",
                             NormalizedName = "HUVUDADMINISTRATÖR"
                         });
@@ -419,28 +422,6 @@ namespace AdminPanel.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Models.ItemHasSize", b =>
-                {
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SizeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ItemId", "SizeId");
-
-                    b.HasIndex("SizeId");
-
-                    b.ToTable("ItemHasSize");
-
-                    b.HasData(
-                        new
-                        {
-                            ItemId = 36,
-                            SizeId = 1
-                        });
-                });
-
             modelBuilder.Entity("Models.ItemTransaction", b =>
                 {
                     b.Property<int>("TransactionId")
@@ -482,7 +463,7 @@ namespace AdminPanel.Data.Migrations
                             TransactionId = 1,
                             ItemId = 3,
                             Quantity = 16,
-                            TransactionDate = new DateTime(2023, 5, 10, 19, 47, 35, 84, DateTimeKind.Local).AddTicks(334),
+                            TransactionDate = new DateTime(2023, 5, 8, 14, 15, 5, 15, DateTimeKind.Local).AddTicks(3278),
                             TransactionType = "In"
                         });
                 });
@@ -520,11 +501,7 @@ namespace AdminPanel.Data.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ShippingMethodId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ShippingStatusId")
+                    b.Property<int?>("ShippingStatusId")
                         .HasColumnType("int");
 
                     b.HasKey("OrderId");
@@ -543,7 +520,6 @@ namespace AdminPanel.Data.Migrations
                             CustomerPhone = "0765696217",
                             CustomerZipCode = "73133",
                             OrderDate = new DateTime(2023, 3, 8, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            ShippingMethodId = "shr_1MnW4gJ9NmDaISNLsDI6gLUz",
                             ShippingStatusId = 1
                         },
                         new
@@ -555,7 +531,6 @@ namespace AdminPanel.Data.Migrations
                             CustomerPhone = "0767128320",
                             CustomerZipCode = "73133",
                             OrderDate = new DateTime(2023, 3, 10, 13, 44, 0, 0, DateTimeKind.Unspecified),
-                            ShippingMethodId = "shr_1N3cELJ9NmDaISNLaYLSbzBy",
                             ShippingStatusId = 2
                         });
                 });
@@ -739,13 +714,13 @@ namespace AdminPanel.Data.Migrations
                         {
                             Id = "jfkdgjk8jd5509",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b78dd81d-d11d-45f2-b327-8cd59dd785e5",
+                            ConcurrencyStamp = "ba96d32d-92cd-49ed-bee7-bfe752397908",
                             Email = "antonkraft25@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             PasswordHash = "sdfghjklqwertyui12345678",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8d547d7a-6a65-472a-a72a-83ba5889878b",
+                            SecurityStamp = "d494d5f6-1806-499c-89d1-86a32d9d7610",
                             TwoFactorEnabled = false,
                             UserName = "username",
                             FirstName = "Anton",
@@ -900,25 +875,6 @@ namespace AdminPanel.Data.Migrations
                     b.Navigation("Subcategory");
                 });
 
-            modelBuilder.Entity("Models.ItemHasSize", b =>
-                {
-                    b.HasOne("Models.Item", "Item")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.Size", "Size")
-                        .WithMany()
-                        .HasForeignKey("SizeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Item");
-
-                    b.Navigation("Size");
-                });
-
             modelBuilder.Entity("Models.ItemTransaction", b =>
                 {
                     b.HasOne("Models.Item", "Items")
@@ -934,9 +890,7 @@ namespace AdminPanel.Data.Migrations
                 {
                     b.HasOne("Models.ShippingStatus", "ShippingStatus")
                         .WithMany()
-                        .HasForeignKey("ShippingStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ShippingStatusId");
 
                     b.Navigation("ShippingStatus");
                 });

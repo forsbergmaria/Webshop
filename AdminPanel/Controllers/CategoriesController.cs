@@ -12,6 +12,7 @@ namespace AdminPanel.Controllers
     public class CategoriesController : Controller
     {
         CategoryRepository _categoryRepository { get { return new CategoryRepository(); } }
+        OrderRepository _orderRepository { get { return new OrderRepository(); } }
         private readonly ApplicationDbContext _dbContext;
 
         public CategoriesController(ApplicationDbContext dbContext)
@@ -19,17 +20,12 @@ namespace AdminPanel.Controllers
             _dbContext = dbContext;
         }
 
-        [Authorize(Roles = "Huvudadministratör, Moderator")]
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         // Display all categories
         [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult AllCategories()
         {
             var categories = _categoryRepository.GetAllCategories();
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
             return View(categories);
         }
 
@@ -45,6 +41,7 @@ namespace AdminPanel.Controllers
                 Subcategories = _categoryRepository.GetAllLinkedSubcategories(id)
             };
 
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
             return View(model);
         }
 
@@ -52,6 +49,7 @@ namespace AdminPanel.Controllers
         [Authorize(Roles = "Huvudadministratör, Moderator")]
         public IActionResult CreateCategory()
         {
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
             return View();
         }
 
@@ -64,6 +62,7 @@ namespace AdminPanel.Controllers
             {
                 _categoryRepository.AddCategory(category);
             }
+ 
             return View();
 
         }
@@ -80,6 +79,7 @@ namespace AdminPanel.Controllers
             }
             var selectList = new SelectList(categories, "Name").OrderByDescending(c => c.Text);
             ViewBag.CategoryList = selectList;
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
             return View("CreateSubcategory");
         }
 
@@ -90,6 +90,7 @@ namespace AdminPanel.Controllers
             var selectedCategory = _categoryRepository.GetCategory(id);
             TempData["id"] = id;
             ViewBag.SelectedCategory = selectedCategory.Name;
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
             return View("CreateSubcategoryFromCategory");
         }
@@ -111,6 +112,7 @@ namespace AdminPanel.Controllers
                 _categoryRepository.AddSubcategory(subcategory);
             }
 
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
             return RedirectToAction("AllCategories");
         }
 
@@ -169,6 +171,7 @@ namespace AdminPanel.Controllers
             var categories = await query.ToListAsync();
 
             ViewBag.SearchString = searchString;
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
             return View(categories);
         }
@@ -199,6 +202,7 @@ namespace AdminPanel.Controllers
             };
 
             ViewBag.SearchString = searchString;
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
             return View(model);
         }
@@ -230,6 +234,8 @@ namespace AdminPanel.Controllers
 
       
             TempData["id"] = id;
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
+
             return View("UpdateCategory", category);
         }
 
@@ -246,6 +252,8 @@ namespace AdminPanel.Controllers
                 cat.Name = category.Name;
                 _dbContext.SaveChanges();
             }
+
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
 
             return RedirectToAction("AllCategories");
         }
@@ -267,6 +275,8 @@ namespace AdminPanel.Controllers
             ViewBag.CategoryList = selectList;
 
             TempData["id"] = id;
+            ViewBag.UnhandledOrders = _orderRepository.GetNumberOfUnhandledOrders();
+
             return View("UpdateSubcategory", subcategory);
         }
 

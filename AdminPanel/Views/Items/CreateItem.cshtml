@@ -56,6 +56,21 @@
                 <option value="">Välj en underkategori</option>
             </select>
         </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="hasSize" name="hasSize" value="true">
+            <label class="form-check-label" for="hasSize">
+                Denna produkt har storlekar
+            </label>
+        </div>
+    <div id="sizes" style="display:none">
+        @foreach (var size in ViewBag.Sizes)
+        {
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input sizeCheckbox" name="selectedSizes" value="@size.SizeId">
+                <label class="form-check-label">@size.Name</label>
+            </div>
+        }
+    </div>
         <div class="form-group">
             @Html.LabelFor(m => m.ProductImages, new { @class = "col-md-2 control-label" })
             <input asp-for="ProductImages" type="file" name="files" multiple class="form-control-file" accept="image/jpeg, image/png, image/jpg, image/jfif"/>
@@ -95,6 +110,45 @@
                     }
                 });
             });
+        </script>
+        <script>
+            // Hitta elementen på sidan
+            const showSizesCheckbox = document.getElementById("hasSize");
+            const sizesDiv = document.getElementById("sizes");
+
+            // Lägg till händelselyssnare på kryssrutan
+            showSizesCheckbox.addEventListener("change", function () {
+                if (showSizesCheckbox.checked) {
+                    sizesDiv.style.display = "block";
+                } else {
+                    sizesDiv.style.display = "none";
+                    clearSelectedSizes();
+                }
+            });
+
+            // Lägg till händelselyssnare på storlekscheckboxarna
+            const sizeCheckboxes = sizesDiv.getElementsByClassName("sizeCheckbox");
+            Array.from(sizeCheckboxes).forEach(function (checkbox) {
+                checkbox.addEventListener("change", function () {
+                    updateSelectedSizes();
+                });
+            });
+
+            // Uppdatera den dolda inmatningsfältet när en storlekscheckbox ändras
+            function updateSelectedSizes() {
+                const selectedSizes = Array.from(sizeCheckboxes)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.value);
+                document.getElementById("selectedSizes").value = JSON.stringify(selectedSizes);
+            }
+
+            // Rensa de valda storlekarna och uppdatera den dolda inmatningsfältet
+            function clearSelectedSizes() {
+                Array.from(sizeCheckboxes).forEach(function (checkbox) {
+                    checkbox.checked = false;
+                });
+                document.getElementById("selectedSizes").value = "";
+            }
         </script>
          }
 </body>

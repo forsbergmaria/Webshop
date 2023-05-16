@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Models;
+@using DataAccess;
 @inject SignInManager<Admin> SignInManager
 @inject UserManager<Admin> UserManager
 
@@ -59,17 +60,23 @@
                             <li><a class="dropdown-item" asp-controller="Items" asp-action="AllItems">Alla produkter</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" asp-controller="Items" asp-action="CreateItemForm">Lägg till produkt</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="Items" asp-action="ManageSizes">Lägg till storlek</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false"
                        asp-controller="Orders" asp-action="Index">
                        <span>
-                        Beställningar
+                                    Beställningar 
+                                    @if (ViewBag.UnhandledOrders > 0)
+                                    {
+                                        <span class="badge rounded-circle bg-danger" id="unhandled-orders-badge">@ViewBag.UnhandledOrders</span>
+                                    }
                        </span>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" asp-controller="Orders" asp-action="">Alla beställningar</a></li>
+                            <li><a class="dropdown-item" asp-controller="Orders" asp-action="Index">Alla beställningar</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" asp-controller="Orders" asp-action="">Action</a></li>
                             <li><hr class="dropdown-divider"></li>

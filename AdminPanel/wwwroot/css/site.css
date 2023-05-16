@@ -1,4 +1,19 @@
 
+#all-sizes-table {
+    width: 40%;
+    text-align: center;
+    margin-top: 2em;
+}
+
+.table-responsive {
+    display: flex;
+    justify-content: center;
+}
+
+.table {
+    margin: 0 auto;
+}
+
 
 html {
   font-size: 14px;
@@ -32,6 +47,10 @@ body {
 #logo {
     width: 5%;
     margin-left: 1em;
+}
+
+.general-page-heading {
+    text-align: center;
 }
 
 .manage-btn {
@@ -109,3 +128,8 @@ td {
     width: 15em;
     height: 15em;
 }
+
+#unhandled-orders-badge {
+    color: #fff;
+}
+
