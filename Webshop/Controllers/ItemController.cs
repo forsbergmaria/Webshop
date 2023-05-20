@@ -15,7 +15,9 @@ namespace Webshop.Controllers
 
         public ActionResult Index(string searchstring)
         {
+            //Return items containing "searchstring" from the method ItemTextSearch
             var items = itemService.ItemTextSearch(searchstring);
+            //Get the searchstring via ViewBag
             ViewBag.Searchstring = searchstring;
             return View(items);
         }
@@ -25,19 +27,26 @@ namespace Webshop.Controllers
             return View(item);
         }
 
-        //public ActionResult Category(int id)
-        //{
-        //    var items = itemService.GetItemsPerCategory(id);
-        //    //typ get categoryselectmodel
-        //    return View(items);
-        //}
+        public ActionResult Category(int id, int subId)
+        {
+            var items = itemService.GetItemsPerCategory(id);
+            //typ get categoryselectmodel
+            if(subId != 0)
+            {
+                items.Items = itemService.GetItemsPerSubcategory(subId);
+            }
+            return View(items);
+        }
 
         public IActionResult Filter(SelectCategoryModel viewmodel)
         {
+            //Get all categories to display
             viewmodel.Categories = categoryRepository.GetAllCategories();
 
+            //If categories exist
             if (viewmodel.CategoryId != 0)
             {
+                //Get all the items from selected category
                 viewmodel.Items = itemRepository.GetAllItems()
                     .Where(i => i.CategoryId == viewmodel.CategoryId);
             }

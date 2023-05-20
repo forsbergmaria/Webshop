@@ -97,10 +97,24 @@ namespace DataAccess.Data.Services
             List<Subcategory> subcategories = categoryRepository.GetAllSubcategories().Where(s => s.CategoryId == id).ToList();
             SelectCategoryModel model = new SelectCategoryModel
             {
+                CategoryId = id,
                 Items = items,
                 Subcategories = subcategories
             };
             return model;
+        }
+
+        public List<Item> GetItemsPerSubcategory(int id)
+        {
+            List<Item> items = itemRepository.GetAllItems().Where(i => i.CategoryId == id).ToList();
+            var subcategory = categoryRepository.GetSubcategoryFromCategory(id);
+
+            if(subcategory != null)
+            {
+                items = itemRepository.GetAllItems().Where(i => i.SubcategoryId == id).ToList();
+            }
+
+            return items;
         }
     }
 }

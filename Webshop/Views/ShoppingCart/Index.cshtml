@@ -2,99 +2,95 @@
 @model ShoppingCart
 
 <body>
-  <div class="container h-100">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col">
-        <p><span class="h2">Shopping Cart </span><span class="h4">(@Model.Quantity item in your cart)</span></p>
+    <div class="container h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col">
+                <p><span class="h2">Shopping Cart </span><span class="h4">(@Model.Quantity item(s) in your cart)</span></p>
 
-        <div class="card mb-4">
-          <div class="card-body p-4">
-            <div class="row align-items-center">
-                 @if(Model != null && Model.Items.Count > 0) {
-
-                    @foreach(var valuePair in Model.ItemQuantity)
-                    {
-                                    var item = Model.Items.Where(i => i.ItemId == valuePair.Key).Distinct().FirstOrDefault();
-                                    var salesPrice = @Math.Round(item.PriceWithoutVAT * item.VAT, 2);
-                                    <div class="col-md-2">
-                <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/1.webp"
-                  class="img-fluid" alt="Generic placeholder image">
-              </div>
-              <div class="col-md-2 d-flex justify-content-center">
-                <div>
-                  <p class="small text-muted mb-4 pb-2">Name</p>
-                  <p class="lead fw-normal mb-0">@item.Name</p>
-                </div>
-              </div>
-              <div class="col-md-2 d-flex justify-content-center">
-                <div>
-                  <p class="small text-muted mb-4 pb-2">Color</p>
-                  <p class="lead fw-normal mb-0"><i class="fas fa-circle me-2" style="color: #fdd8d2;"></i>
-                    @item.Color</p>
-                </div>
-              </div>
-              <div class="col-md-2 d-flex justify-content-center">
-                <div>
-                    <form method="post" action="@Url.Action("Remove", "ShoppingCart")">
-                        <input type="hidden" name="id" value="@item.ItemId"/>
-                        <div class="form-group">
-                            <label for="quantity-@item.ItemId">Quantity:</label>
-                            <select class="form-control" name="quantity" id="quantity-@item.ItemId">
-                                @for(int i = @valuePair.Value; i > 0; i--)
-                                {
-                                    <option value="@i">@i</option>
-                                }
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
-                    </form>
-                </div>
-              </div>
-              <div class="col-md-2 d-flex justify-content-center">
-                <div>
-                  <p class="small text-muted mb-4 pb-2">Price</p>
-                  <p class="lead fw-normal mb-0">@salesPrice</p>
-                </div>
-              </div>
-              <div class="col-md-2 d-flex justify-content-center">
-                <div>
-                  <p class="small text-muted mb-4 pb-2">Total</p>
-                     @if(@valuePair.Value > 1)
-                         {
-                            var total = salesPrice * @valuePair.Value;
-                            <p class="lead fw-normal mb-0">@total</p>
-                         }
-                          else
+                <div class="card mb-4">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            @if (Model != null && Model.Items.Count > 0)
                             {
-                              <p class="lead fw-normal mb-0">@salesPrice</p>    
+                                @foreach (var itemId in Model.ItemSize)
+                                {
+                                    <div class="col">
+                                        <h3>Item ID: @itemId.Key</h3>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Size</th>
+                                                    <th>Quantity</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var sizePair in itemId.Value)
+                                                {
+                                                    var size = sizePair.Key;
+                                                    var quantity = sizePair.Value;
+                                                    <tr>
+                                                        <td>@size</td>
+                                                        <td>@quantity</td>
+                                                        <td>
+                                                            @*<form method="post" action="@Url.Action("Remove", "ShoppingCart")">
+                                                                <input type="hidden" name="itemId" value="@itemId.Key" />
+                                                                <input type="hidden" name="size" value="@size" />
+                                                                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                                            </form>*@
+                                                           <form method="post" action="@Url.Action("Remove", "ShoppingCart")">
+                                                                <input type="hidden" name="id" value="@itemId.Key" />
+                                                                <input type="hidden" name="size" value="@size" />
+                                                                <input type="hidden" name="quantity" value="@quantity" />
+                                                                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
                             }
-                 </div>
-              </div>
-                    }
+                            else
+                            {
+                                <div class="col">
+                                    <p class="lead fw-normal mb-0">Your shopping cart is empty.</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model != null && Model.Items.Count > 0)
+                {
+                    <div class="card mb-4">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <p class="lead fw-normal mb-0">Total Quantity:</p>
+                                </div>
+                                <div class="col-md-6 d-flex justify-content-end">
+                                    <p class="lead fw-normal mb-0">@Model.Quantity</p>
+                                </div>
+                            </div>
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <p class="lead fw-normal mb-0">Total Price:</p>
+                                </div>
+                                <div class="col-md-6 d-flex justify-content-end">
+                                    <p class="lead fw-normal mb-0">@Model.Total</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 }
-              </div>
-          </div>
-        </div>
-
-        <div class="card mb-5">
-          <div class="card-body p-4">
-
-            <div class="float-end">
-              <p class="mb-0 me-5 d-flex align-items-center">
-                <span class="small text-muted me-2">Order total:</span> <span
-                  class="lead fw-normal">@Model.Total</span>
-              </p>
-            </div>
-
-          </div>
-        </div>
-
-        <div class="d-flex justify-content-end">
-          <button type="button" class="btn btn-light btn-lg me-2">Continue shopping</button>
+>
+                <div class="d-flex justify-content-end">
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Continue Shopping</a>
                     <button type="button" class="btn btn-primary btn-lg"><a class="nav-link text-dark" asp-controller="CheckoutApi" asp-action="Create">Gå till kassan</a></button>
+                </div>
+            </div>
         </div>
-
-      </div>
     </div>
-  </div>
 </body>
