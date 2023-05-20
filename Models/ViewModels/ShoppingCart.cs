@@ -16,6 +16,15 @@ namespace Models.ViewModels
         public List<Item>? Items { get; set; }
         public int Quantity;
         public Dictionary<int, int>? ItemQuantity;
+        public Dictionary<int, Dictionary<string, int>>? ItemSize;
         public decimal? Total;
+    }
+
+    public class ShoppingCartItem
+    {
+        //public List<int>? Ids { get; set; }
+        public int Id { get; set; }
+        public string Size { get; set; }
+        public int Quantity { get; set; }
     }
 }

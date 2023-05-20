@@ -7,6 +7,7 @@ using Models.ViewModels;
 using Newtonsoft.Json;
 using Stripe;
 using Stripe.Checkout;
+using System.Linq;
 
 namespace Webshop.Controllers
 {
@@ -24,33 +25,58 @@ namespace Webshop.Controllers
 
         public ShoppingCart GetCartItems()
         {
+            //Retrieves value from "ShoppingCart"
             var shoppingCartCookie = _ca.HttpContext.Request.Cookies["ShoppingCart"];
-            var itemIds = shoppingCartCookie?.Split(',').Select(int.Parse) ?? new List<int>();
-            List<Item> cartItems = new List<Item>();
 
-            //Gets list of Items from itemIds
-            foreach(var item in itemIds)
+            //Instatiates a list of ShoppingCartItem
+            List<ShoppingCartItem> scItems = new List<ShoppingCartItem>();
+
+            if (shoppingCartCookie != null)
             {
-                var specificItem = itemRepository.GetItem(item);
-                cartItems.Add(specificItem);
+                //Splits the cookieValues by commas as it's structured (id, size, quantity)
+                var cookieValues = shoppingCartCookie.Split(',');
+                for (int i = 0; i < cookieValues.Length; i += 3)
+                {
+                    int id = int.Parse(cookieValues[i]);
+                    string size = cookieValues[i + 1];
+                    int quantity = int.Parse(cookieValues[i + 2]);
+
+                    //Adds the values to a ShoppingCartItem
+                    ShoppingCartItem cartItem = new ShoppingCartItem
+                    {
+                        Id = id,
+                        Size = size,
+                        Quantity = quantity,
+                    };
+
+                    //Adds cartItem to the scItems list
+                    scItems.Add(cartItem);
+                }
             }
 
-            //Dictionary to contain a key-value pair of the quantity of a specific type of item (itemId, quantity)
-            Dictionary<int,int> itemQuantity = cartItems.GroupBy(x => x.ItemId).ToDictionary(x => x.Key, x => x.Count());
+            //Creates a dictionary by the amount of items per size
+            var quantityPerSize = scItems.GroupBy(item => item.Id)
+            .ToDictionary(
+             group => group.Key,
+             group => group
+            .GroupBy(item => item.Size)
+            .ToDictionary(subGroup => subGroup.Key, subGroup => subGroup.Sum(item => item.Quantity))
+             );
 
-            // calculate the total sum of all order amounts
-            decimal totalPrice = cartItems.Sum(o => o.PriceWithoutVAT);
+            //Create a list of items to display
+            List<Item> items = new List<Item>();
+            foreach (var item in scItems)
+            {
+                items.Add(itemRepository.GetItem(item.Id));
+            }
 
             //Instantiate the ShoppingCart to be returned
             ShoppingCart cart = new ShoppingCart
             {
-                Items = cartItems,
-                Quantity = cartItems.Count(),
-                ItemQuantity = itemQuantity,
-                Total = totalPrice
+                Items = items,
+                ItemSize = quantityPerSize
             };
 
-           
             return cart;
         }
 
@@ -107,18 +133,36 @@ namespace Webshop.Controllers
 
         public IActionResult Add(int id, string size, int quantity)
         {
+            //Retrieves the value from the cookie "ShoppingCart"
             var existingCookie = Request.Cookies["ShoppingCart"];
             string newCookieValue;
 
+            //If the cookie exists, append new values
             if (existingCookie != null)
             {
-                newCookieValue = $"{existingCookie},{id}";
+                if(quantity == 0)
+                {
+                    newCookieValue = $"{existingCookie},{id}, 0, 1";
+                }
+                else
+                {
+                    newCookieValue = $"{existingCookie},{id}, {size}, {quantity}";
+                }       
             }
+            //Else create a new cookie
             else
             {
-                newCookieValue = $"{id}";
+                if(quantity == 0)
+                {
+                    newCookieValue = $"{id}, 0, 1";
+                }
+                else
+                {
+                    newCookieValue = $"{id}, {size}, {quantity}";
+                }
             }
 
+            //Cookie options
             var cookieOptions = new CookieOptions
             {
                 Expires = DateTime.UtcNow.AddDays(7),
@@ -128,41 +172,67 @@ namespace Webshop.Controllers
                 Secure = true
             };
 
+            //Adds or updates "ShoppingCart" with the newCookieValue and cookieOptions
             Response.Cookies.Append("ShoppingCart", newCookieValue, cookieOptions);
 
             return RedirectToAction("Index");
         }
 
-        public IActionResult Remove(int id, int quantity)
+        public IActionResult Remove(int id, int quantity, string size)
         {
             var existingCookie = Request.Cookies["ShoppingCart"];
             string newCookieValue = null;
+            // Create a new list to hold the updated items
+            //var updatedItems = new List<string>();
+            List<ShoppingCartItem> scItem = new List<ShoppingCartItem>();
+            List<ShoppingCartItem> newItems = new List<ShoppingCartItem>();
 
             if (existingCookie != null)
             {
                 // Split the existing cookie value into individual items
                 var items = existingCookie.Split(',');
-
-                // Create a new list to hold the updated items
-                var updatedItems = new List<string>();
-
-                // Iterate over the items and add all but the one with the specified ID
-                // Add back the items of specified id according to Quantity
-                foreach (var item in items)
+                //List<string> itemIds = new List<string>();
+                for (int i = 0; i < items.Length; i += 3)
                 {
-                    if (item != id.ToString())
+                    string itemId = int.Parse(items[i]).ToString();
+                    string itemSize = items[i + 1];
+                    int existingQuantity = int.Parse(items[i + 2]);
+
+                    ShoppingCartItem sci = new ShoppingCartItem
                     {
-                        updatedItems.Add(item);
+                        Id = int.Parse(itemId),
+                        Size = itemSize,
+                        Quantity = existingQuantity
+                    };
+
+                    scItem.Add(sci);
+                }
+
+                
+
+                // Iterate over the items and add all but the one with the specified Id & the ones with Id but different size
+                // Add back the items of specified id according to Quantity
+                foreach (var item in scItem)
+                {
+                    // Returning a list of the Ids NOT deleted back to the index view
+                    if (item.Id != id)
+                    {
+                        newItems.Add(item);
                     }
-                    if(item == id.ToString() && quantity > 0)
+
+                    if(item.Id == id && item.Size != size)
                     {
-                        updatedItems.Add(item);
+                        newItems.Add(item);
+                    }
+
+                    if (item.Id == id && item.Size == size && quantity > 1)
+                    {
+                        newItems.Add(item);
+                        item.Quantity--;
                         quantity--;
                     }
                 }
 
-                // Combine the updated items into a new cookie value
-                newCookieValue = string.Join(",", updatedItems);
             }
 
             var cookieOptions = new CookieOptions
@@ -174,7 +244,23 @@ namespace Webshop.Controllers
                 Secure = true
             };
 
-            Response.Cookies.Append("ShoppingCart", newCookieValue, cookieOptions);
+            foreach (var item in newItems)
+            {
+                // Combine the updated items into a new cookie value
+                newCookieValue += $"{item.Id}, {item.Size}, {item.Quantity},";
+                
+            }
+
+            // Add new values to cookie
+            if(newCookieValue != null) {
+                newCookieValue = newCookieValue.Remove(newCookieValue.Length - 1, 1);
+                Response.Cookies.Append("ShoppingCart", newCookieValue, cookieOptions); 
+            }
+            // Remove cookie if there's no values
+            else
+            {
+                Response.Cookies.Delete("ShoppingCart", cookieOptions);
+            }
 
             return RedirectToAction("Index");
         }
