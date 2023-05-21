@@ -16,7 +16,7 @@ namespace DataAccess.Data.Repositories
 
         // Gets the top n most sold items, based on a specific start and end date
         // "quantity" determines how many items to be returned
-        public List<Item> GetTopMostSoldItems(int quantity, DateTime startDate, DateTime endDate)
+        public List<Item> GetMostSoldItems(int quantity, DateTime startDate, DateTime endDate)
         {
             using (var context = new ApplicationDbContext())
             {
@@ -38,7 +38,7 @@ namespace DataAccess.Data.Repositories
         }
 
         // Gets the top n most sold items, based on a specific start and end date
-        public List<Item> GetTopLeastSoldItems(int quantity, DateTime startDate, DateTime endDate)
+        public List<Item> GetLeastSoldItems(int quantity, DateTime startDate, DateTime endDate)
         {
             using (var context = new ApplicationDbContext())
             {
@@ -63,74 +63,74 @@ namespace DataAccess.Data.Repositories
         // The method retrieves all sold transactions from the database, and then uses a dictionary to keep track of the sold item counts. 
         // It then looks up each item in the Items table to get its corresponding name and adds the item and its count to the dictionary. 
         // Finally, it returns the resulting dictionary with each item and its sold count
-        public Dictionary<Item, int> GetMostSoldItems(int quantity, DateTime startDate, DateTime endDate)
-        {
-            using (var context = new ApplicationDbContext())
-            {
-                var soldTransactions = context.ItemTransactions.Where(t => t.TransactionType == "Försäljning"
-                    && t.TransactionDate.Date >= startDate && t.TransactionDate < endDate)
-                    .Where(t => t.Quantity > 0).Take(quantity).ToList();
+        //public Dictionary<Item, int> GetMostSoldItems(int quantity, DateTime startDate, DateTime endDate)
+        //{
+        //    using (var context = new ApplicationDbContext())
+        //    {
+        //        var soldTransactions = context.ItemTransactions.Where(t => t.TransactionType == "Försäljning"
+        //            && t.TransactionDate.Date >= startDate && t.TransactionDate < endDate)
+        //            .Where(t => t.Quantity > 0).Take(quantity).ToList();
 
-                var soldItemCountDict = new Dictionary<Item, int>();
+        //        var soldItemCountDict = new Dictionary<Item, int>();
 
-                foreach (var transaction in soldTransactions)
-                {
-                    var item = _itemRepository.GetItem(transaction.ItemId);
+        //        foreach (var transaction in soldTransactions)
+        //        {
+        //            var item = _itemRepository.GetItem(transaction.ItemId);
 
-                    if (item != null)
-                    {
-                        if (soldItemCountDict.ContainsKey(item))
-                        {
-                            soldItemCountDict[item] += transaction.Quantity;
-                        }
-                        else
-                        {
-                            soldItemCountDict[item] = transaction.Quantity;
-                        }
-                    }
-                }
+        //            if (item != null)
+        //            {
+        //                if (soldItemCountDict.ContainsKey(item))
+        //                {
+        //                    soldItemCountDict[item] += transaction.Quantity;
+        //                }
+        //                else
+        //                {
+        //                    soldItemCountDict[item] = transaction.Quantity;
+        //                }
+        //            }
+        //        }
 
-                return soldItemCountDict;
-            }
-        }
+        //        return soldItemCountDict;
+        //    }
+        //}
 
         // Returns a dictionary with the total number of items sold for each item that has been sold at least once. 
         // The method retrieves all sold transactions from the database, and then uses a dictionary to keep track of the sold item counts. 
         // It then looks up each item in the Items table to get its corresponding name and adds the item and its count to the dictionary. 
         // Finally, it returns the resulting dictionary with each item and its sold count
-        public Dictionary<Item, int> GetLeastSoldItems(int quantity, DateTime startDate, DateTime endDate)
-        {
-            using (var context = new ApplicationDbContext())
-            {
-                var soldTransactions = context.ItemTransactions.Where(t => t.TransactionType == "Försäljning"
-                    && t.TransactionDate.Date >= startDate && t.TransactionDate < endDate)
-                    .Where(t => t.Quantity > 0).Take(quantity).ToList();
+        //public Dictionary<Item, int> GetLeastSoldItems(int quantity, DateTime startDate, DateTime endDate)
+        //{
+        //    using (var context = new ApplicationDbContext())
+        //    {
+        //        var soldTransactions = context.ItemTransactions.Where(t => t.TransactionType == "Försäljning"
+        //            && t.TransactionDate.Date >= startDate && t.TransactionDate < endDate)
+        //            .Where(t => t.Quantity > 0).Take(quantity).ToList();
 
-                var soldItemCountDict = new Dictionary<Item, int>();
+        //        var soldItemCountDict = new Dictionary<Item, int>();
 
-                foreach (var transaction in soldTransactions)
-                {
-                    var item = _itemRepository.GetItem(transaction.ItemId);
+        //        foreach (var transaction in soldTransactions)
+        //        {
+        //            var item = _itemRepository.GetItem(transaction.ItemId);
 
-                    if (item != null)
-                    {
-                        if (soldItemCountDict.ContainsKey(item))
-                        {
-                            soldItemCountDict[item] -= transaction.Quantity;
-                        }
-                        else
-                        {
-                            soldItemCountDict[item] = -transaction.Quantity;
-                        }
-                    }
-                }
+        //            if (item != null)
+        //            {
+        //                if (soldItemCountDict.ContainsKey(item))
+        //                {
+        //                    soldItemCountDict[item] -= transaction.Quantity;
+        //                }
+        //                else
+        //                {
+        //                    soldItemCountDict[item] = -transaction.Quantity;
+        //                }
+        //            }
+        //        }
 
-                // Sorterar dictionary efter minsta till största försäljningsantal
-                var sortedDict = soldItemCountDict.OrderBy(x => x.Value);
+        //        // Sorterar dictionary efter minsta till största försäljningsantal
+        //        var sortedDict = soldItemCountDict.OrderBy(x => x.Value);
 
-                return sortedDict.ToDictionary(x => x.Key, x => -x.Value);
-            }
-        }
+        //        return sortedDict.ToDictionary(x => x.Key, x => -x.Value);
+        //    }
+        //}
 
 
 

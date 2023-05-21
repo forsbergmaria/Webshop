@@ -1,8 +1,41 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@using Models.ViewModels
+@using Models
+@model List<HomePageViewModel>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<body>
+    <div class="text-center">
+        <h6 class="display-4">Populärt just nu</h6>
+    </div>
+
+    <div class="">
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            @foreach (var item in Model)
+            {
+                var price = @item.Item.PriceWithoutVAT * item.Item.VAT;
+                price = Math.Round(price, 2);
+                <div class="col">
+                    <div class="card text-center">
+                           @if (item.Image != null)
+                        {
+                            <img src="@Url.Content(item.Image.Path).FirstOrDefault()" class="card-img-top" alt="...">
+                        } else
+                        {
+                            <img class="images-all-items" src="~/images/productImages/noimage.jpg" />
+                        }
+
+                        <div class="card-body">
+                            <h5 class="card-title">@Html.ActionLink(@item.Item.Name, "Details", "Item", new {id = item.Item.ItemId})</h5>
+                            <p class="card-text">@price kr</p>
+                            <form method="post" action="@Url.Action("Add", "ShoppingCart")">
+                                <input type="hidden" name="id" value="@item.Item.ItemId" {
+                                }/>
+                                <button type="submit">Lägg till i varukorg</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</body>
+

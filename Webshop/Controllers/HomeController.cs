@@ -10,12 +10,15 @@ using DataAccess;
 using Data;
 using DataAccess.Data.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using DataAccess.Data.Repositories;
+using Models.ViewModels;
 
 namespace Webshop.Controllers
 {
     public class HomeController : Controller
     {
         ItemRepository itemRepository { get { return new ItemRepository(); } }
+        StatisticsRepository statisticsRepository { get { return new StatisticsRepository(); } }
         ItemService itemService { get { return new ItemService(); } }
 
         private readonly ILogger<HomeController> _logger;
@@ -25,10 +28,21 @@ namespace Webshop.Controllers
         }
 
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
+            List<Item> mostPopularItems = statisticsRepository.GetMostSoldItems(10, DateTime.Now.AddDays(-14), DateTime.Now);
+            List<HomePageViewModel> model = new List<HomePageViewModel>();
 
-            return View();
+            foreach(Item item in mostPopularItems)
+            {
+                var m = new HomePageViewModel {
+                    Item = item,
+                    Image = itemRepository.GetImagesByItemId(item.ItemId).FirstOrDefault()
+                };
+
+                model.Add(m);
+            }
+            return View(model);
 
         }
 

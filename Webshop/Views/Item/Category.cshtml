@@ -22,12 +22,13 @@
             <div class="row row-cols-1 row-cols-md-4 g-4">
             @foreach(var item in Model.Items)
                {
+                var price = @item.PriceWithoutVAT * item.VAT;
                      <div class="col">
                         <div class="card text-center">
                           <img src="https://sachinchoolur.github.io/lightslider/img/cS-1.jpg" class="card-img-top" alt="...">
                           <div class="card-body">
                             <h5 class="card-title">@Html.ActionLink(@item.Name, "Details", "Item", new {id = item.ItemId})</h5>
-                            <p class="card-text">@item.PriceWithoutVAT kr</p>
+                            <p class="card-text">@price kr</p>
                                         <form method="post" action="@Url.Action("Add", "ShoppingCart")">
                                             <input type="hidden" name="id" value="@item.ItemId"/>
                                             <button type="submit">Lägg till i varukorg</button>
