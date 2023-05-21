@@ -62,6 +62,12 @@ p {
     list-style: none;
     display: flex;
     align-items: center;
+    margin-left: -5em;
+}
+
+.size-button, 
+.cart-button-details {
+    color: white;
 }
 
 #item-description-heading {
@@ -107,9 +113,7 @@ a {
         color: #0097b2;
     }
 
-.material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 48
-}
+
 
 .add-to-cart-btn {
     background-color: #0097b2;
@@ -161,8 +165,11 @@ input {
     background-color: inherit;
     border: none;
     color: white;
-    font-size: 3.5vh;
     margin-left: 1.5vw;
+}
+
+#cart-icon {
+    font-size: 30px;
 }
 
 .search-btn {

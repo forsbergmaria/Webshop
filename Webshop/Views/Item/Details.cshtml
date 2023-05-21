@@ -68,7 +68,7 @@
                       <div class="mb-4">
                         @foreach(var size in Model.Sizes)
                             {
-                                <button class="btn btn-outline-dark flex-shrink-0" type="button">
+                                <button class="btn btn-outline-dark flex-shrink-0 size-button" type="button">
                                     @size.Name
                                 </button>
                              }
@@ -83,7 +83,7 @@
                             </div>
                             <form method="post" action="@Url.Action("Add", "ShoppingCart")">
                                 <input type="hidden" name="id" value="@Model.Item.ItemId"/>
-                                  <button class="btn btn-outline-dark flex-shrink-0" type="submit">Lägg till i varukorg</button>
+                                  <button class="btn btn-outline-dark flex-shrink-0 cart-button-details" type="submit">Lägg till i varukorg</button>
                             </form>
                         </div>
                     </div>
