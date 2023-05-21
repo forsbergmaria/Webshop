@@ -7,16 +7,61 @@
  <section class="py-5">
             <div class="container">
                 <div class="row gx-4 gx-lg-5 align-items-center">
-                    <div class="col-lg-5"><img class="card-img-top mb-5 mb-md-0" src="https://sachinchoolur.github.io/lightslider/img/cS-1.jpg" alt="..." />
+            @{
+                string firstImagePath = Model.Images.FirstOrDefault().Path;
+            }
+                    <ul class="item-path">
+                        <li class="item-path-item">
+                            <a class="item-path-link">Start</a>
+                        </li>
+                <li class="item-path-item">
+                    <a class="item-path-link">/ @Model.Item.Category.Name</a>
+                </li>
+                @if (Model.Item.Subcategory != null)
+                {
+                    <li class="item-path-item">
+                            <a class="item-path-link">/ @Model.Item.Subcategory.Name</a>
+                        </li>
+                }
+                <li class="item-path-item">
+                    <a class="item-path-link">/ @Model.Item.Name</a>
+                </li>
+            </ul>
+                    <div class="col-lg-5"><img class="card-img-top mb-5 mb-md-0" src="@firstImagePath" alt="..." />
                     <div class="w-100"></div>
-                    <div class="col-lg-2"><p>här är mina bilder</p></div>
+                    <div class="row">
+                    @if (Model.Images.Count > 1)
+                    {
+                        foreach (var image in Model.Images)
+                        {
+                            if (!image.Path.Equals(firstImagePath))
+                            {
+                                <div class="col-lg-4 details-images-container">
+                                <img src="@image.Path" class="details-images"/>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
                     </div>
                     <div class="col-lg-5">
                         <h1 class="display-5 fw-bolder">@Model.Item.Name</h1>
                         <div class="fs-5 mb-1">
-                            <span>@Model.Item.PriceWithoutVAT kr</span>
+                    @{
+                        var price = Model.Item.PriceWithoutVAT * Model.Item.VAT;
+                        price = Math.Round(price, 2);
+                    }
+                            <span id="price">@price kr</span>
                         </div>
-                        <p class="lead">@Model.Item.Description</p>
+                        <div class="item-information-container">
+                    <p><strong>Varumärke:</strong> @Model.Item.Brand</p>
+                    @if (Model.Item.Color != null)
+                    {
+                        <p><strong>Färg:</strong> @Model.Item.Color</p>
+                    }
+                        </div>
+                        <h6 id="item-description-heading">Produktbeskrivning:</h6>
+                        <p class="lead description">@Model.Item.Description</p>
                     @if (Model.Item.HasSize)
                     {
                         <p>Välj storlek:</p>

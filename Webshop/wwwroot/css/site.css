@@ -46,6 +46,58 @@ p {
     color: white;
 }
 
+.details-images-container {
+    margin-top: 1em;
+    margin-right: -50px;
+    margin-left: -20px;
+}
+
+.details-images {
+    width: 4em;
+    max-width: 5em;
+    margin-left: 20px;
+}
+
+.item-path {
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+#item-description-heading {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.item-path-item {
+    margin-right: -3em;
+}
+
+.item-path-link {
+    color: white;
+    text-decoration: solid;
+    font-style: italic;
+
+}
+
+#price {
+    font-size: 26px;
+    font-weight: 200;
+}
+
+.description {
+    font-size: 14px;
+}
+
+.item-information-container {
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+.item-information-container p {
+    font-weight: 200;
+}
+
 a {
     color: inherit;
     text-decoration: none;
