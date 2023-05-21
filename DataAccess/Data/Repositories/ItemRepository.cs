@@ -12,6 +12,14 @@ namespace Data
     public class ItemRepository
     {
 
+        public int CountItems()
+        {
+            using (var context = new ApplicationDbContext()) 
+            {
+                return context.Items.Count();
+            }
+        }
+
         //Checks if any Items exist in the database
         public bool ItemsExist()
         {

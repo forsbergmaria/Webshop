@@ -10,6 +10,7 @@ namespace DataAccess.Data.Services
     public class ItemService
     {
         private ItemRepository itemRepository { get { return new ItemRepository(); } }
+        private StatisticsRepository statisticsRepository { get { return new StatisticsRepository(); } }
         private CategoryRepository categoryRepository { get { return new CategoryRepository(); } }
         private SizeRepository sizeRepository { get { return new SizeRepository(); } }
         public List<Item> ItemTextSearch(string searchstring)
@@ -47,6 +48,54 @@ namespace DataAccess.Data.Services
 
             return categories;
         }
+
+        public List<Item> SortItems(int sortOption)
+        {
+            try
+            {
+                List<Item> sortedList = new List<Item>();
+
+                switch (sortOption)
+                {
+                    case 2:
+                        sortedList = itemRepository.GetAllItems()
+                            .OrderBy(i => i.PriceWithoutVAT * i.VAT)
+                            .ToList();
+                        break;
+
+                    case 3:
+                        sortedList = itemRepository.GetAllItems()
+                            .OrderByDescending(i => i.PriceWithoutVAT * i.VAT)
+                            .ToList();
+                        break;
+
+                    case 4:
+                        sortedList = itemRepository.GetAllItems()
+                            .OrderBy(i => i.Name)
+                            .ToList();
+                        break;
+
+                    case 5:
+                        sortedList = itemRepository.GetAllItems()
+                            .OrderByDescending(i => i.Name)
+                            .ToList();
+                        break;
+
+                    default:
+                        int totalItems = itemRepository.CountItems();
+                        sortedList = statisticsRepository.GetMostSoldItems(totalItems, DateTime.Now.AddDays(-14), DateTime.Now);
+                        break;
+                }
+
+                return sortedList;
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
+
+
 
         public ItemIndexView GetViewModel()
         {

@@ -1,0 +1,53 @@
+﻿@using Models;
+@model List<Item>
+
+<body>
+    <div class="text-center">
+        <h6>ALLA PRODUKTER</h6>
+    </div>
+
+    <div class="">
+        <div class="form-group">
+            <label>Sortera produkter:</label>
+            <form action="/Item/SortItems" method="post">
+            <select id="sortOption" name="sortOption" class="form-control">
+                <option value="1">Visa populärast först</option>
+                <option value="2">Visa billigast först</option>
+                <option value="3">Visa dyrast först</option>
+                <option value="4">Visa från A-Ö</option>
+                <option value="5">Visa från Ö-A</option>
+            </select>
+                <input type="submit" value="Sortera" />
+            </form>
+        </div>
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            @foreach (var item in Model)
+            {
+                var price = @item.PriceWithoutVAT * item.VAT;
+                price = Math.Round(price, 2);
+                <div class="col">
+                    <div class="card text-center">
+                        @if (item.ProductImages != null)
+                        {
+                            <img src="@item.ProductImages.FirstOrDefault().Path" class="card-img-top" alt="..." />
+                        }
+                        else
+                        {
+                            <img class="images-all-items" src="~/images/productImages/noimage.jpg" />
+                        }
+
+                        <div class="card-body">
+                            <h5 class="card-title">@Html.ActionLink(@item.Name, "Details", "Item", new {id = item.ItemId})</h5>
+                            <p class="card-text">@price kr</p>
+                            <form method="post" action="@Url.Action("Add", "ShoppingCart")">
+                                <input type="hidden" name="id" value="@item.ItemId" {
+                                   } />
+                                <button class="add-to-cart-btn" type="submit">Lägg till i varukorg</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</body>

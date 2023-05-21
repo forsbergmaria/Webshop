@@ -19,6 +19,19 @@ namespace Webshop.Controllers
             ViewBag.Searchstring = searchstring;
             return View(items);
         }
+
+        public IActionResult AllItems()
+        {
+            List<Item> allItems = itemRepository.GetAllItems();
+            return View(allItems);
+        }
+
+        [HttpPost]
+        public IActionResult SortItems(int sortOption)
+        {
+            List<Item> sortedItems = itemService.SortItems(sortOption);
+            return View("AllItems", sortedItems);
+        }
         public IActionResult Details(int id)
         {
             var item = itemService.GetDetailsView(id);
