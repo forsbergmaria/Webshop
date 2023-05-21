@@ -92,6 +92,8 @@ nav {
 input {
     background-color: #b3b3b3;
     border: none;
+    border-bottom-left-radius: 3px;
+    border-top-left-radius: 3px;
 }
 
     textarea:focus, input:focus {
@@ -116,9 +118,12 @@ input {
     border: none;
     color: white;
     font-size: 3.5vh;
+    border-bottom-right-radius: 3px;
+    border-top-right-radius: 3px;
 }
 
 .search-component {
+    
     
 }
 
