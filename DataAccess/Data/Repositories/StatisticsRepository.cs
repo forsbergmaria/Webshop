@@ -1,4 +1,5 @@
 ﻿using Data;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace DataAccess.Data.Repositories
         {
             using (var context = new ApplicationDbContext())
             {
-                var topItems = context.Items
+                var topItems = _itemRepository.GetAllItems()
                     .Join(context.ItemTransactions.Where(t => t.TransactionType == "Försäljning")
                     .Where(t => t.TransactionDate.Date >= startDate && t.TransactionDate.Date <= endDate),
                         item => item.ItemId,

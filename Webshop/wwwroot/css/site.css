@@ -21,7 +21,12 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
     color: white;
-    font-weight: 200;
+}
+
+h6 {
+    font-size: 40px;
+    font-weight: 100;
+    margin: 1em 0;
 }
 
 .btn {
@@ -54,6 +59,20 @@ a {
     font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 48
 }
 
+.add-to-cart-btn {
+    background-color: #0097b2;
+    color: white;
+    padding: 0.8em;
+    border-radius: 2px;
+    box-shadow: none;
+    font-size: 10px;
+    border: none;
+
+}
+
+.add-to-cart-btn:hover {
+    background-color: #065C6B;
+}
 
 nav {
     background-color: #403f3f;
@@ -78,6 +97,11 @@ input {
     textarea:focus, input:focus {
         outline: none;
     }
+
+.card-img-top {
+    max-width: 20em;
+    max-height: 20em;
+}
 
 .cart-btn {
     background-color: inherit;

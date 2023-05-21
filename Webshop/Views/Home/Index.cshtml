@@ -4,7 +4,7 @@
 
 <body>
     <div class="text-center">
-        <h6 class="display-4">Populärt just nu</h6>
+        <h6>POPULÄRT JUST NU</h6>
     </div>
 
     <div class="">
@@ -17,7 +17,7 @@
                     <div class="card text-center">
                            @if (item.Image != null)
                         {
-                            <img src="@Url.Content(item.Image.Path).FirstOrDefault()" class="card-img-top" alt="...">
+                            <img src="@item.Image.Path" class="card-img-top" alt="..." />
                         } else
                         {
                             <img class="images-all-items" src="~/images/productImages/noimage.jpg" />
@@ -29,7 +29,7 @@
                             <form method="post" action="@Url.Action("Add", "ShoppingCart")">
                                 <input type="hidden" name="id" value="@item.Item.ItemId" {
                                 }/>
-                                <button type="submit">Lägg till i varukorg</button>
+                                <button class="add-to-cart-btn" type="submit">Lägg till i varukorg</button>
                             </form>
                         </div>
                     </div>

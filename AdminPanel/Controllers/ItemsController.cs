@@ -64,7 +64,7 @@ namespace AdminPanel.Controllers
                 foreach (var file in files)
                 {
                     var fileName = Path.GetFileName(file.FileName);
-                    var filePath = Path.Combine(_env., "images/productImages", fileName);
+                    var filePath = Path.Combine(_env.WebRootPath, "images/productImages", fileName);
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
