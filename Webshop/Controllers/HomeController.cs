@@ -18,6 +18,8 @@ namespace Webshop.Controllers
     public class HomeController : Controller
     {
         ItemRepository itemRepository { get { return new ItemRepository(); } }
+        IHttpContextAccessor _ca => new HttpContextAccessor();
+        ShoppingCartManager _cm { get { return new ShoppingCartManager(_ca); } }
         StatisticsRepository statisticsRepository { get { return new StatisticsRepository(); } }
         ItemService itemService { get { return new ItemService(); } }
 
@@ -42,6 +44,10 @@ namespace Webshop.Controllers
 
                 model.Add(m);
             }
+
+            var cartItems = _cm.GetCartItems();
+            ViewBag.Quantity = cartItems.Quantity;
+
             return View(model);
 
         }

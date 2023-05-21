@@ -102,6 +102,7 @@ namespace Webshop.Controllers
         public IActionResult Index()
         {
             var cartItems = _cm.GetCartItems();
+            ViewBag.Quantity = cartItems.Quantity;
             return View(cartItems);
         }
 

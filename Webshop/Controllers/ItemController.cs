@@ -12,6 +12,8 @@ namespace Webshop.Controllers
         ItemRepository itemRepository { get { return new ItemRepository(); } }
         ItemService itemService { get { return new ItemService(); } }
         CategoryRepository categoryRepository { get { return new CategoryRepository(); } }
+        IHttpContextAccessor _ca => new HttpContextAccessor();
+        ShoppingCartManager _cm { get { return new ShoppingCartManager(_ca); } }
 
         public ActionResult Index(string searchstring)
         {
@@ -35,6 +37,8 @@ namespace Webshop.Controllers
         public IActionResult Details(int id)
         {
             var item = itemService.GetDetailsView(id);
+            var cartItems = _cm.GetCartItems();
+            ViewBag.Quantity = cartItems.Quantity;
             return View(item);
         }
 
