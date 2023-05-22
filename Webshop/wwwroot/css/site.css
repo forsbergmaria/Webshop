@@ -31,6 +31,8 @@ h6 {
 
 .btn {
     background-color: #0097B2;
+    border: none;
+    color: white;
 }
 
     .btn:hover {
@@ -147,6 +149,7 @@ nav {
 
 .cart-container p {
     font-size: 12px;
+    text-align: center;
 }
 
 .cart-heading {
@@ -156,6 +159,7 @@ nav {
 .cart-p {
     font-size: 16px;
     color: #b3b3b3;
+    text-align: center;
 }
 
 .quantity-control {
@@ -164,7 +168,29 @@ nav {
 
 #cart-quantity {
     margin-top: 3.5em;
+    margin-left: 2.2em;
 }
+
+.remove-item-btn {
+    background-color: #982323;
+}
+
+#continue-shopping {
+    color: black;
+    font-size: 12px;
+    background-color: #b3b3b3;
+}
+
+#continue-shopping:hover {
+    color: white;
+    background-color: rgb(29 29 29);
+}
+
+#checkout-btn-link {
+    color: white;
+    font-size: 12px;
+}
+
 
 input {
     background-color: #b3b3b3;
