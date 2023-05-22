@@ -18,11 +18,11 @@
                                     var salesPrice = @Math.Round(item.PriceWithoutVAT * item.VAT, 2);
                                     <div class="col-md-2">
                 <img src="@item.ProductImages.FirstOrDefault().Path"
-                  class="img-fluid" alt="...">
+                  class="img-fluid cart-image" alt="...">
               </div>
               <div class="col-md-2 d-flex justify-content-center">
                 <div>
-                  <p class="cart-p">Produktnamn</p>
+                  <p class="cart-p">Produkt</p>
                                             @if (item.HasSize)
                                             {
                                                 <p class="lead fw-normal mb-0">@item.Name XL</p>
@@ -105,9 +105,9 @@
 
             <div class="float-end">
               <p class="mb-0 me-5 d-flex align-items-center">
-                                <span class="cart-p">Totalsumma: @Model.Total kr</span>
+                                <span id="total-sum"><strong>Totalsumma:</strong> @Model.Total kr</span>
               </p>
-              <p class="mb-0 me-5 d-flex align-items-center">Fraktkostnader kan tillkomma. Fraktalternativ väljs i kassan.</p>
+              <p class="mb-0 me-5 d-flex align-items-center" id="shipping-fee-info">Fraktkostnader kan tillkomma. Fraktalternativ väljs i kassan.</p>
             </div>
 
           </div>

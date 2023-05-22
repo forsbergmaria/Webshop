@@ -152,6 +152,10 @@ nav {
     text-align: center;
 }
 
+.cart-image {
+    width: 60%;
+}
+
 .cart-heading {
     text-align: center;
 }
@@ -188,6 +192,16 @@ nav {
 
 #checkout-btn-link {
     color: white;
+    font-size: 12px;
+}
+
+#total-sum {
+    font-size: 18px;
+    color: white;
+}
+
+#shipping-fee-info {
+    color: #b3b3b3;
     font-size: 12px;
 }
 
