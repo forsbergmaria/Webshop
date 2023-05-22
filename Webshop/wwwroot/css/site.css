@@ -145,6 +145,10 @@ nav {
     color: #0097b2;
 }
 
+.cart-p {
+    color: white;
+}
+
 input {
     background-color: #b3b3b3;
     border: none;

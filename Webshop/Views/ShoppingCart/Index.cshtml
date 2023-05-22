@@ -59,7 +59,7 @@
                     <form method="post" action="@Url.Action("Remove", "ShoppingCart")">
                         <input type="hidden" name="id" value="@item.ItemId"/>
                         <div class="form-group">
-                        <label class="small text-muted mb-4 pb-2" for="quantity-@item.ItemId">Antal:</label>
+                                                    <label class="cart-p" for="quantity-@item.ItemId">Antal:</label>
                             <select class="form-control" name="quantity" id="quantity-@item.ItemId">
                                 @for(int i = @valuePair.Value; i > 0; i--)
                                 {
@@ -67,23 +67,23 @@
                                 }
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-danger btn-sm">Ta bort produkt</button>
+                        <button type="submit" class="btn btn-danger remove-item-btn btn-sm">Ta bort produkt</button>
                     </form>
                 </div>
               </div>
               <div class="col-md-2 d-flex justify-content-center">
                 <div>
-                  <p class="small text-muted mb-4 pb-2">Pris</p>
+                                            <p class="cart-p">Pris</p>
                   <p class="lead fw-normal mb-0">@salesPrice</p>
                 </div>
               </div>
               <div class="col-md-2 d-flex justify-content-center">
                 <div>
-                  <p class="small text-muted mb-4 pb-2">Delsumma</p>
+                                            <p class="cart-p">Delsumma</p>
                      @if(@valuePair.Value > 1)
                          {
                             var total = salesPrice * @valuePair.Value;
-                            <p class="lead fw-normal mb-0">@total</p>
+                            <p class="lead fw-normal mb-0">@total kr</p>
                          }
                           else
                             {
@@ -102,8 +102,7 @@
 
             <div class="float-end">
               <p class="mb-0 me-5 d-flex align-items-center">
-                <span class="small text-muted me-2">Totalsumma:</span> <span
-                  class="lead fw-normal">@Model.Total kr</span>
+                                <span class="cart-p">Totalsumma: @Model.Total kr</span>
               </p>
               <p class="mb-0 me-5 d-flex align-items-center">Fraktkostnader kan tillkomma. Fraktalternativ väljs i kassan.</p>
             </div>
