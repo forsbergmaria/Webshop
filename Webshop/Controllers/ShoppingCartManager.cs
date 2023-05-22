@@ -39,7 +39,7 @@ namespace Webshop.Controllers
             Dictionary<int,int> itemQuantity = cartItems.GroupBy(x => x.ItemId).ToDictionary(x => x.Key, x => x.Count());
 
             // calculate the total sum of all order amounts
-            decimal totalPrice = cartItems.Sum(o => o.PriceWithoutVAT);
+            decimal totalPrice = Math.Round(cartItems.Sum(o => o.PriceWithoutVAT * o.VAT), 2);
 
             //Instantiate the ShoppingCart to be returned
             ShoppingCart cart = new ShoppingCart

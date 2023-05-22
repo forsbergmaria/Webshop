@@ -18,19 +18,40 @@
                                     var salesPrice = @Math.Round(item.PriceWithoutVAT * item.VAT, 2);
                                     <div class="col-md-2">
                 <img src="@item.ProductImages.FirstOrDefault().Path"
-                  class="img-fluid" alt="Generic placeholder image">
+                  class="img-fluid" alt="...">
               </div>
               <div class="col-md-2 d-flex justify-content-center">
                 <div>
-                  <p class="small text-muted mb-4 pb-2">Produktnamn</p>
-                  <p class="lead fw-normal mb-0">@item.Name</p>
+                  <p class="cart-p">Produktnamn</p>
+                                            @if (item.HasSize)
+                                            {
+                                                <p class="lead fw-normal mb-0">@item.Name L</p>
+                                            }
+                                            else
+                                            {
+                                                <p class="lead fw-normal mb-0">@item.Name</p>
+                                            }
+                                            
                 </div>
               </div>
               <div class="col-md-2 d-flex justify-content-center">
                 <div>
-                  <p class="small text-muted mb-4 pb-2">Färg</p>
-                  <p class="lead fw-normal mb-0"><i class="fas fa-circle me-2" style="color: #fdd8d2;"></i>
-                    @item.Color</p>
+                   <p class="cart-p">Färg</p>
+                                        @if(item.Color != null)
+                                            {
+                                                <p class="lead fw-normal mb-0">
+                                                    <i class="fas fa-circle me-2" style="color: #fdd8d2;"></i>
+                                                    @item.Color
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <p class="lead fw-normal mb-0">
+                                                    <i class="fas fa-circle me-2" style="color: #fdd8d2;"></i>
+                                                    Ingen
+                                                </p>
+                                            }
+
                 </div>
               </div>
               <div class="col-md-2 d-flex justify-content-center">
