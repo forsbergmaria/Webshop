@@ -37,6 +37,7 @@ namespace Webshop.Controllers
             var options = new SessionCreateOptions
             {
                 Locale = "sv",
+                AutomaticTax = new SessionAutomaticTaxOptions { Enabled = true },
                 ShippingAddressCollection = new SessionShippingAddressCollectionOptions
                 {
                     AllowedCountries = new List<string> { "SE" },

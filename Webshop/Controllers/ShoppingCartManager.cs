@@ -131,7 +131,9 @@ namespace Webshop.Controllers
 
             Response.Cookies.Append("ShoppingCart", newCookieValue, cookieOptions);
 
-            return RedirectToAction("Index");
+            TempData["id"] = id;
+
+            return RedirectToAction("Details", "Item");
         }
 
         public IActionResult Remove(int id, int quantity)

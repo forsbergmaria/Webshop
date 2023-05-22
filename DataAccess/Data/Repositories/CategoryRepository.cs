@@ -11,9 +11,16 @@ namespace Data
         //Returns a list of categories from the database
         public List<Category> GetAllCategories()
         {
-            using (var context = new ApplicationDbContext())
+            try
             {
-                return context.Categories.ToList();
+                using (var context = new ApplicationDbContext())
+                {
+                    return context.Categories.ToList();
+                }
+            }
+            catch(Exception ex)
+            {
+                throw;
             }
         }
 
@@ -173,11 +180,18 @@ namespace Data
         //Modify existing category
         public Subcategory ModifySubcategory(Subcategory subcategory)
         {
-            using (var context = new ApplicationDbContext())
+            try
             {
-                context.Entry(subcategory).State = EntityState.Modified;
-                context.SaveChanges();
-                return subcategory;
+                using (var context = new ApplicationDbContext())
+                {
+                    context.Entry(subcategory).State = EntityState.Modified;
+                    context.SaveChanges();
+                    return subcategory;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
 

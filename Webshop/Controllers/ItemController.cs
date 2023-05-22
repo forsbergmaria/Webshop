@@ -36,7 +36,17 @@ namespace Webshop.Controllers
         }
         public IActionResult Details(int id)
         {
-            var item = itemService.GetDetailsView(id);
+            _ = new ItemDetailsView();
+            ItemDetailsView? item;
+            if (TempData["id"] == null)
+            {
+                item = itemService.GetDetailsView(id);
+            }
+            else
+            {
+                int temp = (int)TempData["id"];
+                item = itemService.GetDetailsView(temp);
+            }
             var cartItems = _cm.GetCartItems();
             ViewBag.Quantity = cartItems.Quantity;
             return View(item);
