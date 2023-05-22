@@ -13,14 +13,30 @@ namespace Webshop.Controllers
         ItemService itemService { get { return new ItemService(); } }
         CategoryRepository categoryRepository { get { return new CategoryRepository(); } }
 
-        public ActionResult Index(string searchstring)
+        public ActionResult Index(string searchstring, string color, string brand)
         {
-            //Return items containing "searchstring" from the method ItemTextSearch
+            // Return items containing "searchstring" from the method ItemTextSearch
             var items = itemService.ItemTextSearch(searchstring);
-            //Get the searchstring via ViewBag
+
+            // Apply additional filters based on color and type
+            if (!string.IsNullOrEmpty(color))
+            {
+                items = items.Where(item => item.Color == color).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(brand))
+            {
+                items = items.Where(item => item.Brand == brand).ToList();
+            }
+
+            // Set the filter values in ViewBag for display in the view
             ViewBag.Searchstring = searchstring;
+            ViewBag.Color = color;
+            ViewBag.Brand = brand;
+
             return View(items);
         }
+
         public IActionResult Details(int id)
         {
             var item = itemService.GetDetailsView(id);
