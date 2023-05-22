@@ -145,8 +145,25 @@ nav {
     color: #0097b2;
 }
 
+.cart-container p {
+    font-size: 12px;
+}
+
+.cart-heading {
+    text-align: center;
+}
+
 .cart-p {
-    color: white;
+    font-size: 16px;
+    color: #b3b3b3;
+}
+
+.quantity-control {
+    /*margin-top: 2.5em;*/
+}
+
+#cart-quantity {
+    margin-top: 3.5em;
 }
 
 input {
