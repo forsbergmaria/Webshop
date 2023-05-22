@@ -147,6 +147,14 @@ nav {
     color: #0097b2;
 }
 
+.badge {
+    position: absolute;
+    top: 8px;
+    right: 25px;
+    font-weight: 600;
+    color: black;
+}
+
 .cart-container p {
     font-size: 12px;
     text-align: center;
